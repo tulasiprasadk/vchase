@@ -1,48 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { useSponsorships } from "@/hooks/useSponsorships";
+import { useSponsorEvents } from "@/hooks/useSponsorEvents";
+import { useSponsorshipEnquiries } from "@/hooks/useSponsorshipEnquiries";
+import { useAuth } from "@/context/AuthContext";
+import { Event, SponsorshipPackage } from "@/types";
+import toast from "react-hot-toast";
 
 const SponsorshipsDashboardPage: React.FC = () => {
-  // Mock data - in real app, this would come from API
-  const sponsorships = [
-    {
-      id: "1",
-      eventTitle: "Tech Summit 2025",
-      packageName: "Premium Package",
-      amount: 15000,
-      status: "approved",
-      eventDate: "2025-03-15",
-      location: "San Francisco, CA",
-      reach: 50000,
-      leads: 245,
-    },
-    {
-      id: "2",
-      eventTitle: "Marketing Conference",
-      packageName: "Gold Package",
-      amount: 8500,
-      status: "active",
-      eventDate: "2025-05-10",
-      location: "New York, NY",
-      reach: 35000,
-      leads: 180,
-    },
-    {
-      id: "3",
-      eventTitle: "AI Workshop Series",
-      packageName: "Silver Package",
-      amount: 5000,
-      status: "pending",
-      eventDate: "2025-04-22",
-      location: "Austin, TX",
-      reach: 0,
-      leads: 0,
-    },
-  ];
+  const { user } = useAuth();
+  const { sponsorships, loading: sponsorshipsLoading } = useSponsorships();
+  const { events, loading: eventsLoading } = useSponsorEvents({});
+  const { enquiries, submitEnquiry, fetchEnquiries } =
+    useSponsorshipEnquiries();
+
+  const [activeTab, setActiveTab] = useState<
+    "current" | "submitted" | "discover"
+  >("discover");
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedPackage, setSelectedPackage] =
+    useState<SponsorshipPackage | null>(null);
+  const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+  const [enquiryMessage, setEnquiryMessage] = useState("");
+  const [companyInfo, setCompanyInfo] = useState("");
+  const [submittingEnquiry, setSubmittingEnquiry] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -61,6 +47,55 @@ const SponsorshipsDashboardPage: React.FC = () => {
     }
   };
 
+  // Fetch enquiries when component mounts
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = fetchEnquiries();
+      return unsubscribe;
+    }
+  }, [user, fetchEnquiries]);
+
+  const handleSendEnquiry = async (event: Event, pkg: SponsorshipPackage) => {
+    if (!user) {
+      toast.error("Please log in to send enquiry");
+      return;
+    }
+
+    setSelectedEvent(event);
+    setSelectedPackage(pkg);
+    setShowEnquiryModal(true);
+  };
+
+  const handleEnquirySubmit = async () => {
+    if (!selectedEvent || !selectedPackage || !user) return;
+
+    setSubmittingEnquiry(true);
+    try {
+      const enquiryData = {
+        eventId: selectedEvent.id!,
+        eventTitle: selectedEvent.title,
+        packageId: selectedPackage.id,
+        packageName: selectedPackage.name,
+        companyName: companyInfo,
+        contactEmail: user.email || "",
+        message: enquiryMessage,
+      };
+
+      await submitEnquiry(enquiryData);
+
+      setShowEnquiryModal(false);
+      setSelectedEvent(null);
+      setSelectedPackage(null);
+      setEnquiryMessage("");
+      setCompanyInfo("");
+      toast.success("Enquiry submitted successfully!");
+    } catch {
+      toast.error("Failed to submit enquiry");
+    } finally {
+      setSubmittingEnquiry(false);
+    }
+  };
+
   const activeSponsorship = sponsorships.filter(
     (s) => s.status === "active" || s.status === "approved"
   );
@@ -68,179 +103,508 @@ const SponsorshipsDashboardPage: React.FC = () => {
   const totalReach = sponsorships.reduce((sum, s) => sum + s.reach, 0);
   const totalLeads = sponsorships.reduce((sum, s) => sum + s.leads, 0);
 
+  // Show loading state
+  if (sponsorshipsLoading) {
+    return (
+      <ProtectedRoute requireAuth={true} allowedRoles={["sponsor"]}>
+        <DashboardLayout title="Sponsorships">
+          <div className="flex justify-center items-center py-12">
+            <div className="text-gray-600">Loading sponsorships...</div>
+          </div>
+        </DashboardLayout>
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <ProtectedRoute requireAuth={true} allowedRoles={["sponsor"]}>
       <Head>
-        <title>My Sponsorships - EventSponsor</title>
+        <title>Sponsorships - EventSponsor</title>
         <meta
           name="description"
-          content="Manage your sponsorships and track ROI"
+          content="Manage your sponsorships and discover new opportunities"
         />
       </Head>
-      <DashboardLayout title="My Sponsorships">
+      <DashboardLayout title="Sponsorships">
         <div className="space-y-6">
-          {/* Header with action button */}
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-gray-600">
-                Track your sponsorships and measure their impact
-              </p>
+          {/* Header with Stats */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Your Sponsorship Hub
+                </h1>
+                <p className="text-gray-600">
+                  Manage current sponsorships and discover new opportunities
+                </p>
+              </div>
             </div>
-            <Link href="/dashboard/browse-events">
-              <Button>
-                🔍 Browse Events
-              </Button>
-            </Link>
-          </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-6">
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <div className="text-2xl mr-4">💳</div>
+                  <div className="text-2xl mr-3">💳</div>
                   <div>
                     <p className="text-sm text-gray-600">Active Sponsorships</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-xl font-bold text-gray-900">
                       {activeSponsorship.length}
                     </p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card>
-              <CardContent className="p-6">
+              <div className="bg-green-50 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <div className="text-2xl mr-4">💰</div>
+                  <div className="text-2xl mr-3">💰</div>
                   <div>
                     <p className="text-sm text-gray-600">Total Investment</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-xl font-bold text-gray-900">
                       ${totalInvestment.toLocaleString()}
                     </p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card>
-              <CardContent className="p-6">
+              <div className="bg-purple-50 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <div className="text-2xl mr-4">📊</div>
+                  <div className="text-2xl mr-3">📊</div>
                   <div>
                     <p className="text-sm text-gray-600">Total Reach</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-xl font-bold text-gray-900">
                       {totalReach.toLocaleString()}
                     </p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card>
-              <CardContent className="p-6">
+              <div className="bg-orange-50 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <div className="text-2xl mr-4">🎯</div>
+                  <div className="text-2xl mr-3">🎯</div>
                   <div>
                     <p className="text-sm text-gray-600">Total Leads</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-xl font-bold text-gray-900">
                       {totalLeads}
                     </p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Sponsorships List */}
-          <div className="space-y-4">
-            {sponsorships.map((sponsorship) => (
-              <Card key={sponsorship.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-4">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {sponsorship.eventTitle}
-                          </h3>
-                          <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
-                            <span>📦 {sponsorship.packageName}</span>
-                            <span>📍 {sponsorship.location}</span>
-                            <span>
-                              📅{" "}
-                              {new Date(
-                                sponsorship.eventDate
-                              ).toLocaleDateString()}
-                            </span>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                                sponsorship.status
-                              )}`}
-                            >
-                              {sponsorship.status.charAt(0).toUpperCase() +
-                                sponsorship.status.slice(1)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+          {/* Tab Navigation */}
+          <div className="bg-white rounded-lg shadow-sm">
+            <div className="border-b border-gray-200">
+              <nav className="flex space-x-8 px-6">
+                <button
+                  onClick={() => setActiveTab("discover")}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === "discover"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  🔍 Discover Events ({events.length})
+                </button>
+                <button
+                  onClick={() => setActiveTab("current")}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === "current"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  📋 My Sponsorships ({sponsorships.length})
+                </button>
+                <button
+                  onClick={() => setActiveTab("submitted")}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === "submitted"
+                      ? "border-blue-500 text-blue-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  📤 Submitted ({enquiries.length})
+                </button>
+              </nav>
+            </div>
 
-                      <div className="flex items-center space-x-8 mt-4 text-sm">
-                        <div>
-                          <span className="text-gray-600">Investment: </span>
-                          <span className="font-medium text-green-600">
-                            ${sponsorship.amount.toLocaleString()}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Reach: </span>
-                          <span className="font-medium">
-                            {sponsorship.reach.toLocaleString()}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Leads: </span>
-                          <span className="font-medium">
-                            {sponsorship.leads}
-                          </span>
-                        </div>
-                        {sponsorship.reach > 0 && (
-                          <div>
-                            <span className="text-gray-600">
-                              Cost per Lead:{" "}
-                            </span>
-                            <span className="font-medium">
-                              $
-                              {(sponsorship.amount / sponsorship.leads).toFixed(
-                                2
-                              )}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm">
-                        📊 Analytics
-                      </Button>
-                      {sponsorship.status === "pending" && (
-                        <Button variant="outline" size="sm">
-                          ✏️ Edit
-                        </Button>
-                      )}
-                      <Button variant="outline" size="sm">
-                        👁️ View
-                      </Button>
-                    </div>
+            <div className="p-6">
+              {/* Current Sponsorships Tab */}
+              {activeTab === "current" && (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Current Sponsorships
+                    </h2>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+
+                  {sponsorships.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="text-6xl mb-4">💳</div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No sponsorships yet
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        Start sponsoring events to grow your brand and reach new
+                        audiences
+                      </p>
+                      <Button onClick={() => setActiveTab("discover")}>
+                        Browse Available Events
+                      </Button>
+                    </div>
+                  ) : (
+                    sponsorships.map((sponsorship) => (
+                      <Card key={sponsorship.id}>
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-4">
+                                <div>
+                                  <h3 className="text-lg font-semibold text-gray-900">
+                                    {sponsorship.eventTitle}
+                                  </h3>
+                                  <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                    <span>📦 {sponsorship.packageName}</span>
+                                    <span>📍 {sponsorship.location}</span>
+                                    <span>
+                                      📅{" "}
+                                      {sponsorship.eventDate
+                                        .toDate()
+                                        .toLocaleDateString()}
+                                    </span>
+                                    <span
+                                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                                        sponsorship.status
+                                      )}`}
+                                    >
+                                      {sponsorship.status
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                        sponsorship.status.slice(1)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center space-x-8 mt-4 text-sm">
+                                <div>
+                                  <span className="text-gray-600">
+                                    Investment:{" "}
+                                  </span>
+                                  <span className="font-medium text-green-600">
+                                    ${sponsorship.amount.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="text-gray-600">Reach: </span>
+                                  <span className="font-medium">
+                                    {sponsorship.reach.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="text-gray-600">Leads: </span>
+                                  <span className="font-medium">
+                                    {sponsorship.leads}
+                                  </span>
+                                </div>
+                                {sponsorship.reach > 0 &&
+                                  sponsorship.leads > 0 && (
+                                    <div>
+                                      <span className="text-gray-600">
+                                        Cost per Lead:{" "}
+                                      </span>
+                                      <span className="font-medium">
+                                        $
+                                        {(
+                                          sponsorship.amount / sponsorship.leads
+                                        ).toFixed(2)}
+                                      </span>
+                                    </div>
+                                  )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                              <Button variant="outline" size="sm">
+                                📊 Analytics
+                              </Button>
+                              <Button variant="outline" size="sm">
+                                👁️ View
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {/* Submitted Enquiries Tab */}
+              {activeTab === "submitted" && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Submitted Sponsorship Enquiries
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      Track your sponsorship applications and their status
+                    </p>
+                  </div>
+
+                  {enquiries.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="text-6xl mb-4">📋</div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No enquiries submitted yet
+                      </h3>
+                      <p className="text-gray-600">
+                        Your sponsorship applications will appear here once
+                        submitted
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {enquiries.map((enquiry) => (
+                        <Card key={enquiry.id}>
+                          <CardContent className="p-6">
+                            <div className="flex justify-between items-start mb-4">
+                              <div>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                  {enquiry.eventTitle}
+                                </h3>
+                                <div className="flex items-center gap-4 text-sm text-gray-600">
+                                  <span>
+                                    📅{" "}
+                                    {enquiry.submittedAt
+                                      .toDate()
+                                      .toLocaleDateString()}
+                                  </span>
+                                  <span>💰 {enquiry.packageName}</span>
+                                  {enquiry.proposedAmount && (
+                                    <span>
+                                      💵 $
+                                      {enquiry.proposedAmount.toLocaleString()}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                    enquiry.status === "pending"
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : enquiry.status === "accepted"
+                                      ? "bg-green-100 text-green-800"
+                                      : enquiry.status === "rejected"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-gray-100 text-gray-800"
+                                  }`}
+                                >
+                                  {enquiry.status === "pending" && "⏳ Pending"}
+                                  {enquiry.status === "accepted" &&
+                                    "✅ Accepted"}
+                                  {enquiry.status === "rejected" &&
+                                    "❌ Rejected"}
+                                  {enquiry.status === "under_review" &&
+                                    "🔍 Under Review"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {enquiry.message && (
+                              <div className="mb-4">
+                                <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                  Your Message:
+                                </h4>
+                                <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
+                                  {enquiry.message}
+                                </p>
+                              </div>
+                            )}
+
+                            {enquiry.organizerResponse && (
+                              <div className="mb-4">
+                                <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                  Organizer Response:
+                                </h4>
+                                <p className="text-sm text-gray-700 bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
+                                  {enquiry.organizerResponse}
+                                </p>
+                                {enquiry.responseDate && (
+                                  <p className="text-xs text-gray-500 mt-2">
+                                    Responded on{" "}
+                                    {enquiry.responseDate
+                                      .toDate()
+                                      .toLocaleDateString()}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                              <div className="flex items-center gap-4 text-xs text-gray-500">
+                                <span>
+                                  Enquiry ID:{" "}
+                                  {enquiry.id ? enquiry.id.slice(-8) : "N/A"}
+                                </span>
+                                <span>Company: {enquiry.companyName}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {enquiry.status === "accepted" && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-green-600 border-green-200 hover:bg-green-50"
+                                  >
+                                    💰 Proceed to Payment
+                                  </Button>
+                                )}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    // Could add a view details modal here
+                                    console.log(
+                                      "View enquiry details:",
+                                      enquiry.id
+                                    );
+                                  }}
+                                >
+                                  👁️ View Details
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Discover Events Tab */}
+              {activeTab === "discover" && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Available Events to Sponsor
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      Find perfect sponsorship opportunities for your brand
+                    </p>
+                  </div>
+
+                  {eventsLoading ? (
+                    <div className="text-center py-12">
+                      <div className="text-gray-600">Loading events...</div>
+                    </div>
+                  ) : events.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="text-6xl mb-4">🔍</div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        No events available
+                      </h3>
+                      <p className="text-gray-600">
+                        Check back later for new sponsorship opportunities
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {events.map((event) => (
+                        <Card key={event.id}>
+                          <CardContent className="p-6">
+                            <div className="mb-4">
+                              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                {event.title}
+                              </h3>
+                              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                                <span>
+                                  📅{" "}
+                                  {event.startDate
+                                    .toDate()
+                                    .toLocaleDateString()}
+                                </span>
+                                <span>
+                                  📍 {event.location.city},{" "}
+                                  {event.location.country}
+                                </span>
+                                <span>
+                                  👥{" "}
+                                  {event.attendeeCount
+                                    ? event.attendeeCount.toLocaleString()
+                                    : "TBD"}{" "}
+                                  attendees
+                                </span>
+                                <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                  {event.category}
+                                </span>
+                              </div>
+                            </div>
+
+                            <p className="text-gray-700 mb-4 line-clamp-2">
+                              {event.description}
+                            </p>
+
+                            <div className="space-y-3">
+                              <h4 className="font-medium text-gray-900">
+                                Sponsorship Packages:
+                              </h4>
+                              {event.sponsorshipPackages &&
+                                event.sponsorshipPackages.map((pkg) => (
+                                  <div
+                                    key={pkg.id}
+                                    className="border border-gray-200 rounded-lg p-4"
+                                  >
+                                    <div className="flex justify-between items-start mb-2">
+                                      <div>
+                                        <h5 className="font-medium text-gray-900">
+                                          {pkg.name}
+                                        </h5>
+                                        <p className="text-2xl font-bold text-green-600">
+                                          ${pkg.price.toLocaleString()}
+                                        </p>
+                                      </div>
+                                      <Button
+                                        size="sm"
+                                        onClick={() =>
+                                          handleSendEnquiry(event, pkg)
+                                        }
+                                      >
+                                        📧 Send Enquiry
+                                      </Button>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                      {pkg.benefits &&
+                                        pkg.benefits.map((benefit, index) => (
+                                          <div
+                                            key={index}
+                                            className="flex items-center text-sm text-gray-600"
+                                          >
+                                            <span className="text-green-500 mr-2">
+                                              ✓
+                                            </span>
+                                            {benefit}
+                                          </div>
+                                        ))}
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* ROI Summary Card */}
-          {activeSponsorship.length > 0 && (
+          {/* ROI Summary - only show when on current sponsorships tab */}
+          {activeTab === "current" && activeSponsorship.length > 0 && (
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -277,24 +641,101 @@ const SponsorshipsDashboardPage: React.FC = () => {
               </CardContent>
             </Card>
           )}
-
-          {/* Empty state */}
-          {sponsorships.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">💳</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No sponsorships yet
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Start sponsoring events to grow your brand and reach new
-                audiences
-              </p>
-              <Link href="/dashboard/browse-events">
-                <Button>Browse Available Events</Button>
-              </Link>
-            </div>
-          )}
         </div>
+
+        {/* Enquiry Modal */}
+        {showEnquiryModal && selectedEvent && selectedPackage && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Send Sponsorship Enquiry
+                    </h2>
+                    <p className="text-gray-600 mt-1">
+                      {selectedEvent.title} - {selectedPackage.name}
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowEnquiryModal(false)}
+                  >
+                    ✕
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Package Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      Package Details:
+                    </h3>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <div>Package: {selectedPackage.name}</div>
+                      <div>
+                        Price: ${selectedPackage.price.toLocaleString()}
+                      </div>
+                      <div>Event: {selectedEvent.title}</div>
+                      <div>
+                        Date:{" "}
+                        {selectedEvent.startDate.toDate().toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Company Information */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Company Information *
+                    </label>
+                    <textarea
+                      value={companyInfo}
+                      onChange={(e) => setCompanyInfo(e.target.value)}
+                      rows={3}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Tell us about your company, industry, and why you're interested in sponsoring this event..."
+                      required
+                    />
+                  </div>
+
+                  {/* Custom Message */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Additional Message
+                    </label>
+                    <textarea
+                      value={enquiryMessage}
+                      onChange={(e) => setEnquiryMessage(e.target.value)}
+                      rows={4}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Any specific requirements, questions, or additional information you'd like to share..."
+                    />
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-4 pt-4">
+                    <Button
+                      onClick={handleEnquirySubmit}
+                      disabled={submittingEnquiry || !companyInfo.trim()}
+                      className="flex-1"
+                    >
+                      {submittingEnquiry ? "Sending..." : "📧 Send Enquiry"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowEnquiryModal(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </DashboardLayout>
     </ProtectedRoute>
   );

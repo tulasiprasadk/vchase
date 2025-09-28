@@ -1,6 +1,7 @@
 // Fixed version of sponsorships page without optional chaining
 import React from "react";
 import Head from "next/head";
+import Link from "next/link";
 
 const SponsorshipsDashboard: React.FC = () => {
   // Mock data for demonstration
@@ -69,13 +70,13 @@ const SponsorshipsDashboard: React.FC = () => {
               <p className="text-gray-600">
                 Track your sponsorships and measure their impact
               </p>
+              <Link
+                href="/browse-events-basic"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                🔍 Browse Events
+              </Link>
             </div>
-            <a
-              href="/browse-events-basic"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              🔍 Browse Events
-            </a>
           </div>
 
           {/* Stats Cards */}

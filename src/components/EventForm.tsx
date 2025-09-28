@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { Event } from "@/types";
+import { Event, SponsorshipPackage } from "@/types";
 import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
 import Button from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Label } from "@/components/ui/Label";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { SearchableMultiSelect } from "@/components/ui/SearchableMultiSelect";
+import { SponsorshipPackageManager } from "@/components/SponsorshipPackageManager";
 import {
   Calendar,
   MapPin,
@@ -98,6 +99,7 @@ export const EventForm: React.FC<EventFormProps> = ({
     category: event?.category || "",
     tags: event?.tags || [],
     imageUrl: event?.imageUrl || "",
+    sponsorshipPackages: event?.sponsorshipPackages || [],
   });
 
   const handleInputChange = (
@@ -191,6 +193,17 @@ export const EventForm: React.FC<EventFormProps> = ({
         category: formData.category.trim(),
         tags: formData.tags,
         status: "draft" as const,
+        sponsorshipPackages: formData.sponsorshipPackages,
+        requirements: {
+          minBudget:
+            formData.sponsorshipPackages.length > 0
+              ? Math.min(
+                  ...formData.sponsorshipPackages.map((pkg) => pkg.price)
+                )
+              : undefined,
+          industries: [],
+          sponsorshipTypes: formData.sponsorshipPackages.map((pkg) => pkg.name),
+        },
       };
 
       // Only add imageUrl if it exists
@@ -360,6 +373,17 @@ export const EventForm: React.FC<EventFormProps> = ({
               maxSelections={10}
             />
           </div>
+
+          {/* Sponsorship Packages */}
+          <SponsorshipPackageManager
+            packages={formData.sponsorshipPackages}
+            onChange={(packages) =>
+              setFormData((prev) => ({
+                ...prev,
+                sponsorshipPackages: packages,
+              }))
+            }
+          />
 
           {/* Image Upload */}
           <div className="space-y-2">

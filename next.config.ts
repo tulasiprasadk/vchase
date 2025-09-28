@@ -6,13 +6,8 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["res.cloudinary.com"],
   },
-  swcMinify: false,
-  experimental: {
-    esmExternals: false,
-  },
-  compiler: {
-    // Remove optional chaining during compilation for older Node.js
-  },
+  transpilePackages: [],
+  outputFileTracingRoot: __dirname,
 };
 
 export default nextConfig;

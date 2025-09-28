@@ -17,6 +17,8 @@ import {
   MapPin,
   Grid3X3,
   CalendarDays,
+  Send,
+  Archive,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Timestamp } from "firebase/firestore";
@@ -57,6 +59,50 @@ const EventsDashboardPage: React.FC = () => {
         toast.success("Event deleted successfully!");
       } catch (error) {
         console.error("Error deleting event:", error);
+      }
+    }
+  };
+
+  const handlePublishEvent = async (eventId: string, currentStatus: string) => {
+    const newStatus = currentStatus === "published" ? "draft" : "published";
+    const actionText = newStatus === "published" ? "publish" : "unpublish";
+
+    // Find the event to validate before publishing
+    const event = events.find((e) => e.id === eventId);
+
+    if (newStatus === "published" && event) {
+      // Validate event has required information for publishing
+      const errors = [];
+
+      if (!event.title?.trim()) errors.push("Title is required");
+      if (!event.description?.trim()) errors.push("Description is required");
+      if (!event.startDate) errors.push("Start date is required");
+      if (!event.location) errors.push("Location is required");
+      if (!event.category?.trim()) errors.push("Category is required");
+      if (
+        !event.sponsorshipPackages ||
+        event.sponsorshipPackages.length === 0
+      ) {
+        errors.push("At least one sponsorship package is required");
+      }
+
+      if (errors.length > 0) {
+        toast.error(`Cannot publish event. Missing: ${errors.join(", ")}`);
+        return;
+      }
+    }
+
+    if (window.confirm(`Are you sure you want to ${actionText} this event?`)) {
+      try {
+        await updateEvent({ id: eventId, status: newStatus });
+        toast.success(`Event ${actionText}ed successfully!`);
+
+        if (newStatus === "published") {
+          toast.success("🎉 Your event is now live and visible to sponsors!");
+        }
+      } catch (error) {
+        console.error(`Error ${actionText}ing event:`, error);
+        toast.error(`Failed to ${actionText} event`);
       }
     }
   };
@@ -505,6 +551,30 @@ const EventsDashboardPage: React.FC = () => {
                           >
                             <Edit className="w-4 h-4 mr-1" />
                             Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className={
+                              event.status === "published"
+                                ? "text-orange-600 hover:bg-orange-50"
+                                : "text-green-600 hover:bg-green-50"
+                            }
+                            onClick={() =>
+                              handlePublishEvent(event.id!, event.status)
+                            }
+                          >
+                            {event.status === "published" ? (
+                              <>
+                                <Archive className="w-4 h-4 mr-1" />
+                                Unpublish
+                              </>
+                            ) : (
+                              <>
+                                <Send className="w-4 h-4 mr-1" />
+                                Publish
+                              </>
+                            )}
                           </Button>
                           <Button
                             variant="outline"

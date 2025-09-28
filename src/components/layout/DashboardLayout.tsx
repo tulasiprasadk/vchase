@@ -41,6 +41,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const organizerNavItems = [
     { href: "/dashboard", label: "Overview", icon: Home },
     { href: "/dashboard/events", label: "My Events", icon: Calendar },
+    {
+      href: "/dashboard/enquiries",
+      label: "Sponsorship Enquiries",
+      icon: CreditCard,
+    },
     { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];

@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "next/head";
+import Link from "next/link";
 
 const BrowseEventsBasic: React.FC = () => {
   return (
@@ -165,12 +166,12 @@ const BrowseEventsBasic: React.FC = () => {
             <p className="text-gray-600 mb-4">
               ✅ This page demonstrates the browse events functionality working
             </p>
-            <a
+            <Link
               href="/dashboard/sponsorships"
               className="inline-block px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
             >
               ← Back to My Sponsorships
-            </a>
+            </Link>
           </div>
         </div>
       </div>

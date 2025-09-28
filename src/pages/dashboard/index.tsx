@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useAuth } from "@/context/AuthContext";
 import { useLayout } from "@/context/LayoutContext";
 import { DashboardCard } from "@/components/ui/DashboardCard";
 import { LayoutCustomizer } from "@/components/layout/LayoutCustomizer";
+import { useOrganizerEnquiries } from "@/hooks/useOrganizerEnquiries";
+import { useEvents } from "@/hooks/useEvents";
 import {
   Calendar,
   DollarSign,
@@ -17,14 +20,19 @@ import {
   TrendingUp,
   UserCheck,
   Settings,
+  ArrowRight,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 const DashboardPage: React.FC = () => {
-  const { userProfile } = useAuth();
+  const { userProfile, user } = useAuth();
   const { settings } = useLayout();
   const router = useRouter();
   const [showLayoutCustomizer, setShowLayoutCustomizer] = useState(false);
+
+  // Hooks for organizer data - always called regardless of user type
+  const { enquiries } = useOrganizerEnquiries();
+  const { events } = useEvents();
 
   // Redirect sponsors to their main sponsorships page
   useEffect(() => {
@@ -47,6 +55,14 @@ const DashboardPage: React.FC = () => {
   };
 
   const renderOrganizerDashboard = () => {
+    // Filter organizer's events and enquiries
+    const organizerEvents = events.filter(
+      (event) => event.organizerId === user?.uid
+    );
+    const organizerEnquiries = enquiries.filter((enquiry) =>
+      organizerEvents.some((event) => event.id === enquiry.eventId)
+    );
+
     const cards = [
       {
         title: "Active Events",
@@ -122,34 +138,66 @@ const DashboardPage: React.FC = () => {
           </div>
 
           <div className="bg-white p-4 lg:p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Sponsorship Applications
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">
+                Recent Sponsorship Enquiries
+              </h3>
+              <Link
+                href="/dashboard/enquiries"
+                className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              >
+                View All
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  TechCorp - Premium Package
-                </span>
-                <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded whitespace-nowrap">
-                  Pending
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  StartupXYZ - Gold Package
-                </span>
-                <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded whitespace-nowrap">
-                  Approved
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  InnovateCo - Silver Package
-                </span>
-                <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded whitespace-nowrap">
-                  Pending
-                </span>
-              </div>
+              {organizerEnquiries.length === 0 ? (
+                <div className="text-center py-8">
+                  <CreditCard className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">
+                    No sponsorship enquiries yet
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Enquiries will appear here when sponsors apply to your
+                    events
+                  </p>
+                </div>
+              ) : (
+                organizerEnquiries.slice(0, 3).map((enquiry) => (
+                  <div
+                    key={enquiry.id}
+                    className="flex items-center justify-between border-b pb-2"
+                  >
+                    <span className="text-sm text-gray-600 truncate pr-2">
+                      {enquiry.companyName} - {enquiry.packageName}
+                    </span>
+                    <span
+                      className={`px-2 py-1 text-xs rounded whitespace-nowrap ${
+                        enquiry.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : enquiry.status === "accepted"
+                          ? "bg-green-100 text-green-800"
+                          : enquiry.status === "rejected"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {enquiry.status.charAt(0).toUpperCase() +
+                        enquiry.status.slice(1).replace("_", " ")}
+                    </span>
+                  </div>
+                ))
+              )}
+              {organizerEnquiries.length > 3 && (
+                <div className="text-center pt-2">
+                  <Link
+                    href="/dashboard/enquiries"
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    +{organizerEnquiries.length - 3} more enquiries
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
