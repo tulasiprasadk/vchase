@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   collection,
   query,
@@ -24,6 +24,9 @@ export const useSponsorEvents = (filters?: EventFilters) => {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
+
+  // Create a stable string representation of filters for dependencies
+  const filtersString = useMemo(() => JSON.stringify(filters || {}), [filters]);
 
   // Fetch unique categories and locations for filters
   useEffect(() => {
@@ -187,7 +190,8 @@ export const useSponsorEvents = (filters?: EventFilters) => {
     );
 
     return () => unsubscribe();
-  }, [filters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtersString]);
 
   return {
     events,

@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  MessageCircle,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -46,6 +47,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       label: "Sponsorship Enquiries",
       icon: CreditCard,
     },
+    { href: "/dashboard/messages", label: "Messages", icon: MessageCircle },
     { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
@@ -56,6 +58,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       label: "Sponsorships",
       icon: CreditCard,
     },
+    { href: "/dashboard/messages", label: "Messages", icon: MessageCircle },
     { href: "/dashboard/profile", label: "Company Profile", icon: Building },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];

@@ -12,10 +12,13 @@ import { Event, SponsorshipPackage } from "@/types";
 import toast from "react-hot-toast";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
+// Create a stable empty filters object to prevent re-renders
+const EMPTY_FILTERS = {};
+
 const SponsorshipsDashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { sponsorships, loading: sponsorshipsLoading } = useSponsorships();
-  const { events, loading: eventsLoading } = useSponsorEvents({});
+  const { events, loading: eventsLoading } = useSponsorEvents(EMPTY_FILTERS);
   const { submitEnquiry } = useSponsorshipEnquiries();
 
   const [activeTab, setActiveTab] = useState<"current" | "discover">("current");

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Button from "@/components/ui/Button";
@@ -8,16 +8,23 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { useSponsorships } from "@/hooks/useSponsorships";
 import { useSponsorEvents } from "@/hooks/useSponsorEvents";
 import { useSponsorshipEnquiries } from "@/hooks/useSponsorshipEnquiries";
+
 import { useAuth } from "@/context/AuthContext";
 import { Event, SponsorshipPackage } from "@/types";
 import toast from "react-hot-toast";
+import { useMessaging } from "@/hooks/useMessaging";
+
+// Create a stable empty filters object to prevent re-renders
+const EMPTY_FILTERS = {};
 
 const SponsorshipsDashboardPage: React.FC = () => {
+  const router = useRouter();
   const { user } = useAuth();
   const { sponsorships, loading: sponsorshipsLoading } = useSponsorships();
-  const { events, loading: eventsLoading } = useSponsorEvents({});
+  const { events, loading: eventsLoading } = useSponsorEvents(EMPTY_FILTERS);
   const { enquiries, submitEnquiry, fetchEnquiries } =
     useSponsorshipEnquiries();
+  const { findOrCreateChatForEnquiry, sendMessage } = useMessaging();
 
   const [activeTab, setActiveTab] = useState<
     "current" | "submitted" | "discover"
@@ -29,6 +36,13 @@ const SponsorshipsDashboardPage: React.FC = () => {
   const [enquiryMessage, setEnquiryMessage] = useState("");
   const [companyInfo, setCompanyInfo] = useState("");
   const [submittingEnquiry, setSubmittingEnquiry] = useState(false);
+
+  // Add states for direct messaging
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [messageText, setMessageText] = useState("");
+  const [selectedEventForMessage, setSelectedEventForMessage] =
+    useState<Event | null>(null);
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -93,6 +107,132 @@ const SponsorshipsDashboardPage: React.FC = () => {
       toast.error("Failed to submit enquiry");
     } finally {
       setSubmittingEnquiry(false);
+    }
+  };
+
+  const handleMessageOrganizerByEvent = async (
+    eventId: string,
+    eventTitle: string,
+    enquiryId?: string
+  ) => {
+    if (!user) {
+      toast.error("Please log in to send messages");
+      return;
+    }
+
+    try {
+      // Find the event to get organizer information
+      const event = events.find((e) => e.id === eventId);
+      if (!event) {
+        toast.error("Event information not found");
+        console.error("Event not found with ID:", eventId);
+        console.log(
+          "Available events:",
+          events.map((e) => ({ id: e.id, title: e.title }))
+        );
+        return;
+      }
+
+      if (!event.organizerId) {
+        toast.error("Event organizer information not available");
+        console.error("Event missing organizerId:", event);
+        return;
+      }
+
+      console.log("Creating chat with organizer:", {
+        eventId,
+        organizerId: event.organizerId,
+        sponsorId: user.uid,
+        eventTitle,
+      });
+
+      // Show loading toast while creating chat
+      const loadingToast = toast.loading("Creating conversation...");
+
+      const chatId = await findOrCreateChatForEnquiry(
+        event.organizerId,
+        user.uid,
+        "Event Organizer", // Default name - will be fetched by the messaging system
+        user.displayName || "Sponsor",
+        "", // Organizer email - will be fetched by the messaging system
+        user.email || "",
+        enquiryId || "",
+        eventTitle,
+        eventId // Pass the eventId as well
+      );
+
+      toast.dismiss(loadingToast);
+      console.log("Chat created successfully:", chatId);
+      toast.success("Conversation started successfully!");
+
+      // Navigate to messages page with the chat opened
+      router.push(`/dashboard/messages?chat=${chatId}`);
+    } catch (error) {
+      console.error("Error creating chat:", error);
+
+      // Provide more specific error messages
+      if (error instanceof Error) {
+        if (error.message.includes("User not authenticated")) {
+          toast.error("Please log in to send messages");
+        } else if (error.message.includes("Could not fetch user information")) {
+          toast.error(
+            "Could not find organizer information. Please try again later."
+          );
+        } else {
+          toast.error(`Failed to start conversation: ${error.message}`);
+        }
+      } else {
+        toast.error("Failed to start conversation. Please try again.");
+      }
+    }
+  };
+
+  // Direct message sending function for organizers
+  const handleDirectMessageOrganizer = async (event: Event) => {
+    if (!user) {
+      toast.error("Please log in to send messages");
+      return;
+    }
+
+    setSelectedEventForMessage(event);
+    setShowMessageModal(true);
+  };
+
+  const sendDirectMessage = async () => {
+    if (!selectedEventForMessage || !messageText.trim() || !user) return;
+
+    setSendingMessage(true);
+    try {
+      // Create or find chat first
+      const chatId = await findOrCreateChatForEnquiry(
+        selectedEventForMessage.organizerId,
+        user.uid,
+        "Event Organizer",
+        user.displayName || "Sponsor",
+        "",
+        user.email || "",
+        "",
+        selectedEventForMessage.title,
+        selectedEventForMessage.id
+      );
+
+      // Send the actual message
+      await sendMessage(chatId, messageText.trim());
+
+      toast.success("Message sent successfully!");
+
+      // Reset form and close modal
+      setMessageText("");
+      setShowMessageModal(false);
+      setSelectedEventForMessage(null);
+
+      // Navigate to messages page
+      router.push(`/dashboard/messages?chat=${chatId}`);
+    } catch (error) {
+      console.error("Error sending direct message:", error);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setSendingMessage(false);
     }
   };
 
@@ -332,6 +472,20 @@ const SponsorshipsDashboardPage: React.FC = () => {
                               <Button variant="outline" size="sm">
                                 👁️ View
                               </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  handleMessageOrganizerByEvent(
+                                    sponsorship.eventId,
+                                    sponsorship.eventTitle,
+                                    sponsorship.id
+                                  )
+                                }
+                                className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                              >
+                                💬 Message Organizer
+                              </Button>
                             </div>
                           </div>
                         </CardContent>
@@ -464,6 +618,20 @@ const SponsorshipsDashboardPage: React.FC = () => {
                                 <Button
                                   variant="outline"
                                   size="sm"
+                                  onClick={() =>
+                                    handleMessageOrganizerByEvent(
+                                      enquiry.eventId,
+                                      enquiry.eventTitle,
+                                      enquiry.id
+                                    )
+                                  }
+                                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                >
+                                  💬 Message Organizer
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
                                   onClick={() => {
                                     // Could add a view details modal here
                                     console.log(
@@ -566,14 +734,26 @@ const SponsorshipsDashboardPage: React.FC = () => {
                                           ${pkg.price.toLocaleString()}
                                         </p>
                                       </div>
-                                      <Button
-                                        size="sm"
-                                        onClick={() =>
-                                          handleSendEnquiry(event, pkg)
-                                        }
-                                      >
-                                        📧 Send Enquiry
-                                      </Button>
+                                      <div className="flex space-x-2">
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={() =>
+                                            handleDirectMessageOrganizer(event)
+                                          }
+                                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                        >
+                                          💬 Message
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          onClick={() =>
+                                            handleSendEnquiry(event, pkg)
+                                          }
+                                        >
+                                          📧 Send Enquiry
+                                        </Button>
+                                      </div>
                                     </div>
 
                                     <div className="space-y-1">
@@ -726,6 +906,93 @@ const SponsorshipsDashboardPage: React.FC = () => {
                     <Button
                       variant="outline"
                       onClick={() => setShowEnquiryModal(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Direct Message Modal */}
+        {showMessageModal && selectedEventForMessage && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Send Message to Organizer
+                    </h2>
+                    <p className="text-gray-600 mt-1">
+                      {selectedEventForMessage.title}
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setShowMessageModal(false);
+                      setMessageText("");
+                      setSelectedEventForMessage(null);
+                    }}
+                  >
+                    ✕
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Event Summary */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      Event Details:
+                    </h3>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <div>Event: {selectedEventForMessage.title}</div>
+                      <div>
+                        Date:{" "}
+                        {selectedEventForMessage.startDate
+                          .toDate()
+                          .toLocaleDateString()}
+                      </div>
+                      <div>Category: {selectedEventForMessage.category}</div>
+                    </div>
+                  </div>
+
+                  {/* Message Input */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Your Message *
+                    </label>
+                    <textarea
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      rows={6}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Type your message to the event organizer here..."
+                      required
+                    />
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-4 pt-4">
+                    <Button
+                      onClick={sendDirectMessage}
+                      disabled={sendingMessage || !messageText.trim()}
+                      className="flex-1"
+                    >
+                      {sendingMessage ? "Sending..." : "💬 Send Message"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowMessageModal(false);
+                        setMessageText("");
+                        setSelectedEventForMessage(null);
+                      }}
                       className="flex-1"
                     >
                       Cancel
