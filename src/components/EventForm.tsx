@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { Event, SponsorshipPackage } from "@/types";
+import { Event } from "@/types";
 import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
 import Button from "@/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -194,6 +194,7 @@ export const EventForm: React.FC<EventFormProps> = ({
         tags: formData.tags,
         status: "draft" as const,
         sponsorshipPackages: formData.sponsorshipPackages,
+        // Auto-calculated requirements based on sponsorship packages
         requirements: {
           minBudget:
             formData.sponsorshipPackages.length > 0
@@ -201,7 +202,6 @@ export const EventForm: React.FC<EventFormProps> = ({
                   ...formData.sponsorshipPackages.map((pkg) => pkg.price)
                 )
               : undefined,
-          industries: [],
           sponsorshipTypes: formData.sponsorshipPackages.map((pkg) => pkg.name),
         },
       };
@@ -220,6 +220,13 @@ export const EventForm: React.FC<EventFormProps> = ({
       // if (website && website.trim()) {
       //   eventData.website = website;
       // }
+
+      console.log("🔍 EventForm: Submitting event data:", {
+        title: eventData.title,
+        sponsorshipPackagesCount: eventData.sponsorshipPackages?.length || 0,
+        sponsorshipPackages: eventData.sponsorshipPackages,
+        requirements: eventData.requirements,
+      });
 
       await onSubmit(eventData);
     } catch (error) {

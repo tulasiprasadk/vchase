@@ -52,11 +52,25 @@ export interface Event extends BaseDocument {
   attendeeCount?: number;
   maxAttendees?: number;
   sponsorshipPackages: SponsorshipPackage[];
+  // Auto-calculated requirements based on sponsorship packages
   requirements: {
-    minBudget?: number;
-    industries?: string[];
-    sponsorshipTypes?: string[];
+    minBudget?: number; // Minimum price from sponsorship packages
+    sponsorshipTypes?: string[]; // Names of all sponsorship packages
   };
+  sponsors?: EventSponsor[];
+}
+
+// Event sponsor interface
+export interface EventSponsor {
+  sponsorId: string;
+  enquiryId: string;
+  packageId: string;
+  packageName: string;
+  companyName: string;
+  contactEmail: string;
+  amount: number;
+  addedAt: Timestamp;
+  status: "active" | "completed" | "cancelled";
 }
 
 // Sponsorship interfaces

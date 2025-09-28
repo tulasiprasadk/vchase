@@ -104,7 +104,6 @@ const sampleEvents = [
     ],
     requirements: {
       minBudget: 5000,
-      industries: ["Technology", "Data Science", "AI"],
       sponsorshipTypes: ["Bronze", "Silver", "Gold", "Platinum"],
     },
     createdAt: Timestamp.now(),
@@ -160,7 +159,6 @@ const sampleEvents = [
     ],
     requirements: {
       minBudget: 3000,
-      industries: ["Technology", "Finance", "Business"],
       sponsorshipTypes: ["Partner", "Investor"],
     },
     createdAt: Timestamp.now(),

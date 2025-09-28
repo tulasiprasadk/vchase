@@ -12,7 +12,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { Event } from "@/types";
+import { Event, SponsorshipPackage } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 
@@ -33,6 +33,11 @@ export interface CreateEventData {
   website?: string;
   maxAttendees?: number;
   status: "draft" | "published";
+  sponsorshipPackages?: SponsorshipPackage[];
+  requirements?: {
+    minBudget?: number;
+    sponsorshipTypes?: string[];
+  };
 }
 
 export interface UpdateEventData extends Partial<CreateEventData> {
@@ -105,6 +110,13 @@ export const useEvents = (): UseEventsReturn => {
     }
 
     try {
+      console.log("🔍 useEvents: Creating event with data:", {
+        title: eventData.title,
+        sponsorshipPackagesCount: eventData.sponsorshipPackages?.length || 0,
+        sponsorshipPackages: eventData.sponsorshipPackages,
+        requirements: eventData.requirements,
+      });
+
       const eventId = `event_${Date.now()}_${Math.random()
         .toString(36)
         .substr(2, 9)}`;
@@ -125,8 +137,8 @@ export const useEvents = (): UseEventsReturn => {
         createdAt: now,
         updatedAt: now,
         attendeeCount: 0,
-        sponsorshipPackages: [],
-        requirements: {},
+        sponsorshipPackages: eventData.sponsorshipPackages || [],
+        requirements: eventData.requirements || {},
       };
 
       // Only add optional fields if they exist
@@ -142,6 +154,12 @@ export const useEvents = (): UseEventsReturn => {
 
       const eventDoc = doc(db, "events", eventId);
       await setDoc(eventDoc, newEventData);
+
+      console.log("✅ useEvents: Event created successfully:", {
+        eventId,
+        sponsorshipPackagesCount: newEventData.sponsorshipPackages?.length || 0,
+        sponsorshipPackages: newEventData.sponsorshipPackages,
+      });
 
       const newEvent = newEventData as Event;
 

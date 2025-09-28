@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Button from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 import { useSponsorships } from "@/hooks/useSponsorships";
 import { useSponsorEvents } from "@/hooks/useSponsorEvents";
 import { useSponsorshipEnquiries } from "@/hooks/useSponsorshipEnquiries";
 
 import { useAuth } from "@/context/AuthContext";
 import { Event, SponsorshipPackage } from "@/types";
+import { SponsorshipEnquiry } from "@/hooks/useSponsorshipEnquiries";
 import toast from "react-hot-toast";
 import { useMessaging } from "@/hooks/useMessaging";
 
@@ -22,8 +25,13 @@ const SponsorshipsDashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { sponsorships, loading: sponsorshipsLoading } = useSponsorships();
   const { events, loading: eventsLoading } = useSponsorEvents(EMPTY_FILTERS);
-  const { enquiries, submitEnquiry, fetchEnquiries } =
-    useSponsorshipEnquiries();
+  const {
+    enquiries,
+    submitEnquiry,
+    fetchEnquiries,
+    uploadPaymentProof,
+    updateEnquiryStatus,
+  } = useSponsorshipEnquiries();
   const { findOrCreateChatForEnquiry, sendMessage } = useMessaging();
 
   const [activeTab, setActiveTab] = useState<
@@ -44,6 +52,13 @@ const SponsorshipsDashboardPage: React.FC = () => {
     useState<Event | null>(null);
   const [sendingMessage, setSendingMessage] = useState(false);
 
+  // Add states for payment flow
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedEnquiryForPayment, setSelectedEnquiryForPayment] =
+    useState<SponsorshipEnquiry | null>(null);
+  const [uploadingPayment, setUploadingPayment] = useState(false);
+  const [paymentProofUrl, setPaymentProofUrl] = useState("");
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "approved":
@@ -52,12 +67,56 @@ const SponsorshipsDashboardPage: React.FC = () => {
         return "bg-blue-100 text-blue-800";
       case "pending":
         return "bg-yellow-100 text-yellow-800";
-      case "completed":
-        return "bg-purple-100 text-purple-800";
+      case "accepted":
+        return "bg-green-100 text-green-800";
       case "rejected":
         return "bg-red-100 text-red-800";
+      case "payment_pending":
+        return "bg-orange-100 text-orange-800";
+      case "payment_uploaded":
+        return "bg-blue-100 text-blue-800";
+      case "payment_verified":
+        return "bg-green-100 text-green-800";
+      case "completed":
+        return "bg-purple-100 text-purple-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  // Handle opening payment upload modal
+  const handleUploadPaymentProof = (enquiry: SponsorshipEnquiry) => {
+    setSelectedEnquiryForPayment(enquiry);
+    setShowPaymentModal(true);
+  };
+
+  // Handle payment proof upload
+  const handlePaymentProofUpload = async (uploadResult: {
+    url: string;
+    original_filename?: string;
+  }) => {
+    if (!selectedEnquiryForPayment || !uploadResult.url) return;
+
+    setUploadingPayment(true);
+    try {
+      await uploadPaymentProof(
+        selectedEnquiryForPayment.id!,
+        uploadResult.url,
+        uploadResult.original_filename || "payment_proof"
+      );
+
+      setPaymentProofUrl(uploadResult.url);
+      toast.success("Payment proof uploaded successfully!");
+
+      // Close modal
+      setShowPaymentModal(false);
+      setSelectedEnquiryForPayment(null);
+      setPaymentProofUrl("");
+    } catch (error) {
+      console.error("Error uploading payment proof:", error);
+      toast.error("Failed to upload payment proof");
+    } finally {
+      setUploadingPayment(false);
     }
   };
 
@@ -546,15 +605,9 @@ const SponsorshipsDashboardPage: React.FC = () => {
                               </div>
                               <div className="flex items-center gap-2">
                                 <span
-                                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                    enquiry.status === "pending"
-                                      ? "bg-yellow-100 text-yellow-800"
-                                      : enquiry.status === "accepted"
-                                      ? "bg-green-100 text-green-800"
-                                      : enquiry.status === "rejected"
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
+                                  className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                                    enquiry.status
+                                  )}`}
                                 >
                                   {enquiry.status === "pending" && "⏳ Pending"}
                                   {enquiry.status === "accepted" &&
@@ -563,6 +616,14 @@ const SponsorshipsDashboardPage: React.FC = () => {
                                     "❌ Rejected"}
                                   {enquiry.status === "under_review" &&
                                     "🔍 Under Review"}
+                                  {enquiry.status === "payment_pending" &&
+                                    "💰 Payment Required"}
+                                  {enquiry.status === "payment_uploaded" &&
+                                    "📤 Payment Uploaded"}
+                                  {enquiry.status === "payment_verified" &&
+                                    "✅ Payment Verified"}
+                                  {enquiry.status === "completed" &&
+                                    "🎉 Completed"}
                                 </span>
                               </div>
                             </div>
@@ -606,15 +667,35 @@ const SponsorshipsDashboardPage: React.FC = () => {
                                 <span>Company: {enquiry.companyName}</span>
                               </div>
                               <div className="flex items-center gap-2">
+                                {/* Payment Flow Actions */}
                                 {enquiry.status === "accepted" && (
                                   <Button
                                     variant="outline"
                                     size="sm"
+                                    onClick={() =>
+                                      handleUploadPaymentProof(enquiry)
+                                    }
                                     className="text-green-600 border-green-200 hover:bg-green-50"
                                   >
-                                    💰 Proceed to Payment
+                                    💰 Upload Payment Proof
                                   </Button>
                                 )}
+
+                                {enquiry.status === "payment_uploaded" && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-blue-600">
+                                      ✅ Payment proof uploaded - Awaiting
+                                      verification
+                                    </span>
+                                  </div>
+                                )}
+
+                                {enquiry.status === "payment_verified" && (
+                                  <span className="text-sm text-green-600 font-medium">
+                                    🎉 Payment verified! You are now a sponsor.
+                                  </span>
+                                )}
+
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -992,6 +1073,147 @@ const SponsorshipsDashboardPage: React.FC = () => {
                         setShowMessageModal(false);
                         setMessageText("");
                         setSelectedEventForMessage(null);
+                      }}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Upload Modal */}
+        {showPaymentModal && selectedEnquiryForPayment && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      Upload Payment Proof
+                    </h2>
+                    <p className="text-gray-600 mt-1">
+                      {selectedEnquiryForPayment.eventTitle} -{" "}
+                      {selectedEnquiryForPayment.packageName}
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setShowPaymentModal(false);
+                      setSelectedEnquiryForPayment(null);
+                      setPaymentProofUrl("");
+                    }}
+                  >
+                    ✕
+                  </Button>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Payment Details */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      Payment Details:
+                    </h3>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <div>Event: {selectedEnquiryForPayment.eventTitle}</div>
+                      <div>
+                        Package: {selectedEnquiryForPayment.packageName}
+                      </div>
+                      <div>
+                        Amount: $
+                        {(
+                          selectedEnquiryForPayment.finalAmount ||
+                          selectedEnquiryForPayment.proposedAmount ||
+                          0
+                        ).toLocaleString()}
+                      </div>
+                      <div>Status: Payment Required</div>
+                    </div>
+                  </div>
+
+                  {/* Instructions */}
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h3 className="font-medium text-blue-900 mb-2">
+                      📋 Instructions:
+                    </h3>
+                    <div className="text-sm text-blue-800 space-y-1">
+                      <div>
+                        1. Make payment using the details provided by the
+                        organizer
+                      </div>
+                      <div>
+                        2. Upload a screenshot or photo of your payment receipt
+                      </div>
+                      <div>
+                        3. The organizer will verify your payment and confirm
+                        your sponsorship
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* File Upload */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Payment Proof *
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                      <ImageUpload
+                        onUpload={handlePaymentProofUpload}
+                        placeholder="Click to upload payment proof (receipt, screenshot, etc.)"
+                        className="w-full"
+                        uploadPreset="payment_proofs"
+                      />
+
+                      {paymentProofUrl && (
+                        <div className="mt-4">
+                          <div className="text-sm text-green-600">
+                            ✅ Payment proof uploaded successfully!
+                          </div>
+                          <Image
+                            src={paymentProofUrl}
+                            alt="Payment proof"
+                            width={300}
+                            height={200}
+                            className="mt-2 max-w-xs rounded-lg"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Accepted formats: JPG, PNG, PDF. Max size: 10MB
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex space-x-4 pt-4">
+                    <Button
+                      onClick={() => {
+                        if (paymentProofUrl) {
+                          setShowPaymentModal(false);
+                          setSelectedEnquiryForPayment(null);
+                          setPaymentProofUrl("");
+                        }
+                      }}
+                      disabled={uploadingPayment || !paymentProofUrl}
+                      className="flex-1"
+                    >
+                      {uploadingPayment
+                        ? "Uploading..."
+                        : paymentProofUrl
+                        ? "✅ Complete Upload"
+                        : "📤 Upload Payment Proof"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowPaymentModal(false);
+                        setSelectedEnquiryForPayment(null);
+                        setPaymentProofUrl("");
                       }}
                       className="flex-1"
                     >

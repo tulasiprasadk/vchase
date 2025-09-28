@@ -2,10 +2,14 @@ import { useState } from "react";
 import {
   collection,
   addDoc,
+  doc,
+  updateDoc,
   query,
   where,
   onSnapshot,
   Timestamp,
+  arrayUnion,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { useAuth } from "@/context/AuthContext";
@@ -23,11 +27,26 @@ export interface SponsorshipEnquiry {
   contactPhone?: string;
   message?: string;
   proposedAmount?: number;
-  status: "pending" | "accepted" | "rejected" | "under_review";
+  status:
+    | "pending"
+    | "accepted"
+    | "rejected"
+    | "under_review"
+    | "payment_pending"
+    | "payment_uploaded"
+    | "payment_verified"
+    | "completed";
   submittedAt: Timestamp;
   updatedAt: Timestamp;
   organizerResponse?: string;
   responseDate?: Timestamp;
+  // Payment flow fields
+  paymentProofUrl?: string;
+  paymentProofFileName?: string;
+  paymentUploadedAt?: Timestamp;
+  paymentVerifiedAt?: Timestamp;
+  paymentVerificationNotes?: string;
+  finalAmount?: number; // Actual amount agreed upon
 }
 
 export const useSponsorshipEnquiries = () => {
@@ -100,10 +119,128 @@ export const useSponsorshipEnquiries = () => {
     );
   };
 
+  // Upload payment proof
+  const uploadPaymentProof = async (
+    enquiryId: string,
+    paymentProofUrl: string,
+    fileName: string
+  ) => {
+    if (!user) throw new Error("User not authenticated");
+
+    try {
+      const enquiryRef = doc(db, "enquiries", enquiryId);
+      await updateDoc(enquiryRef, {
+        paymentProofUrl,
+        paymentProofFileName: fileName,
+        paymentUploadedAt: Timestamp.now(),
+        status: "payment_uploaded",
+        updatedAt: Timestamp.now(),
+      });
+
+      toast.success("Payment proof uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading payment proof:", error);
+      toast.error("Failed to upload payment proof");
+      throw error;
+    }
+  };
+
+  // Update enquiry status (for organizers)
+  const updateEnquiryStatus = async (
+    enquiryId: string,
+    status: SponsorshipEnquiry["status"],
+    notes?: string,
+    finalAmount?: number
+  ) => {
+    if (!user) throw new Error("User not authenticated");
+
+    try {
+      const updateData: Partial<SponsorshipEnquiry> = {
+        status,
+        updatedAt: Timestamp.now(),
+        responseDate: Timestamp.now(),
+      };
+
+      if (notes) {
+        updateData.organizerResponse = notes;
+      }
+
+      if (finalAmount !== undefined) {
+        updateData.finalAmount = finalAmount;
+      }
+
+      if (status === "payment_verified") {
+        updateData.paymentVerifiedAt = Timestamp.now();
+        if (notes) {
+          updateData.paymentVerificationNotes = notes;
+        }
+      }
+
+      const enquiryRef = doc(db, "enquiries", enquiryId);
+      await updateDoc(enquiryRef, updateData);
+
+      const statusMessages: { [key: string]: string } = {
+        accepted: "Enquiry accepted successfully!",
+        rejected: "Enquiry rejected.",
+        payment_pending: "Payment request sent to sponsor.",
+        payment_verified: "Payment verified successfully!",
+        completed: "Sponsorship completed!",
+      };
+
+      toast.success(statusMessages[status] || "Enquiry status updated!");
+    } catch (error) {
+      console.error("Error updating enquiry status:", error);
+      toast.error("Failed to update enquiry status");
+      throw error;
+    }
+  };
+
+  // Add sponsor to event (called when payment is verified)
+  const addSponsorToEvent = async (enquiry: SponsorshipEnquiry) => {
+    if (!user) throw new Error("User not authenticated");
+
+    try {
+      // Create the sponsor record for the event
+      const eventSponsor = {
+        sponsorId: enquiry.sponsorId,
+        enquiryId: enquiry.id!,
+        packageId: enquiry.packageId,
+        packageName: enquiry.packageName,
+        companyName: enquiry.companyName,
+        contactEmail: enquiry.contactEmail,
+        amount: enquiry.finalAmount || enquiry.proposedAmount || 0,
+        addedAt: Timestamp.now(),
+        status: "active",
+      };
+
+      // Add sponsor to the event's sponsors array
+      const eventRef = doc(db, "events", enquiry.eventId);
+      await updateDoc(eventRef, {
+        sponsors: arrayUnion(eventSponsor),
+      });
+
+      // Update enquiry status to completed
+      const enquiryRef = doc(db, "enquiries", enquiry.id!);
+      await updateDoc(enquiryRef, {
+        status: "completed",
+        updatedAt: Timestamp.now(),
+      });
+
+      toast.success("Sponsor added to event successfully!");
+    } catch (error) {
+      console.error("Error adding sponsor to event:", error);
+      toast.error("Failed to add sponsor to event");
+      throw error;
+    }
+  };
+
   return {
     enquiries,
     loading,
     submitEnquiry,
     fetchEnquiries,
+    uploadPaymentProof,
+    updateEnquiryStatus,
+    addSponsorToEvent,
   };
 };
