@@ -59,14 +59,16 @@ const sampleSponsorships = [
 // Sample events for discovery
 const sampleEvents = [
   {
-    title: "Data Science Bootcamp",
+    title: "Data Science Conference 2025",
     description:
-      "Intensive 3-day bootcamp covering machine learning, AI, and data analysis techniques.",
+      "Join industry leaders and data science professionals for cutting-edge insights into machine learning, AI, and analytics.",
     startDate: Timestamp.fromDate(new Date("2025-06-15")),
     endDate: Timestamp.fromDate(new Date("2025-06-17")),
+    imageUrl:
+      "https://images.unsplash.com/photo-1551818255-e6e10975cd17?w=800&h=600&fit=crop&crop=center",
     location: {
       venue: "Convention Center",
-      address: "123 Convention Ave",
+      address: "123 Data Drive",
       city: "Seattle",
       country: "USA",
     },
@@ -115,6 +117,8 @@ const sampleEvents = [
       "Annual competition where emerging startups pitch to investors and industry leaders.",
     startDate: Timestamp.fromDate(new Date("2025-07-20")),
     endDate: Timestamp.fromDate(new Date("2025-07-20")),
+    imageUrl:
+      "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&h=600&fit=crop&crop=center",
     location: {
       venue: "Tech Hub",
       address: "456 Innovation St",

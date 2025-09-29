@@ -223,7 +223,9 @@ const MessagingPage: React.FC = () => {
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading messages...</p>
+              <p className="mt-4 text-gray-700 font-medium">
+                Loading messages...
+              </p>
             </div>
           </div>
         </DashboardLayout>
@@ -268,7 +270,7 @@ const MessagingPage: React.FC = () => {
                   }}
                   className="hidden md:flex"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4 text-gray-500" />
                 </Button>
               </div>
 
@@ -280,7 +282,7 @@ const MessagingPage: React.FC = () => {
                   placeholder="Search conversations..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
                 />
               </div>
 
@@ -289,7 +291,7 @@ const MessagingPage: React.FC = () => {
                 <select
                   value={filterPriority}
                   onChange={(e) => setFilterPriority(e.target.value)}
-                  className="text-xs border border-gray-300 rounded px-2 py-1 bg-white"
+                  className="text-xs border border-gray-300 rounded px-2 py-1 bg-white text-gray-500"
                 >
                   <option value="all">All Priority</option>
                   <option value="high">High</option>
@@ -299,7 +301,7 @@ const MessagingPage: React.FC = () => {
                 <select
                   value={filterTags}
                   onChange={(e) => setFilterTags(e.target.value)}
-                  className="text-xs border border-gray-300 rounded px-2 py-1 bg-white"
+                  className="text-xs border border-gray-300 rounded px-2 py-1 bg-white text-gray-500"
                 >
                   <option value="all">All Tags</option>
                   <option value="enquiry">Enquiries</option>
@@ -313,13 +315,13 @@ const MessagingPage: React.FC = () => {
             <div className="flex-1 overflow-y-auto" ref={chatListRef}>
               {filteredChats.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-64 text-center p-6">
-                  <MessageCircle className="w-12 h-12 text-gray-400 mb-4" />
+                  <MessageCircle className="w-12 h-12 text-blue-400 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">
                     {searchTerm
                       ? "No matching conversations"
                       : "No conversations yet"}
                   </h3>
-                  <p className="text-gray-600 text-sm max-w-xs">
+                  <p className="text-gray-700 text-sm max-w-xs">
                     {searchTerm
                       ? "Try adjusting your search or filters"
                       : "Start engaging with sponsors or organizers to begin messaging"}
@@ -351,9 +353,11 @@ const MessagingPage: React.FC = () => {
                           {/* Avatar */}
                           <div className="relative flex-shrink-0">
                             {otherParticipant.avatar ? (
-                              <img
+                              <Image
                                 src={otherParticipant.avatar}
                                 alt={otherParticipant.name}
+                                width={40}
+                                height={40}
                                 className="w-10 h-10 rounded-full object-cover"
                               />
                             ) : (
@@ -409,7 +413,7 @@ const MessagingPage: React.FC = () => {
                                   }
                                 `}
                                 ></div>
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-gray-600">
                                   {formatTime(
                                     chat.metadata.lastMessage.timestamp
                                   )}
@@ -434,7 +438,7 @@ const MessagingPage: React.FC = () => {
                                   : "Sponsor"}
                               </span>
                               {otherParticipant.companyName && (
-                                <span className="text-xs text-gray-500 truncate">
+                                <span className="text-xs text-gray-600 truncate">
                                   {otherParticipant.companyName}
                                 </span>
                               )}
@@ -455,7 +459,7 @@ const MessagingPage: React.FC = () => {
                                 ${
                                   unreadCount > 0
                                     ? "text-gray-900 font-medium"
-                                    : "text-gray-600"
+                                    : "text-gray-700"
                                 }
                               `}
                               >
@@ -480,13 +484,13 @@ const MessagingPage: React.FC = () => {
                             {chat.metadata.tags.slice(0, 3).map((tag) => (
                               <span
                                 key={tag}
-                                className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"
+                                className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded"
                               >
                                 {tag}
                               </span>
                             ))}
                             {chat.metadata.tags.length > 3 && (
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-gray-600 font-medium">
                                 +{chat.metadata.tags.length - 3}
                               </span>
                             )}
@@ -511,15 +515,15 @@ const MessagingPage: React.FC = () => {
               // Empty state
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center max-w-md mx-auto p-6">
-                  <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-6" />
+                  <MessageCircle className="w-16 h-16 text-blue-300 mx-auto mb-6" />
                   <h3 className="text-xl font-medium text-gray-900 mb-3">
                     Select a conversation
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-700 mb-6">
                     Choose a conversation from the sidebar to start messaging
                     with organizers and sponsors.
                   </p>
-                  <div className="space-y-3 text-sm text-gray-500">
+                  <div className="space-y-3 text-sm text-gray-600">
                     <div className="flex items-center justify-center space-x-2">
                       <CheckCheck className="w-4 h-4 text-green-500" />
                       <span>Real-time messaging</span>
@@ -557,9 +561,11 @@ const MessagingPage: React.FC = () => {
                           return (
                             <>
                               {otherParticipant.avatar ? (
-                                <img
+                                <Image
                                   src={otherParticipant.avatar}
                                   alt={otherParticipant.name}
+                                  width={40}
+                                  height={40}
                                   className="w-10 h-10 rounded-full object-cover"
                                 />
                               ) : (
@@ -631,18 +637,22 @@ const MessagingPage: React.FC = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="hidden sm:flex"
+                          className="hidden sm:flex text-gray-500"
                         >
                           <Phone className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="hidden sm:flex"
+                          className="hidden sm:flex text-gray-500"
                         >
                           <Video className="w-4 h-4" />
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-gray-500"
+                        >
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </div>
@@ -674,8 +684,8 @@ const MessagingPage: React.FC = () => {
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
                   {messages.length === 0 ? (
                     <div className="flex items-center justify-center h-full">
-                      <div className="text-center text-gray-500">
-                        <MessageCircle className="w-8 h-8 mx-auto mb-3 opacity-50" />
+                      <div className="text-center text-gray-600">
+                        <MessageCircle className="w-8 h-8 mx-auto mb-3 text-blue-400" />
                         <p className="text-sm">
                           No messages yet. Start the conversation!
                         </p>
@@ -729,7 +739,7 @@ const MessagingPage: React.FC = () => {
                                 isOwn ? "justify-end" : "justify-start"
                               }`}
                             >
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-gray-600">
                                 {formatTime(message.timestamp)}
                               </span>
                               {isOwn && (
@@ -748,8 +758,8 @@ const MessagingPage: React.FC = () => {
                           {/* Avatar for other participant */}
                           {!isOwn && (
                             <div className="order-0 mr-2 flex-shrink-0">
-                              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-                                <span className="text-xs font-medium text-gray-600">
+                              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                <span className="text-xs font-medium text-blue-700">
                                   {message.senderName.charAt(0).toUpperCase()}
                                 </span>
                               </div>
@@ -774,7 +784,7 @@ const MessagingPage: React.FC = () => {
                         onKeyPress={handleKeyPress}
                         placeholder="Type your message..."
                         disabled={sending}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:bg-gray-50 disabled:text-gray-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:bg-gray-50 disabled:text-gray-600 text-gray-500"
                       />
                     </div>
                     <Button

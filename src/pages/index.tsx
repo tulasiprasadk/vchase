@@ -3,6 +3,7 @@ import Link from "next/link";
 import Layout from "@/components/layout/Layout";
 import Button from "@/components/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
+import { Calendar, Handshake, Rocket } from "lucide-react";
 
 export default function Home() {
   return (
@@ -67,7 +68,7 @@ export default function Home() {
               <Card>
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">📅</span>
+                    <Calendar className="w-8 h-8 text-blue-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900">
                     Create Your Event
@@ -84,7 +85,7 @@ export default function Home() {
               <Card>
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">🤝</span>
+                    <Handshake className="w-8 h-8 text-green-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900">
                     Connect & Match
@@ -101,7 +102,7 @@ export default function Home() {
               <Card>
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl">🚀</span>
+                    <Rocket className="w-8 h-8 text-purple-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900">
                     Grow Together
