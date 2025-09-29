@@ -20,10 +20,10 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">
+            {/* <h4 className="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">
               For Organizers
-            </h4>
-            <ul className="space-y-2">
+            </h4> */}
+            {/* <ul className="space-y-2">
               <li>
                 <a
                   href="/events/create"
@@ -48,11 +48,11 @@ const Footer: React.FC = () => {
                   Pricing
                 </a>
               </li>
-            </ul>
+            </ul> */}
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">
+            {/* <h4 className="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">
               For Sponsors
             </h4>
             <ul className="space-y-2">
@@ -77,7 +77,7 @@ const Footer: React.FC = () => {
                   How It Works
                 </a>
               </li>
-            </ul>
+            </ul> */}
           </div>
         </div>
 
