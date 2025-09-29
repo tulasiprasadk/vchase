@@ -64,21 +64,20 @@ export const useSponsorEvents = (filters?: EventFilters) => {
   // Fetch events with filters
   useEffect(() => {
     console.log(
-      "🚀 useSponsorEvents: Starting to fetch events with filters:",
+      "🚀 useSponsorEvents: Fetching published events with filters:",
       filters
     );
     setLoading(true);
 
     const eventsRef = collection(db, "events");
-    // Temporarily remove status filter to see all events
-    const q = query(eventsRef);
-    // const q = query(eventsRef, where("status", "==", "published"));
+    // Only show published events to sponsors
+    const q = query(eventsRef, where("status", "==", "published"));
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
         console.log(
-          "📊 Events snapshot received:",
+          "📊 Published events snapshot received:",
           snapshot.docs.length,
           "documents"
         );

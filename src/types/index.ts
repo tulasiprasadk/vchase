@@ -25,6 +25,15 @@ export interface UserProfile extends BaseDocument {
   userType: "organizer" | "sponsor" | "admin";
   profileImage?: string;
   displayName?: string;
+  company?: string;
+  isActive: boolean;
+  permissions?: string[];
+  // Verification fields
+  isVerified: boolean;
+  verificationStatus: "pending" | "approved" | "rejected" | "not_requested";
+  verificationRequestId?: string;
+  verifiedAt?: Timestamp;
+  verifiedBy?: string; // Admin ID who verified
 }
 
 // Event interfaces
@@ -202,6 +211,69 @@ export interface EventFilters {
   };
   tags?: string[];
   status?: string[];
+}
+
+// Verification interfaces
+export interface VerificationRequest extends BaseDocument {
+  userId: string;
+  userType: "organizer" | "sponsor";
+  status: "pending" | "approved" | "rejected";
+  requestedAt: Timestamp;
+  reviewedAt?: Timestamp;
+  reviewedBy?: string; // Admin ID
+  reviewNotes?: string;
+
+  // User information at time of request
+  userInfo: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    company?: string;
+    userType: "organizer" | "sponsor";
+  };
+
+  // Verification documents and info
+  documents: VerificationDocument[];
+  businessInfo?: {
+    businessName: string;
+    businessType: string;
+    businessAddress: string;
+    businessPhone: string;
+    businessWebsite?: string;
+    businessDescription: string;
+  };
+
+  // For organizers - event organizing experience
+  organizerInfo?: {
+    yearsOfExperience: number;
+    previousEvents: string[];
+    organizationType: "individual" | "company" | "nonprofit";
+    portfolio?: string;
+  };
+
+  // For sponsors - sponsorship interests
+  sponsorInfo?: {
+    sponsorshipBudget: string;
+    industryFocus: string[];
+    sponsorshipGoals: string[];
+    companySize: string;
+    website?: string;
+  };
+}
+
+export interface VerificationDocument {
+  id: string;
+  type:
+    | "business_license"
+    | "tax_certificate"
+    | "identity_document"
+    | "portfolio"
+    | "company_registration"
+    | "other";
+  filename: string;
+  url: string;
+  uploadedAt: Timestamp;
+  description?: string;
 }
 
 export interface SponsorFilters {

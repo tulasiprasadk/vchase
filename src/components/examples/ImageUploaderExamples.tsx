@@ -62,7 +62,7 @@ export function ProfileImageUploader({
       <ImageUpload
         onUpload={handleUpload}
         currentImageUrl={currentImage?.url}
-        uploadPreset="avatar" // This should match your Cloudinary upload preset
+        uploadPreset="events_preset" // Using the configured Cloudinary upload preset
         placeholder="Upload your profile picture"
       />
 
@@ -125,7 +125,7 @@ export function EventImageUploader({
     <div className="space-y-6">
       <ImageUpload
         onUpload={handleUpload}
-        uploadPreset="event" // This should match your Cloudinary upload preset
+        uploadPreset="events_preset" // Using the configured Cloudinary upload preset
         placeholder="Upload event images"
         multiple={true}
         maxFiles={5}

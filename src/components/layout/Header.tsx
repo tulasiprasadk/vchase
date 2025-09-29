@@ -69,7 +69,7 @@ const Header: React.FC = () => {
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 text-gray-700">
                 <Link href="/auth/signin">
                   <Button variant="ghost" size="sm">
                     Sign In

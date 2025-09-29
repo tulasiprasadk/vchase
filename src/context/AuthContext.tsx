@@ -85,6 +85,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         profileImage: firebaseUser.photoURL || "",
+        // Add verification fields with default values
+        isActive: true,
+        isVerified: false,
+        verificationStatus: "not_requested",
+        permissions: [],
         ...additionalData,
       };
 

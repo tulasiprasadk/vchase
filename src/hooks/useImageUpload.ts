@@ -51,12 +51,34 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
       setIsUploading(true);
       setUploadProgress(0);
 
+      // Debug logging
+      console.log("🔄 Starting image upload:", {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        uploadPreset,
+        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      });
+
       try {
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        if (!cloudName) {
+          throw new Error(
+            "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME environment variable is not set"
+          );
+        }
+
+        if (!uploadPreset || uploadPreset === "default") {
+          throw new Error(
+            "NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET environment variable is not set or is using default value"
+          );
+        }
+
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", uploadPreset);
 
-        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`;
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
         const xhr = new XMLHttpRequest();
 
@@ -76,7 +98,23 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
                 public_id: response.public_id,
               });
             } else {
-              reject(new Error(`Upload failed with status ${xhr.status}`));
+              let errorMessage = `Upload failed with status ${xhr.status}`;
+              try {
+                const errorResponse = JSON.parse(xhr.responseText);
+                if (errorResponse.error && errorResponse.error.message) {
+                  errorMessage += `: ${errorResponse.error.message}`;
+                }
+              } catch {
+                // If we can't parse the error response, just use the status code
+                errorMessage += `: ${xhr.responseText || "Unknown error"}`;
+              }
+              console.error("Cloudinary upload error:", {
+                status: xhr.status,
+                response: xhr.responseText,
+                cloudinaryUrl,
+                uploadPreset,
+              });
+              reject(new Error(errorMessage));
             }
           });
 

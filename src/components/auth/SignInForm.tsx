@@ -104,7 +104,7 @@ const SignInForm: React.FC = () => {
               </Button>
             </form>
 
-            <div className="relative">
+            {/* <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
               </div>
@@ -113,9 +113,9 @@ const SignInForm: React.FC = () => {
                   Or continue with
                 </span>
               </div>
-            </div>
+            </div> */}
 
-            <Button
+            {/* <Button
               variant="outline"
               className="w-full"
               onClick={handleGoogleSignIn}
@@ -140,7 +140,7 @@ const SignInForm: React.FC = () => {
                 />
               </svg>
               Sign in with Google
-            </Button>
+            </Button> */}
 
             <div className="text-center">
               <p className="text-sm text-gray-600">

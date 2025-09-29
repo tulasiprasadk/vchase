@@ -325,7 +325,7 @@ const ManageEnquiriesPage: React.FC = () => {
                             className="bg-blue-600 hover:bg-blue-700"
                           >
                             {actionLoading === enquiry.id
-                              ? "..."
+                              ? "Processing..."
                               : "✅ Verify Payment"}
                           </Button>
                         )}

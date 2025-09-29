@@ -134,11 +134,11 @@ const SignUpForm: React.FC = () => {
               />
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm text-gray-800 font-semibold">
                   Account Type
                 </label>
                 <div className="flex space-x-4">
-                  <label className="flex items-center">
+                  <label className="flex items-center text-gray-600 text-sm">
                     <input
                       type="radio"
                       name="userType"
@@ -152,7 +152,7 @@ const SignUpForm: React.FC = () => {
                     />
                     Event Organizer
                   </label>
-                  <label className="flex items-center">
+                  <label className="flex items-center text-gray-600 text-sm">
                     <input
                       type="radio"
                       name="userType"
@@ -177,7 +177,7 @@ const SignUpForm: React.FC = () => {
               </Button>
             </form>
 
-            <div className="relative">
+            {/* <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
               </div>
@@ -193,7 +193,7 @@ const SignUpForm: React.FC = () => {
               disabled={loading}
             >
               Continue with Google
-            </Button>
+            </Button> */}
 
             <div className="text-center">
               <p className="text-sm text-gray-600">

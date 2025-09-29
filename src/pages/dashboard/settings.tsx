@@ -5,12 +5,18 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
+import VerifiedBadge from "@/components/ui/VerifiedBadge";
+import VerificationRequestForm from "@/components/verification/VerificationRequestForm";
 import { useAuth } from "@/context/AuthContext";
+import { useVerification } from "@/hooks/useVerification";
+import { Award, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 const SettingsPage: React.FC = () => {
   const { userProfile } = useAuth();
+  const {} = useVerification();
   const [loading, setLoading] = useState(false);
+  const [showVerificationForm, setShowVerificationForm] = useState(false);
 
   // Form states
   const [profile, setProfile] = useState({
@@ -160,6 +166,95 @@ const SettingsPage: React.FC = () => {
               </form>
             </CardContent>
           </Card>
+
+          {/* Verification Section */}
+          {userProfile?.userType !== "admin" && (
+            <Card>
+              <CardHeader>
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <Award className="mr-2" size={20} />
+                  Account Verification
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Get verified to build trust with event organizers and sponsors
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        Verification Status
+                      </p>
+                      <div className="mt-1">
+                        <VerifiedBadge
+                          verificationStatus={
+                            userProfile?.verificationStatus || "not_requested"
+                          }
+                          size="md"
+                        />
+                      </div>
+                    </div>
+
+                    {(!userProfile?.verificationStatus ||
+                      userProfile?.verificationStatus === "not_requested") && (
+                      <Button
+                        onClick={() => setShowVerificationForm(true)}
+                        className="flex items-center"
+                      >
+                        <CheckCircle size={16} className="mr-2" />
+                        Start Verification
+                      </Button>
+                    )}
+
+                    {userProfile?.verificationStatus === "rejected" && (
+                      <Button
+                        onClick={() => setShowVerificationForm(true)}
+                        variant="outline"
+                        className="flex items-center"
+                      >
+                        <CheckCircle size={16} className="mr-2" />
+                        Reapply
+                      </Button>
+                    )}
+                  </div>
+
+                  {userProfile?.verificationStatus === "pending" && (
+                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-yellow-800 text-sm">
+                        Your verification request is under review. We&apos;ll
+                        notify you once it&apos;s processed.
+                      </p>
+                    </div>
+                  )}
+
+                  {userProfile?.verificationStatus === "approved" && (
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-green-800 text-sm">
+                        Congratulations! Your account is verified. This helps
+                        build trust with other users.
+                      </p>
+                      {userProfile?.verifiedAt && (
+                        <p className="text-green-700 text-xs mt-1">
+                          Verified on{" "}
+                          {userProfile.verifiedAt.toDate().toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {userProfile?.verificationStatus === "rejected" && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-800 text-sm">
+                        Your verification request was not approved. You can
+                        submit a new request with updated information.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Password Settings */}
           <Card>
@@ -375,6 +470,21 @@ const SettingsPage: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Verification Form Modal */}
+        {showVerificationForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+              <VerificationRequestForm
+                onSuccess={() => {
+                  setShowVerificationForm(false);
+                  toast.success("Verification request submitted successfully!");
+                }}
+                onCancel={() => setShowVerificationForm(false)}
+              />
+            </div>
+          </div>
+        )}
       </DashboardLayout>
     </ProtectedRoute>
   );

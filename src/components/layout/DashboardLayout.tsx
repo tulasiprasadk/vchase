@@ -6,15 +6,16 @@ import Button from "@/components/ui/Button";
 import {
   Home,
   Calendar,
-  BarChart3,
   Settings,
   CreditCard,
-  Building,
-  Users,
   LogOut,
   Menu,
   X,
   MessageCircle,
+  AlertTriangle,
+  Users,
+  BarChart3,
+  CheckCircle,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -43,12 +44,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     { href: "/dashboard", label: "Overview", icon: Home },
     { href: "/dashboard/events", label: "My Events", icon: Calendar },
     {
-      href: "/dashboard/enquiries",
+      href: "/dashboard/manage-enquiries",
       label: "Sponsorship Enquiries",
       icon: CreditCard,
     },
     { href: "/dashboard/messages", label: "Messages", icon: MessageCircle },
-    { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
 
@@ -59,19 +59,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       icon: CreditCard,
     },
     { href: "/dashboard/messages", label: "Messages", icon: MessageCircle },
-    { href: "/dashboard/profile", label: "Company Profile", icon: Building },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
 
   const adminNavItems = [
-    { href: "/dashboard", label: "Overview", icon: Home },
-    { href: "/dashboard/users", label: "Users", icon: Users },
-    { href: "/dashboard/events", label: "All Events", icon: Calendar },
+    { href: "/dashboard/admin", label: "Overview", icon: Home },
     {
-      href: "/dashboard/analytics",
-      label: "Platform Analytics",
-      icon: BarChart3,
+      href: "/dashboard/admin/moderate",
+      label: "Moderate",
+      icon: AlertTriangle,
     },
+    { href: "/dashboard/admin/users", label: "Users", icon: Users },
+    {
+      href: "/dashboard/admin/verification-requests",
+      label: "Verification Requests",
+      icon: CheckCircle,
+    },
+    { href: "/dashboard/admin/reports", label: "Reports", icon: BarChart3 },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
 

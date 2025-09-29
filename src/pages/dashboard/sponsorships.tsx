@@ -10,6 +10,30 @@ import { ImageUpload } from "@/components/ui/ImageUpload";
 import { useSponsorships } from "@/hooks/useSponsorships";
 import { useSponsorEvents } from "@/hooks/useSponsorEvents";
 import { useSponsorshipEnquiries } from "@/hooks/useSponsorshipEnquiries";
+import {
+  CreditCard,
+  DollarSign,
+  BarChart3,
+  Target,
+  Search,
+  ClipboardList,
+  Send,
+  Package,
+  MapPin,
+  Calendar,
+  Eye,
+  MessageCircle,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Upload,
+  Users,
+  Mail,
+  Check,
+  X,
+  TrendingUp,
+  PartyPopper,
+} from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
 import { Event, SponsorshipPackage } from "@/types";
@@ -25,13 +49,8 @@ const SponsorshipsDashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { sponsorships, loading: sponsorshipsLoading } = useSponsorships();
   const { events, loading: eventsLoading } = useSponsorEvents(EMPTY_FILTERS);
-  const {
-    enquiries,
-    submitEnquiry,
-    fetchEnquiries,
-    uploadPaymentProof,
-    updateEnquiryStatus,
-  } = useSponsorshipEnquiries();
+  const { enquiries, submitEnquiry, fetchEnquiries, uploadPaymentProof } =
+    useSponsorshipEnquiries();
   const { findOrCreateChatForEnquiry, sendMessage } = useMessaging();
 
   const [activeTab, setActiveTab] = useState<
@@ -296,7 +315,10 @@ const SponsorshipsDashboardPage: React.FC = () => {
   };
 
   const activeSponsorship = sponsorships.filter(
-    (s) => s.status === "active" || s.status === "approved"
+    (s) =>
+      s.status === "active" ||
+      s.status === "approved" ||
+      s.status === "completed"
   );
   const totalInvestment = sponsorships.reduce((sum, s) => sum + s.amount, 0);
   const totalReach = sponsorships.reduce((sum, s) => sum + s.reach, 0);
@@ -343,11 +365,15 @@ const SponsorshipsDashboardPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-blue-50 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <div className="text-2xl mr-3">💳</div>
+                  <div className="text-2xl mr-3 text-blue-600">
+                    <CreditCard size={24} />
+                  </div>
                   <div>
-                    <p className="text-sm text-gray-600">Active Sponsorships</p>
+                    <p className="text-sm text-gray-600">My Sponsorships</p>
                     <p className="text-xl font-bold text-gray-900">
-                      {activeSponsorship.length}
+                      {activeSponsorship.length +
+                        enquiries.filter((e) => e.status === "completed")
+                          .length}
                     </p>
                   </div>
                 </div>
@@ -355,7 +381,9 @@ const SponsorshipsDashboardPage: React.FC = () => {
 
               <div className="bg-green-50 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <div className="text-2xl mr-3">💰</div>
+                  <div className="text-2xl mr-3 text-green-600">
+                    <DollarSign size={24} />
+                  </div>
                   <div>
                     <p className="text-sm text-gray-600">Total Investment</p>
                     <p className="text-xl font-bold text-gray-900">
@@ -367,7 +395,9 @@ const SponsorshipsDashboardPage: React.FC = () => {
 
               <div className="bg-purple-50 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <div className="text-2xl mr-3">📊</div>
+                  <div className="text-2xl mr-3 text-purple-600">
+                    <BarChart3 size={24} />
+                  </div>
                   <div>
                     <p className="text-sm text-gray-600">Total Reach</p>
                     <p className="text-xl font-bold text-gray-900">
@@ -379,7 +409,9 @@ const SponsorshipsDashboardPage: React.FC = () => {
 
               <div className="bg-orange-50 p-4 rounded-lg">
                 <div className="flex items-center">
-                  <div className="text-2xl mr-3">🎯</div>
+                  <div className="text-2xl mr-3 text-orange-600">
+                    <Target size={24} />
+                  </div>
                   <div>
                     <p className="text-sm text-gray-600">Total Leads</p>
                     <p className="text-xl font-bold text-gray-900">
@@ -403,7 +435,23 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
-                  🔍 Discover Events ({events.length})
+                  <Search size={16} className="inline mr-1" />
+                  Discover Events (
+                  {(() => {
+                    const availableEvents = events.filter((event) => {
+                      const isAlreadySponsor =
+                        event.sponsors &&
+                        event.sponsors.some(
+                          (sponsor) => sponsor.sponsorId === user?.uid
+                        );
+                      const hasPendingEnquiry = enquiries.some(
+                        (enquiry) => enquiry.eventId === event.id
+                      );
+                      return !isAlreadySponsor && !hasPendingEnquiry;
+                    });
+                    return availableEvents.length;
+                  })()}
+                  )
                 </button>
                 <button
                   onClick={() => setActiveTab("current")}
@@ -413,7 +461,11 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
-                  📋 My Sponsorships ({sponsorships.length})
+                  <ClipboardList size={16} className="inline mr-1" />
+                  My Sponsorships (
+                  {sponsorships.length +
+                    enquiries.filter((e) => e.status === "completed").length}
+                  )
                 </button>
                 <button
                   onClick={() => setActiveTab("submitted")}
@@ -423,7 +475,9 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
-                  📤 Submitted ({enquiries.length})
+                  <Send size={16} className="inline mr-1" />
+                  Submitted (
+                  {enquiries.filter((e) => e.status !== "completed").length})
                 </button>
               </nav>
             </div>
@@ -434,123 +488,210 @@ const SponsorshipsDashboardPage: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h2 className="text-lg font-semibold text-gray-900">
-                      Current Sponsorships
+                      My Sponsorships
                     </h2>
                   </div>
 
-                  {sponsorships.length === 0 ? (
-                    <div className="text-center py-12">
-                      <div className="text-6xl mb-4">💳</div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        No sponsorships yet
-                      </h3>
-                      <p className="text-gray-600 mb-6">
-                        Start sponsoring events to grow your brand and reach new
-                        audiences
-                      </p>
-                      <Button onClick={() => setActiveTab("discover")}>
-                        Browse Available Events
-                      </Button>
-                    </div>
-                  ) : (
-                    sponsorships.map((sponsorship) => (
-                      <Card key={sponsorship.id}>
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-4">
-                                <div>
-                                  <h3 className="text-lg font-semibold text-gray-900">
-                                    {sponsorship.eventTitle}
-                                  </h3>
-                                  <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
-                                    <span>📦 {sponsorship.packageName}</span>
-                                    <span>📍 {sponsorship.location}</span>
-                                    <span>
-                                      📅{" "}
-                                      {sponsorship.eventDate
-                                        .toDate()
-                                        .toLocaleDateString()}
-                                    </span>
-                                    <span
-                                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                                        sponsorship.status
-                                      )}`}
-                                    >
-                                      {sponsorship.status
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                        sponsorship.status.slice(1)}
-                                    </span>
+                  {(() => {
+                    const completedEnquiries = enquiries.filter(
+                      (enquiry) => enquiry.status === "completed"
+                    );
+                    const totalItems =
+                      sponsorships.length + completedEnquiries.length;
+
+                    if (totalItems === 0) {
+                      return (
+                        <div className="text-center py-12">
+                          <div className="text-6xl mb-4 text-gray-400 flex justify-center">
+                            <CreditCard size={64} />
+                          </div>
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">
+                            No sponsorships yet
+                          </h3>
+                          <p className="text-gray-600 mb-6">
+                            Start sponsoring events to grow your brand and reach
+                            new audiences
+                          </p>
+                          <Button onClick={() => setActiveTab("discover")}>
+                            Browse Available Events
+                          </Button>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="space-y-4">
+                        {/* Show completed enquiries first */}
+                        {completedEnquiries.map((enquiry) => (
+                          <Card
+                            key={`completed-${enquiry.id}`}
+                            className="hover:shadow-md transition-shadow"
+                          >
+                            <CardContent className="p-6">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center space-x-4">
+                                    <div>
+                                      <h3 className="text-lg font-semibold text-gray-900">
+                                        {enquiry.eventTitle}
+                                      </h3>
+                                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                        <span className="flex items-center">
+                                          <Package size={14} className="mr-1" />
+                                          {enquiry.packageName}
+                                        </span>
+                                        {enquiry.proposedAmount && (
+                                          <span className="flex items-center">
+                                            <DollarSign
+                                              size={14}
+                                              className="mr-1"
+                                            />
+                                            {enquiry.proposedAmount.toLocaleString()}
+                                          </span>
+                                        )}
+                                        <span
+                                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                                            "completed"
+                                          )}`}
+                                        >
+                                          <CheckCircle
+                                            size={14}
+                                            className="mr-1"
+                                          />
+                                          Completed
+                                        </span>
+                                      </div>
+                                      {enquiry.organizerResponse && (
+                                        <p className="text-sm text-gray-600 mt-2">
+                                          Organizer: {enquiry.organizerResponse}
+                                        </p>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
+                            </CardContent>
+                          </Card>
+                        ))}
 
-                              <div className="flex items-center space-x-8 mt-4 text-sm">
-                                <div>
-                                  <span className="text-gray-600">
-                                    Investment:{" "}
-                                  </span>
-                                  <span className="font-medium text-green-600">
-                                    ${sponsorship.amount.toLocaleString()}
-                                  </span>
-                                </div>
-                                <div>
-                                  <span className="text-gray-600">Reach: </span>
-                                  <span className="font-medium">
-                                    {sponsorship.reach.toLocaleString()}
-                                  </span>
-                                </div>
-                                <div>
-                                  <span className="text-gray-600">Leads: </span>
-                                  <span className="font-medium">
-                                    {sponsorship.leads}
-                                  </span>
-                                </div>
-                                {sponsorship.reach > 0 &&
-                                  sponsorship.leads > 0 && (
+                        {/* Show regular sponsorships */}
+                        {sponsorships.map((sponsorship) => (
+                          <Card key={sponsorship.id}>
+                            <CardContent className="p-6">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center space-x-4">
+                                    <div>
+                                      <h3 className="text-lg font-semibold text-gray-900">
+                                        {sponsorship.eventTitle}
+                                      </h3>
+                                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                        <span className="flex items-center">
+                                          <Package size={14} className="mr-1" />
+                                          {sponsorship.packageName}
+                                        </span>
+                                        <span className="flex items-center">
+                                          <MapPin size={14} className="mr-1" />
+                                          {sponsorship.location}
+                                        </span>
+                                        <span className="flex items-center">
+                                          <Calendar
+                                            size={14}
+                                            className="mr-1"
+                                          />
+                                          {sponsorship.eventDate
+                                            .toDate()
+                                            .toLocaleDateString()}
+                                        </span>
+                                        <span
+                                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                                            sponsorship.status
+                                          )}`}
+                                        >
+                                          {sponsorship.status
+                                            .charAt(0)
+                                            .toUpperCase() +
+                                            sponsorship.status.slice(1)}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center space-x-8 mt-4 text-sm">
                                     <div>
                                       <span className="text-gray-600">
-                                        Cost per Lead:{" "}
+                                        Investment:{" "}
                                       </span>
-                                      <span className="font-medium">
-                                        $
-                                        {(
-                                          sponsorship.amount / sponsorship.leads
-                                        ).toFixed(2)}
+                                      <span className="font-medium text-green-600">
+                                        ${sponsorship.amount.toLocaleString()}
                                       </span>
                                     </div>
-                                  )}
-                              </div>
-                            </div>
+                                    <div>
+                                      <span className="text-gray-600">
+                                        Reach:{" "}
+                                      </span>
+                                      <span className="font-medium">
+                                        {sponsorship.reach.toLocaleString()}
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <span className="text-gray-600">
+                                        Leads:{" "}
+                                      </span>
+                                      <span className="font-medium">
+                                        {sponsorship.leads}
+                                      </span>
+                                    </div>
+                                    {sponsorship.reach > 0 &&
+                                      sponsorship.leads > 0 && (
+                                        <div>
+                                          <span className="text-gray-600">
+                                            Cost per Lead:{" "}
+                                          </span>
+                                          <span className="font-medium">
+                                            $
+                                            {(
+                                              sponsorship.amount /
+                                              sponsorship.leads
+                                            ).toFixed(2)}
+                                          </span>
+                                        </div>
+                                      )}
+                                  </div>
+                                </div>
 
-                            <div className="flex items-center space-x-2">
-                              <Button variant="outline" size="sm">
-                                📊 Analytics
-                              </Button>
-                              <Button variant="outline" size="sm">
-                                👁️ View
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  handleMessageOrganizerByEvent(
-                                    sponsorship.eventId,
-                                    sponsorship.eventTitle,
-                                    sponsorship.id
-                                  )
-                                }
-                                className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                              >
-                                💬 Message Organizer
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
+                                <div className="flex items-center space-x-2">
+                                  <Button variant="outline" size="sm">
+                                    <BarChart3 size={16} className="mr-1" />
+                                    Analytics
+                                  </Button>
+                                  <Button variant="outline" size="sm">
+                                    <Eye size={16} className="mr-1" />
+                                    View
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleMessageOrganizerByEvent(
+                                        sponsorship.eventId,
+                                        sponsorship.eventTitle,
+                                        sponsorship.id
+                                      )
+                                    }
+                                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                  >
+                                    <MessageCircle size={16} className="mr-1" />
+                                    Message Organizer
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 
@@ -566,168 +707,245 @@ const SponsorshipsDashboardPage: React.FC = () => {
                     </p>
                   </div>
 
-                  {enquiries.length === 0 ? (
+                  {enquiries.filter((e) => e.status !== "completed").length ===
+                  0 ? (
                     <div className="text-center py-12">
-                      <div className="text-6xl mb-4">📋</div>
+                      <div className="text-6xl mb-4 text-gray-400 flex justify-center">
+                        <ClipboardList size={64} />
+                      </div>
                       <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        No enquiries submitted yet
+                        No pending enquiries
                       </h3>
                       <p className="text-gray-600">
-                        Your sponsorship applications will appear here once
-                        submitted
+                        Your pending sponsorship applications will appear here.
+                        Completed sponsorships are shown in &quot;My
+                        Sponsorships&quot;.
                       </p>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {enquiries.map((enquiry) => (
-                        <Card key={enquiry.id}>
-                          <CardContent className="p-6">
-                            <div className="flex justify-between items-start mb-4">
-                              <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                                  {enquiry.eventTitle}
-                                </h3>
-                                <div className="flex items-center gap-4 text-sm text-gray-600">
-                                  <span>
-                                    📅{" "}
-                                    {enquiry.submittedAt
-                                      .toDate()
-                                      .toLocaleDateString()}
-                                  </span>
-                                  <span>💰 {enquiry.packageName}</span>
-                                  {enquiry.proposedAmount && (
-                                    <span>
-                                      💵 $
-                                      {enquiry.proposedAmount.toLocaleString()}
+                      {enquiries
+                        .filter((enquiry) => enquiry.status !== "completed")
+                        .map((enquiry) => (
+                          <Card key={enquiry.id}>
+                            <CardContent className="p-6">
+                              <div className="flex justify-between items-start mb-4">
+                                <div>
+                                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                    {enquiry.eventTitle}
+                                  </h3>
+                                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                                    <span className="flex items-center">
+                                      <Calendar size={14} className="mr-1" />
+                                      {enquiry.submittedAt
+                                        .toDate()
+                                        .toLocaleDateString()}
                                     </span>
-                                  )}
+                                    <span className="flex items-center">
+                                      <Package size={14} className="mr-1" />
+                                      {enquiry.packageName}
+                                    </span>
+                                    {enquiry.proposedAmount && (
+                                      <span className="flex items-center">
+                                        <DollarSign
+                                          size={14}
+                                          className="mr-1"
+                                        />
+                                        {enquiry.proposedAmount.toLocaleString()}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                                      enquiry.status
+                                    )}`}
+                                  >
+                                    {enquiry.status === "pending" && (
+                                      <>
+                                        <Clock
+                                          size={12}
+                                          className="mr-1 inline"
+                                        />
+                                        Pending
+                                      </>
+                                    )}
+                                    {enquiry.status === "accepted" && (
+                                      <>
+                                        <CheckCircle
+                                          size={12}
+                                          className="mr-1 inline"
+                                        />
+                                        Accepted
+                                      </>
+                                    )}
+                                    {enquiry.status === "rejected" && (
+                                      <>
+                                        <XCircle
+                                          size={12}
+                                          className="mr-1 inline"
+                                        />
+                                        Rejected
+                                      </>
+                                    )}
+                                    {enquiry.status === "under_review" && (
+                                      <>
+                                        <Search
+                                          size={12}
+                                          className="mr-1 inline"
+                                        />
+                                        Under Review
+                                      </>
+                                    )}
+                                    {enquiry.status === "payment_pending" && (
+                                      <>
+                                        <DollarSign
+                                          size={12}
+                                          className="mr-1 inline"
+                                        />
+                                        Payment Required
+                                      </>
+                                    )}
+                                    {enquiry.status === "payment_uploaded" && (
+                                      <>
+                                        <Upload
+                                          size={12}
+                                          className="mr-1 inline"
+                                        />
+                                        Payment Uploaded
+                                      </>
+                                    )}
+                                    {enquiry.status === "payment_verified" && (
+                                      <>
+                                        <CheckCircle
+                                          size={12}
+                                          className="mr-1 inline"
+                                        />
+                                        Payment Verified
+                                      </>
+                                    )}
+                                    {enquiry.status === "completed" && (
+                                      <>
+                                        <PartyPopper
+                                          size={12}
+                                          className="mr-1 inline"
+                                        />
+                                        Completed
+                                      </>
+                                    )}
+                                  </span>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                                    enquiry.status
-                                  )}`}
-                                >
-                                  {enquiry.status === "pending" && "⏳ Pending"}
-                                  {enquiry.status === "accepted" &&
-                                    "✅ Accepted"}
-                                  {enquiry.status === "rejected" &&
-                                    "❌ Rejected"}
-                                  {enquiry.status === "under_review" &&
-                                    "🔍 Under Review"}
-                                  {enquiry.status === "payment_pending" &&
-                                    "💰 Payment Required"}
-                                  {enquiry.status === "payment_uploaded" &&
-                                    "📤 Payment Uploaded"}
-                                  {enquiry.status === "payment_verified" &&
-                                    "✅ Payment Verified"}
-                                  {enquiry.status === "completed" &&
-                                    "🎉 Completed"}
-                                </span>
-                              </div>
-                            </div>
 
-                            {enquiry.message && (
-                              <div className="mb-4">
-                                <h4 className="text-sm font-medium text-gray-900 mb-2">
-                                  Your Message:
-                                </h4>
-                                <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
-                                  {enquiry.message}
-                                </p>
-                              </div>
-                            )}
-
-                            {enquiry.organizerResponse && (
-                              <div className="mb-4">
-                                <h4 className="text-sm font-medium text-gray-900 mb-2">
-                                  Organizer Response:
-                                </h4>
-                                <p className="text-sm text-gray-700 bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
-                                  {enquiry.organizerResponse}
-                                </p>
-                                {enquiry.responseDate && (
-                                  <p className="text-xs text-gray-500 mt-2">
-                                    Responded on{" "}
-                                    {enquiry.responseDate
-                                      .toDate()
-                                      .toLocaleDateString()}
+                              {enquiry.message && (
+                                <div className="mb-4">
+                                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                    Your Message:
+                                  </h4>
+                                  <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
+                                    {enquiry.message}
                                   </p>
-                                )}
-                              </div>
-                            )}
+                                </div>
+                              )}
 
-                            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                              <div className="flex items-center gap-4 text-xs text-gray-500">
-                                <span>
-                                  Enquiry ID:{" "}
-                                  {enquiry.id ? enquiry.id.slice(-8) : "N/A"}
-                                </span>
-                                <span>Company: {enquiry.companyName}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                {/* Payment Flow Actions */}
-                                {enquiry.status === "accepted" && (
+                              {enquiry.organizerResponse && (
+                                <div className="mb-4">
+                                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                    Organizer Response:
+                                  </h4>
+                                  <p className="text-sm text-gray-700 bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
+                                    {enquiry.organizerResponse}
+                                  </p>
+                                  {enquiry.responseDate && (
+                                    <p className="text-xs text-gray-500 mt-2">
+                                      Responded on{" "}
+                                      {enquiry.responseDate
+                                        .toDate()
+                                        .toLocaleDateString()}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+
+                              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                                <div className="flex items-center gap-4 text-xs text-gray-500">
+                                  <span>
+                                    Enquiry ID:{" "}
+                                    {enquiry.id ? enquiry.id.slice(-8) : "N/A"}
+                                  </span>
+                                  <span>Company: {enquiry.companyName}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {/* Payment Flow Actions */}
+                                  {enquiry.status === "accepted" && (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() =>
+                                        handleUploadPaymentProof(enquiry)
+                                      }
+                                      className="text-green-600 border-green-200 hover:bg-green-50"
+                                    >
+                                      <DollarSign size={16} className="mr-1" />
+                                      Upload Payment Proof
+                                    </Button>
+                                  )}
+
+                                  {enquiry.status === "payment_uploaded" && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-blue-600 flex items-center">
+                                        <CheckCircle
+                                          size={16}
+                                          className="mr-1"
+                                        />
+                                        Payment proof uploaded - Awaiting
+                                        verification
+                                      </span>
+                                    </div>
+                                  )}
+
+                                  {enquiry.status === "payment_verified" && (
+                                    <span className="text-sm text-green-600 font-medium flex items-center">
+                                      <PartyPopper size={16} className="mr-1" />
+                                      Payment verified! You are now a sponsor.
+                                    </span>
+                                  )}
+
                                   <Button
                                     variant="outline"
                                     size="sm"
                                     onClick={() =>
-                                      handleUploadPaymentProof(enquiry)
+                                      handleMessageOrganizerByEvent(
+                                        enquiry.eventId,
+                                        enquiry.eventTitle,
+                                        enquiry.id
+                                      )
                                     }
-                                    className="text-green-600 border-green-200 hover:bg-green-50"
+                                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
                                   >
-                                    💰 Upload Payment Proof
+                                    <MessageCircle size={16} className="mr-1" />
+                                    Message Organizer
                                   </Button>
-                                )}
-
-                                {enquiry.status === "payment_uploaded" && (
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm text-blue-600">
-                                      ✅ Payment proof uploaded - Awaiting
-                                      verification
-                                    </span>
-                                  </div>
-                                )}
-
-                                {enquiry.status === "payment_verified" && (
-                                  <span className="text-sm text-green-600 font-medium">
-                                    🎉 Payment verified! You are now a sponsor.
-                                  </span>
-                                )}
-
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() =>
-                                    handleMessageOrganizerByEvent(
-                                      enquiry.eventId,
-                                      enquiry.eventTitle,
-                                      enquiry.id
-                                    )
-                                  }
-                                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                                >
-                                  💬 Message Organizer
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    // Could add a view details modal here
-                                    console.log(
-                                      "View enquiry details:",
-                                      enquiry.id
-                                    );
-                                  }}
-                                >
-                                  👁️ View Details
-                                </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                      // Could add a view details modal here
+                                      console.log(
+                                        "View enquiry details:",
+                                        enquiry.id
+                                      );
+                                    }}
+                                  >
+                                    <Eye size={16} className="mr-1" />
+                                    View Details
+                                  </Button>
+                                </div>
                               </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                            </CardContent>
+                          </Card>
+                        ))}
                     </div>
                   )}
                 </div>
@@ -745,120 +963,187 @@ const SponsorshipsDashboardPage: React.FC = () => {
                     </p>
                   </div>
 
-                  {eventsLoading ? (
-                    <div className="text-center py-12">
-                      <div className="text-gray-600">Loading events...</div>
-                    </div>
-                  ) : events.length === 0 ? (
-                    <div className="text-center py-12">
-                      <div className="text-6xl mb-4">🔍</div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        No events available
-                      </h3>
-                      <p className="text-gray-600">
-                        Check back later for new sponsorship opportunities
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {events.map((event) => (
-                        <Card key={event.id}>
-                          <CardContent className="p-6">
-                            <div className="mb-4">
-                              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                                {event.title}
-                              </h3>
-                              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                                <span>
-                                  📅{" "}
-                                  {event.startDate
-                                    .toDate()
-                                    .toLocaleDateString()}
-                                </span>
-                                <span>
-                                  📍 {event.location.city},{" "}
-                                  {event.location.country}
-                                </span>
-                                <span>
-                                  👥{" "}
-                                  {event.attendeeCount
-                                    ? event.attendeeCount.toLocaleString()
-                                    : "TBD"}{" "}
-                                  attendees
-                                </span>
-                                <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                                  {event.category}
-                                </span>
-                              </div>
-                            </div>
+                  {(() => {
+                    // Filter out events where the current user is already involved
+                    const availableEvents = events.filter((event) => {
+                      // Check if current user is already in the sponsors array
+                      const isAlreadySponsor =
+                        event.sponsors &&
+                        event.sponsors.some(
+                          (sponsor) => sponsor.sponsorId === user?.uid
+                        );
 
-                            <p className="text-gray-700 mb-4 line-clamp-2">
-                              {event.description}
-                            </p>
+                      // Check if user has pending enquiry for this event
+                      const hasPendingEnquiry = enquiries.some(
+                        (enquiry) => enquiry.eventId === event.id
+                      );
 
-                            <div className="space-y-3">
-                              <h4 className="font-medium text-gray-900">
-                                Sponsorship Packages:
-                              </h4>
-                              {event.sponsorshipPackages &&
-                                event.sponsorshipPackages.map((pkg) => (
-                                  <div
-                                    key={pkg.id}
-                                    className="border border-gray-200 rounded-lg p-4"
-                                  >
-                                    <div className="flex justify-between items-start mb-2">
-                                      <div>
-                                        <h5 className="font-medium text-gray-900">
-                                          {pkg.name}
-                                        </h5>
-                                        <p className="text-2xl font-bold text-green-600">
-                                          ${pkg.price.toLocaleString()}
-                                        </p>
-                                      </div>
-                                      <div className="flex space-x-2">
-                                        <Button
-                                          variant="outline"
-                                          size="sm"
-                                          onClick={() =>
-                                            handleDirectMessageOrganizer(event)
-                                          }
-                                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                                        >
-                                          💬 Message
-                                        </Button>
-                                        <Button
-                                          size="sm"
-                                          onClick={() =>
-                                            handleSendEnquiry(event, pkg)
-                                          }
-                                        >
-                                          📧 Send Enquiry
-                                        </Button>
-                                      </div>
-                                    </div>
+                      return !isAlreadySponsor && !hasPendingEnquiry;
+                    });
 
-                                    <div className="space-y-1">
-                                      {pkg.benefits &&
-                                        pkg.benefits.map((benefit, index) => (
-                                          <div
-                                            key={index}
-                                            className="flex items-center text-sm text-gray-600"
-                                          >
-                                            <span className="text-green-500 mr-2">
-                                              ✓
-                                            </span>
-                                            {benefit}
-                                          </div>
-                                        ))}
-                                    </div>
+                    if (eventsLoading) {
+                      return (
+                        <div className="text-center py-12">
+                          <div className="text-gray-600">Loading events...</div>
+                        </div>
+                      );
+                    }
+
+                    if (availableEvents.length === 0) {
+                      return (
+                        <div className="text-center py-12">
+                          <div className="text-6xl mb-4 text-gray-400 flex justify-center">
+                            <PartyPopper size={64} />
+                          </div>
+                          <h3 className="text-lg font-medium text-gray-900 mb-2">
+                            {events.length === 0
+                              ? "No events available"
+                              : "No new events to discover"}
+                          </h3>
+                          <p className="text-gray-600">
+                            {events.length === 0
+                              ? "Check back later for new sponsorship opportunities"
+                              : "You've already engaged with all available events! Check your 'My Sponsorships' and 'Submitted' tabs, or check back later for new events."}
+                          </p>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {availableEvents.map((event) => (
+                          <Card key={event.id}>
+                            <CardContent className="p-0">
+                              {/* Event Image */}
+                              {event.imageUrl && (
+                                <div className="relative h-48 w-full rounded-t-lg overflow-hidden">
+                                  <Image
+                                    src={event.imageUrl}
+                                    alt={event.title}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                  <div className="absolute top-4 right-4">
+                                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-800 rounded-full text-xs font-medium shadow-sm">
+                                      {event.category}
+                                    </span>
                                   </div>
-                                ))}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
+                                </div>
+                              )}
+
+                              <div className="p-6">
+                                <div className="mb-4">
+                                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                    {event.title}
+                                  </h3>
+                                  <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                                    <span className="flex items-center">
+                                      <Calendar size={14} className="mr-1" />
+                                      {event.startDate
+                                        .toDate()
+                                        .toLocaleDateString()}
+                                    </span>
+                                    <span className="flex items-center">
+                                      <MapPin size={14} className="mr-1" />
+                                      {event.location.city},{" "}
+                                      {event.location.country}
+                                    </span>
+                                    <span className="flex items-center">
+                                      <Users size={14} className="mr-1" />
+                                      {event.attendeeCount
+                                        ? event.attendeeCount.toLocaleString()
+                                        : "TBD"}{" "}
+                                      attendees
+                                    </span>
+                                    {!event.imageUrl && (
+                                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                        {event.category}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <p className="text-gray-700 mb-4 line-clamp-2">
+                                  {event.description}
+                                </p>
+
+                                <div className="space-y-3">
+                                  <h4 className="font-medium text-gray-900">
+                                    Sponsorship Packages:
+                                  </h4>
+                                  {event.sponsorshipPackages &&
+                                    event.sponsorshipPackages.map((pkg) => (
+                                      <div
+                                        key={pkg.id}
+                                        className="border border-gray-200 rounded-lg p-4"
+                                      >
+                                        <div className="flex justify-between items-start mb-2">
+                                          <div>
+                                            <h5 className="font-medium text-gray-900">
+                                              {pkg.name}
+                                            </h5>
+                                            <p className="text-2xl font-bold text-green-600">
+                                              ${pkg.price.toLocaleString()}
+                                            </p>
+                                          </div>
+                                          <div className="flex space-x-2">
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() =>
+                                                handleDirectMessageOrganizer(
+                                                  event
+                                                )
+                                              }
+                                              className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                            >
+                                              <MessageCircle
+                                                size={14}
+                                                className="mr-1"
+                                              />
+                                              Message
+                                            </Button>
+                                            <Button
+                                              size="sm"
+                                              onClick={() =>
+                                                handleSendEnquiry(event, pkg)
+                                              }
+                                            >
+                                              <Mail
+                                                size={14}
+                                                className="mr-1"
+                                              />
+                                              Send Enquiry
+                                            </Button>
+                                          </div>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                          {pkg.benefits &&
+                                            pkg.benefits.map(
+                                              (benefit, index) => (
+                                                <div
+                                                  key={index}
+                                                  className="flex items-center text-sm text-gray-600"
+                                                >
+                                                  <span className="text-green-500 mr-2">
+                                                    <Check size={16} />
+                                                  </span>
+                                                  {benefit}
+                                                </div>
+                                              )
+                                            )}
+                                        </div>
+                                      </div>
+                                    ))}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>
@@ -868,8 +1153,9 @@ const SponsorshipsDashboardPage: React.FC = () => {
           {activeTab === "current" && activeSponsorship.length > 0 && (
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  📈 ROI Summary
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <TrendingUp size={20} className="mr-2" />
+                  ROI Summary
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
@@ -923,7 +1209,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                     size="sm"
                     onClick={() => setShowEnquiryModal(false)}
                   >
-                    ✕
+                    <X size={16} />
                   </Button>
                 </div>
 
@@ -982,7 +1268,14 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       disabled={submittingEnquiry || !companyInfo.trim()}
                       className="flex-1"
                     >
-                      {submittingEnquiry ? "Sending..." : "📧 Send Enquiry"}
+                      {submittingEnquiry ? (
+                        "Sending..."
+                      ) : (
+                        <>
+                          <Mail size={16} className="mr-1" />
+                          Send Enquiry
+                        </>
+                      )}
                     </Button>
                     <Button
                       variant="outline"
@@ -1021,7 +1314,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       setSelectedEventForMessage(null);
                     }}
                   >
-                    ✕
+                    <X size={16} />
                   </Button>
                 </div>
 
@@ -1065,7 +1358,14 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       disabled={sendingMessage || !messageText.trim()}
                       className="flex-1"
                     >
-                      {sendingMessage ? "Sending..." : "💬 Send Message"}
+                      {sendingMessage ? (
+                        "Sending..."
+                      ) : (
+                        <>
+                          <MessageCircle size={16} className="mr-1" />
+                          Send Message
+                        </>
+                      )}
                     </Button>
                     <Button
                       variant="outline"
@@ -1109,7 +1409,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       setPaymentProofUrl("");
                     }}
                   >
-                    ✕
+                    <X size={16} />
                   </Button>
                 </div>
 
@@ -1138,8 +1438,9 @@ const SponsorshipsDashboardPage: React.FC = () => {
 
                   {/* Instructions */}
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-blue-900 mb-2">
-                      📋 Instructions:
+                    <h3 className="font-medium text-blue-900 mb-2 flex items-center">
+                      <ClipboardList size={16} className="mr-1" />
+                      Instructions:
                     </h3>
                     <div className="text-sm text-blue-800 space-y-1">
                       <div>
@@ -1166,13 +1467,14 @@ const SponsorshipsDashboardPage: React.FC = () => {
                         onUpload={handlePaymentProofUpload}
                         placeholder="Click to upload payment proof (receipt, screenshot, etc.)"
                         className="w-full"
-                        uploadPreset="payment_proofs"
+                        uploadPreset="events_preset"
                       />
 
                       {paymentProofUrl && (
                         <div className="mt-4">
-                          <div className="text-sm text-green-600">
-                            ✅ Payment proof uploaded successfully!
+                          <div className="text-sm text-green-600 flex items-center">
+                            <CheckCircle size={16} className="mr-1" />
+                            Payment proof uploaded successfully!
                           </div>
                           <Image
                             src={paymentProofUrl}
@@ -1202,11 +1504,19 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       disabled={uploadingPayment || !paymentProofUrl}
                       className="flex-1"
                     >
-                      {uploadingPayment
-                        ? "Uploading..."
-                        : paymentProofUrl
-                        ? "✅ Complete Upload"
-                        : "📤 Upload Payment Proof"}
+                      {uploadingPayment ? (
+                        "Uploading..."
+                      ) : paymentProofUrl ? (
+                        <>
+                          <CheckCircle size={16} className="mr-1" />
+                          Complete Upload
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={16} className="mr-1" />
+                          Upload Payment Proof
+                        </>
+                      )}
                     </Button>
                     <Button
                       variant="outline"
