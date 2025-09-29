@@ -10,6 +10,7 @@ import { DashboardCard } from "@/components/ui/DashboardCard";
 import { LayoutCustomizer } from "@/components/layout/LayoutCustomizer";
 import { useOrganizerEnquiries } from "@/hooks/useOrganizerEnquiries";
 import { useEvents } from "@/hooks/useEvents";
+import { useSponsorshipEnquiries } from "@/hooks/useSponsorshipEnquiries";
 import {
   Calendar,
   DollarSign,
@@ -33,6 +34,9 @@ const DashboardPage: React.FC = () => {
   // Hooks for organizer data - always called regardless of user type
   const { enquiries } = useOrganizerEnquiries();
   const { events } = useEvents();
+
+  // Hook for sponsor data - only used for sponsors but called unconditionally
+  const { enquiries: sponsorEnquiries } = useSponsorshipEnquiries();
 
   // Redirect sponsors to their main sponsorships page
   useEffect(() => {
@@ -63,31 +67,50 @@ const DashboardPage: React.FC = () => {
       organizerEvents.some((event) => event.id === enquiry.eventId)
     );
 
+    // Calculate actual metrics
+    const activeEventsCount = organizerEvents.filter(
+      (event) => event.status === "published"
+    ).length;
+    const acceptedEnquiries = organizerEnquiries.filter((enquiry) =>
+      ["accepted"].includes(enquiry.status)
+    );
+    const uniqueSponsors = new Set(
+      acceptedEnquiries.map((enquiry) => enquiry.sponsorId)
+    ).size;
+    const totalRevenue = acceptedEnquiries.reduce(
+      (sum, enquiry) => sum + (enquiry.proposedAmount || 0),
+      0
+    );
+    const totalAttendees = organizerEvents.reduce(
+      (sum, event) => sum + (event.maxAttendees || 0),
+      0
+    );
+
     const cards = [
       {
         title: "Active Events",
-        value: 5,
+        value: activeEventsCount,
         icon: Calendar,
         color: "blue",
         trend: { value: 12.5, isPositive: true },
       },
       {
         title: "Total Revenue",
-        value: "$12,500",
+        value: `$${totalRevenue.toLocaleString()}`,
         icon: DollarSign,
         color: "green",
         trend: { value: 8.3, isPositive: true },
       },
       {
         title: "Sponsors",
-        value: 12,
+        value: uniqueSponsors,
         icon: Handshake,
         color: "purple",
         trend: { value: 15.0, isPositive: true },
       },
       {
-        title: "Total Attendees",
-        value: "2,450",
+        title: "Total Capacity",
+        value: totalAttendees.toLocaleString(),
         icon: Users,
         color: "indigo",
         trend: { value: 7.2, isPositive: true },
@@ -110,30 +133,50 @@ const DashboardPage: React.FC = () => {
               Recent Events
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  Tech Summit 2025
-                </span>
-                <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded whitespace-nowrap">
-                  Active
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  Marketing Conference
-                </span>
-                <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded whitespace-nowrap">
-                  Planning
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  AI Workshop Series
-                </span>
-                <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded whitespace-nowrap">
-                  Draft
-                </span>
-              </div>
+              {organizerEvents.length === 0 ? (
+                <div className="text-center py-8">
+                  <Calendar className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">No events created yet</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Create your first event to get started
+                  </p>
+                </div>
+              ) : (
+                organizerEvents.slice(0, 3).map((event) => (
+                  <div
+                    key={event.id}
+                    className="flex items-center justify-between border-b pb-2"
+                  >
+                    <span className="text-sm text-gray-600 truncate pr-2">
+                      {event.title}
+                    </span>
+                    <span
+                      className={`px-2 py-1 text-xs rounded whitespace-nowrap ${
+                        event.status === "published"
+                          ? "bg-green-100 text-green-800"
+                          : event.status === "draft"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {event.status
+                        ? event.status.charAt(0).toUpperCase() +
+                          event.status.slice(1)
+                        : "Draft"}
+                    </span>
+                  </div>
+                ))
+              )}
+              {organizerEvents.length > 3 && (
+                <div className="text-center pt-2">
+                  <Link
+                    href="/dashboard/events"
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    +{organizerEvents.length - 3} more events
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
 
@@ -206,31 +249,50 @@ const DashboardPage: React.FC = () => {
   };
 
   const renderSponsorDashboard = () => {
+    // Calculate actual sponsor metrics
+    const activeSponsorships = sponsorEnquiries.filter((enquiry) =>
+      ["accepted", "payment_verified", "completed"].includes(enquiry.status)
+    );
+    const totalInvested = sponsorEnquiries.reduce(
+      (sum, enquiry) =>
+        sum + (enquiry.finalAmount || enquiry.proposedAmount || 0),
+      0
+    );
+    const uniqueEvents = new Set(
+      activeSponsorships.map((enquiry) => enquiry.eventId)
+    ).size;
+
+    // For reach and ROI, we'll keep placeholder calculations since we don't have event attendance data yet
+    const estimatedReach = activeSponsorships.length * 200; // Rough estimate of 200 people per sponsorship
+
     const cards = [
       {
         title: "Active Sponsorships",
-        value: 8,
+        value: activeSponsorships.length,
         icon: CreditCard,
         color: "blue",
         trend: { value: 6.2, isPositive: true },
       },
       {
         title: "Total Invested",
-        value: "$25,000",
+        value: `$${totalInvested.toLocaleString()}`,
         icon: DollarSign,
         color: "green",
         trend: { value: 12.1, isPositive: true },
       },
       {
-        title: "Reach",
-        value: "150K",
+        title: "Events Sponsored",
+        value: uniqueEvents,
         icon: BarChart3,
         color: "purple",
         trend: { value: 18.5, isPositive: true },
       },
       {
-        title: "ROI",
-        value: "324%",
+        title: "Est. Reach",
+        value:
+          estimatedReach > 1000
+            ? `${(estimatedReach / 1000).toFixed(1)}K`
+            : estimatedReach.toString(),
         icon: TrendingUp,
         color: "indigo",
         trend: { value: 24.3, isPositive: true },
@@ -253,62 +315,96 @@ const DashboardPage: React.FC = () => {
               Current Sponsorships
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  Tech Summit 2025
-                </span>
-                <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded whitespace-nowrap">
-                  Active
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  Marketing Conference
-                </span>
-                <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded whitespace-nowrap">
-                  Active
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  AI Workshop Series
-                </span>
-                <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded whitespace-nowrap">
-                  Upcoming
-                </span>
-              </div>
+              {activeSponsorships.length === 0 ? (
+                <div className="text-center py-8">
+                  <CreditCard className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">
+                    No active sponsorships yet
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Browse events to find sponsorship opportunities
+                  </p>
+                </div>
+              ) : (
+                activeSponsorships.slice(0, 3).map((enquiry) => (
+                  <div
+                    key={enquiry.id}
+                    className="flex items-center justify-between border-b pb-2"
+                  >
+                    <span className="text-sm text-gray-600 truncate pr-2">
+                      {enquiry.eventTitle} - {enquiry.packageName}
+                    </span>
+                    <span
+                      className={`px-2 py-1 text-xs rounded whitespace-nowrap ${
+                        enquiry.status === "accepted"
+                          ? "bg-green-100 text-green-800"
+                          : enquiry.status === "completed"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {enquiry.status.charAt(0).toUpperCase() +
+                        enquiry.status.slice(1).replace("_", " ")}
+                    </span>
+                  </div>
+                ))
+              )}
+              {activeSponsorships.length > 3 && (
+                <div className="text-center pt-2">
+                  <Link
+                    href="/dashboard/sponsorships"
+                    className="text-sm text-blue-600 hover:text-blue-700"
+                  >
+                    +{activeSponsorships.length - 3} more sponsorships
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="bg-white p-4 lg:p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Recommended Events
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">
+                Available Events
+              </h3>
+              <Link
+                href="/dashboard/sponsorships"
+                className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              >
+                Browse All
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  Data Science Meetup
-                </span>
-                <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded whitespace-nowrap">
-                  New
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  Startup Pitch Day
-                </span>
-                <span className="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded whitespace-nowrap">
-                  Featured
-                </span>
-              </div>
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-sm text-gray-600 truncate pr-2">
-                  E-commerce Summit
-                </span>
-                <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded whitespace-nowrap">
-                  Limited
-                </span>
-              </div>
+              {events.filter((event) => event.status === "published").length ===
+              0 ? (
+                <div className="text-center py-8">
+                  <Calendar className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">
+                    No events available yet
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Check back soon for new sponsorship opportunities
+                  </p>
+                </div>
+              ) : (
+                events
+                  .filter((event) => event.status === "published")
+                  .slice(0, 3)
+                  .map((event) => (
+                    <div
+                      key={event.id}
+                      className="flex items-center justify-between border-b pb-2"
+                    >
+                      <span className="text-sm text-gray-600 truncate pr-2">
+                        {event.title}
+                      </span>
+                      <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded whitespace-nowrap">
+                        Available
+                      </span>
+                    </div>
+                  ))
+              )}
             </div>
           </div>
         </div>
@@ -317,31 +413,39 @@ const DashboardPage: React.FC = () => {
   };
 
   const renderAdminDashboard = () => {
+    // Calculate basic admin metrics from available data
+    const totalUsers = events.length > 0 ? "Loading..." : "0"; // We don't have user count access here
+    const totalEvents = events.length;
+    const totalEnquiries = enquiries.length;
+    const publishedEvents = events.filter(
+      (event) => event.status === "published"
+    ).length;
+
     const cards = [
       {
         title: "Total Users",
-        value: "1,245",
+        value: totalUsers,
         icon: UserCheck,
         color: "blue",
         trend: { value: 5.2, isPositive: true },
       },
       {
         title: "Total Events",
-        value: 156,
+        value: totalEvents,
         icon: Calendar,
         color: "green",
         trend: { value: 12.1, isPositive: true },
       },
       {
-        title: "Platform Revenue",
-        value: "$125,000",
+        title: "Published Events",
+        value: publishedEvents,
         icon: DollarSign,
         color: "purple",
         trend: { value: 23.4, isPositive: true },
       },
       {
-        title: "Growth Rate",
-        value: "+23%",
+        title: "Total Enquiries",
+        value: totalEnquiries,
         icon: TrendingUp,
         color: "indigo",
         trend: { value: 15.7, isPositive: true },
