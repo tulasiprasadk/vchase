@@ -22,6 +22,8 @@ export interface UserProfile extends BaseDocument {
   email: string;
   firstName: string;
   lastName: string;
+  companyName: string;
+  contactNumber: string;
   userType: "organizer" | "sponsor" | "admin";
   profileImage?: string;
   displayName?: string;

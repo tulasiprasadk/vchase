@@ -78,6 +78,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           additionalData && additionalData.lastName
             ? additionalData.lastName
             : "",
+        companyName:
+          additionalData && additionalData.companyName
+            ? additionalData.companyName
+            : "",
+        contactNumber:
+          additionalData && additionalData.contactNumber
+            ? additionalData.contactNumber
+            : "",
         userType:
           additionalData && additionalData.userType
             ? additionalData.userType
@@ -148,6 +156,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await createUserProfile(result.user, {
         firstName: names[0] || "",
         lastName: names.slice(1).join(" ") || "",
+        companyName: "", // Will need to be filled later
+        contactNumber: "", // Will need to be filled later
         userType: "organizer", // Default type
       });
     }

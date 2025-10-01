@@ -12,13 +12,15 @@ const SignUpForm: React.FC = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
   const [userType, setUserType] = useState<"organizer" | "sponsor">(
     "organizer"
   );
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const { signUp, signInWithGoogle } = useAuth();
+  const { signUp } = useAuth();
   const router = useRouter();
 
   const validateForm = () => {
@@ -44,6 +46,16 @@ const SignUpForm: React.FC = () => {
       newErrors.lastName = "Last name is required";
     }
 
+    if (!companyName) {
+      newErrors.companyName = "Company name is required";
+    }
+
+    if (!contactNumber) {
+      newErrors.contactNumber = "Contact number is required";
+    } else if (!/^\+?[\d\s\-\(\)]+$/.test(contactNumber)) {
+      newErrors.contactNumber = "Please enter a valid contact number";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -58,22 +70,11 @@ const SignUpForm: React.FC = () => {
       await signUp(email, password, {
         firstName,
         lastName,
+        companyName,
+        contactNumber,
         userType,
       });
       toast.success("Account created successfully!");
-      router.push("/dashboard");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleSignUp = async () => {
-    setLoading(true);
-    try {
-      await signInWithGoogle();
-      toast.success("Signed up with Google!");
       router.push("/dashboard");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
@@ -112,6 +113,25 @@ const SignUpForm: React.FC = () => {
                   disabled={loading}
                 />
               </div>
+
+              <Input
+                label="Company Name"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                error={errors.companyName}
+                placeholder="Enter your company name"
+                disabled={loading}
+              />
+
+              <Input
+                label="Contact Number"
+                type="tel"
+                value={contactNumber}
+                onChange={(e) => setContactNumber(e.target.value)}
+                error={errors.contactNumber}
+                placeholder="Enter your contact number"
+                disabled={loading}
+              />
 
               <Input
                 type="email"
