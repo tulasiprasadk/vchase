@@ -101,7 +101,7 @@ const EventsPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Browse Events - EventSponsor</title>
+        <title>Browse Events - V Chase</title>
         <meta
           name="description"
           content="Discover events perfect for your brand sponsorship"
@@ -110,14 +110,17 @@ const EventsPage: React.FC = () => {
       </Head>
 
       <Layout>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             {/* Header */}
             <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                Browse Events
+              <h1 className="text-4xl font-bold text-slate-900 mb-4">
+                Browse{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-500">
+                  Events
+                </span>
               </h1>
-              <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+              <p className="text-xl text-slate-700 max-w-3xl mx-auto">
                 Discover events perfect for your brand sponsorship and connect
                 with your target audience
               </p>
@@ -132,8 +135,8 @@ const EventsPage: React.FC = () => {
                     onClick={() => setSelectedCategory(category)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                       selectedCategory === category
-                        ? "bg-blue-600 text-white shadow-lg"
-                        : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-700 border border-gray-300 hover:border-blue-300"
+                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
+                        : "bg-white text-slate-700 hover:bg-blue-50 hover:text-blue-700 border border-slate-300 hover:border-blue-300"
                     }`}
                   >
                     {category === "all" ? "All Events" : category}
@@ -147,17 +150,17 @@ const EventsPage: React.FC = () => {
               {loading ? (
                 <div className="text-center py-12">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  <p className="mt-4 text-gray-700 font-medium">
+                  <p className="mt-4 text-slate-700 font-medium">
                     Loading events...
                   </p>
                 </div>
               ) : filteredEvents.length === 0 ? (
                 <div className="text-center py-12">
                   <Calendar className="h-16 w-16 text-blue-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">
                     No Events Found
                   </h3>
-                  <p className="text-gray-700 mb-8">
+                  <p className="text-slate-700 mb-8">
                     {selectedCategory === "all"
                       ? "No events are currently available for sponsorship. Check back soon for new opportunities!"
                       : `No events found in the ${selectedCategory} category. Try browsing other categories or check back later.`}
@@ -174,39 +177,44 @@ const EventsPage: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                   {filteredEvents.map((event) => (
-                    <Card key={event.id} className="overflow-hidden">
+                    <Card
+                      key={event.id}
+                      className="group overflow-hidden bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0"
+                    >
                       {/* Event Image */}
                       {event.imageUrl ? (
-                        <div className="relative h-48 w-full">
+                        <div className="relative h-40 w-full overflow-hidden">
                           <Image
                             src={event.imageUrl}
                             alt={event.title}
                             fill
-                            className="object-cover"
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                         </div>
                       ) : (
-                        <div className="h-48 w-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                          <div className="text-center">
+                        <div className="h-40 w-full bg-gradient-to-br from-blue-100 via-indigo-50 to-slate-100 flex items-center justify-center relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-indigo-400/10"></div>
+                          <div className="text-center z-10">
                             <ImageIcon className="w-12 h-12 text-blue-300 mx-auto mb-2" />
-                            <p className="text-blue-500 font-medium">
+                            <p className="text-blue-500 font-medium text-sm">
                               No Image Available
                             </p>
                           </div>
                         </div>
                       )}
 
-                      <CardHeader>
+                      <CardHeader className="p-4 pb-2">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                            <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-700 transition-colors duration-300 line-clamp-2">
                               {event.title}
                             </h3>
                             {event.category && (
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border border-blue-200">
                                 <Tag className="w-3 h-3 mr-1" />
                                 {event.category}
                               </span>
@@ -215,32 +223,42 @@ const EventsPage: React.FC = () => {
                         </div>
                       </CardHeader>
 
-                      <CardContent className="space-y-6">
-                        {/* Event Details */}
-                        <div className="space-y-3">
-                          <div className="flex items-center text-gray-700">
-                            <Calendar className="w-4 h-4 mr-2 text-blue-600" />
-                            <span>{formatDate(event.startDate)}</span>
+                      <CardContent className="px-4 pb-4 space-y-4">
+                        {/* Event Details - Compact */}
+                        <div className="space-y-2">
+                          <div className="flex items-center text-slate-600">
+                            <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md flex items-center justify-center mr-2">
+                              <Calendar className="w-3 h-3 text-white" />
+                            </div>
+                            <span className="text-sm font-medium">
+                              {formatDate(event.startDate)}
+                            </span>
                             {event.endDate && (
-                              <span> - {formatDate(event.endDate)}</span>
+                              <span className="text-sm font-medium">
+                                {" "}
+                                - {formatDate(event.endDate)}
+                              </span>
                             )}
                           </div>
 
                           {event.location && (
-                            <div className="flex items-center text-gray-700">
-                              <MapPin className="w-4 h-4 mr-2 text-green-600" />
-                              <span>
+                            <div className="flex items-center text-slate-600">
+                              <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-md flex items-center justify-center mr-2">
+                                <MapPin className="w-3 h-3 text-white" />
+                              </div>
+                              <span className="text-sm font-medium truncate">
                                 {event.location.venue}, {event.location.city}
                               </span>
                             </div>
                           )}
 
                           {event.maxAttendees && (
-                            <div className="flex items-center text-gray-700">
-                              <Users className="w-4 h-4 mr-2 text-purple-600" />
-                              <span>
-                                Up to {event.maxAttendees.toLocaleString()}{" "}
-                                attendees
+                            <div className="flex items-center text-slate-600">
+                              <div className="w-6 h-6 bg-gradient-to-br from-slate-500 to-slate-600 rounded-md flex items-center justify-center mr-2">
+                                <Users className="w-3 h-3 text-white" />
+                              </div>
+                              <span className="text-sm font-medium">
+                                {event.maxAttendees.toLocaleString()} attendees
                               </span>
                             </div>
                           )}
@@ -248,8 +266,8 @@ const EventsPage: React.FC = () => {
 
                         {/* Description */}
                         {event.description && (
-                          <div>
-                            <p className="text-gray-700 line-clamp-3">
+                          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-100">
+                            <p className="text-slate-700 text-sm leading-relaxed line-clamp-2">
                               {event.description}
                             </p>
                           </div>
@@ -259,48 +277,45 @@ const EventsPage: React.FC = () => {
                         {event.sponsorshipPackages &&
                           event.sponsorshipPackages.length > 0 && (
                             <div>
-                              <h4 className="font-semibold text-gray-900 mb-3">
-                                Sponsorship Packages Available:
+                              <h4 className="font-bold text-slate-900 mb-2 text-sm">
+                                Packages ({event.sponsorshipPackages.length}):
                               </h4>
-                              <div className="space-y-2">
+                              <div className="space-y-1">
                                 {event.sponsorshipPackages
-                                  .slice(0, 3)
+                                  .slice(0, 2)
                                   .map((pkg) => (
                                     <div
                                       key={pkg.id}
-                                      className="flex items-center justify-between bg-blue-50 border border-blue-100 rounded-lg p-3"
+                                      className="flex items-center justify-between bg-white border border-blue-100 rounded-lg p-2 hover:border-blue-200 transition-all duration-200"
                                     >
-                                      <div>
-                                        <span className="font-medium text-gray-900">
+                                      <div className="flex-1 min-w-0">
+                                        <span className="font-medium text-slate-900 text-sm truncate block">
                                           {pkg.name}
                                         </span>
-                                        {pkg.description && (
-                                          <p className="text-sm text-gray-700 mt-1 line-clamp-1">
-                                            {pkg.description}
-                                          </p>
-                                        )}
                                       </div>
-                                      <div className="flex items-center text-green-600 font-semibold">
-                                        <DollarSign className="w-4 h-4 mr-1" />
+                                      <div className="flex items-center bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-medium px-2 py-1 rounded text-xs ml-2">
+                                        <DollarSign className="w-3 h-3 mr-0.5" />
                                         {formatCurrency(pkg.price)}
                                       </div>
                                     </div>
                                   ))}
-                                {event.sponsorshipPackages.length > 3 && (
-                                  <p className="text-sm text-blue-600 text-center font-medium">
-                                    +{event.sponsorshipPackages.length - 3} more
-                                    packages available
-                                  </p>
+                                {event.sponsorshipPackages.length > 2 && (
+                                  <div className="text-center">
+                                    <span className="inline-flex items-center px-2 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded text-xs font-medium border border-blue-200">
+                                      +{event.sponsorshipPackages.length - 2}{" "}
+                                      more
+                                    </span>
+                                  </div>
                                 )}
                               </div>
                             </div>
                           )}
 
                         {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                        <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-slate-100">
                           <Button
                             onClick={() => handleSponsorClick()}
-                            className="flex-1"
+                            className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                           >
                             {!user ? (
                               <>
@@ -322,7 +337,10 @@ const EventsPage: React.FC = () => {
 
                           {user && userProfile?.userType === "organizer" && (
                             <Link href="/dashboard/events">
-                              <Button variant="outline">
+                              <Button
+                                variant="outline"
+                                className="border border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 font-medium py-2 px-4 rounded-lg transition-all duration-300"
+                              >
                                 <Building2 className="w-4 h-4 mr-2" />
                                 Manage Events
                               </Button>
@@ -338,11 +356,14 @@ const EventsPage: React.FC = () => {
 
             {/* Call to Action */}
             {!user && filteredEvents.length > 0 && (
-              <div className="mt-16 text-center bg-white rounded-lg shadow-sm p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Ready to Start Sponsoring?
+              <div className="mt-16 text-center bg-white rounded-lg shadow-sm p-8 border border-blue-100">
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                  Ready to Start{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-500">
+                    Sponsoring?
+                  </span>
                 </h3>
-                <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+                <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
                   Join our platform to connect with event organizers and grow
                   your brand through strategic sponsorships.
                 </p>
