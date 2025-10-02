@@ -1,6 +1,54 @@
 # EventSponsor Platform
 
-An event sponsorship platform connecting event organizers with sponsors. Built with Next.js, TypeScript, and Firebase.
+An event sponsorship platform connecting event organizers with sponsors. Built with Next.js, TypeScr### 6. Authentication Setup
+
+In Firebase Console > Authentication:
+
+1. Enable Email/Password sign-in method
+2. Enable Google sign-in method (add your OAuth 2.0 client IDs)
+
+### 7. Run the Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🧪 Testing
+
+### E2E Testing with Cypress
+
+The project includes comprehensive Cypress tests for all user flows:
+
+```bash
+# Install Cypress (if not already installed)
+npm install --save-dev cypress
+
+# Run tests in headless mode
+npx cypress run
+
+# Open Cypress UI for interactive testing
+npx cypress open
+
+# Run specific test categories
+npx cypress run --spec "cypress/e2e/core/**/*.cy.js"      # Core functionality
+npx cypress run --spec "cypress/e2e/features/**/*.cy.js"  # Feature tests
+npx cypress run --spec "cypress/e2e/integration/**/*.cy.js" # Integration tests
+```
+
+**Test Coverage:**
+
+- ✅ User authentication (organizer & sponsor)
+- ✅ Event creation and management
+- ✅ Sponsorship workflows
+- ✅ Messaging system
+- ✅ Dashboard navigation
+- ✅ Form validation
+
+For detailed testing documentation, see [`cypress/README.md`](cypress/README.md).
+
+## 🎯 Featurese.
 
 ## 🚀 Features
 
@@ -94,7 +142,27 @@ npm install
    NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
    ```
 
-### 4. Firestore Setup
+### 4. Cloudinary Setup (for Image Uploads)
+
+1. **Create Cloudinary Account**: Sign up at [cloudinary.com](https://cloudinary.com)
+2. **Get Credentials**: Note your Cloud Name, API Key, and API Secret
+3. **Create Upload Preset**:
+
+   - Go to Settings → Upload tab
+   - Click "Add upload preset"
+   - Set Preset name: `events_preset`
+   - Set Signing Mode: `Unsigned`
+   - Set Folder: `events`
+   - Click "Save"
+
+4. **Add to Environment Variables**:
+   ```env
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+   NEXT_PUBLIC_CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
+
+### 5. Firestore Setup
 
 Create the following collections in your Firestore database:
 

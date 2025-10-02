@@ -383,7 +383,7 @@ const ManageEnquiriesPage: React.FC = () => {
                         value={responseNotes}
                         onChange={(e) => setResponseNotes(e.target.value)}
                         rows={4}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full p-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Add notes for the sponsor (optional)..."
                       />
                     </div>

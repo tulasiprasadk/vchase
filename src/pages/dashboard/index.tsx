@@ -39,6 +39,8 @@ const DashboardPage: React.FC = () => {
   const { enquiries: sponsorEnquiries } = useSponsorshipEnquiries();
 
   // Redirect sponsors to their main sponsorships page
+  // This acts as a fallback for existing users and ensures sponsors always
+  // land on their dedicated sponsorships dashboard
   useEffect(() => {
     if (userProfile && userProfile.userType === "sponsor") {
       router.replace("/dashboard/sponsorships");

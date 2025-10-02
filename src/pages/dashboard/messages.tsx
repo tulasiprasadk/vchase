@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Button from "@/components/ui/Button";
+import VerifiedBadge from "@/components/ui/VerifiedBadge";
 import { useAuth } from "@/context/AuthContext";
 import { useMessaging, Chat } from "../../hooks/useMessaging";
 import toast from "react-hot-toast";
@@ -605,6 +606,16 @@ const MessagingPage: React.FC = () => {
                                       ? "Event Organizer"
                                       : "Sponsor"}
                                   </span>
+                                  {otherParticipant.verificationStatus ===
+                                    "approved" && (
+                                    <VerifiedBadge
+                                      verificationStatus={
+                                        otherParticipant.verificationStatus
+                                      }
+                                      size="sm"
+                                      showText={false}
+                                    />
+                                  )}
                                   {otherParticipant.isOnline && (
                                     <div className="flex items-center space-x-1">
                                       <div className="w-2 h-2 bg-green-400 rounded-full"></div>

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/ui/Button";
+import VerifiedBadge from "@/components/ui/VerifiedBadge";
 import {
   Home,
   Calendar,
@@ -99,8 +101,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-0 left-0 z-50 w-full bg-white shadow-sm">
         <div className="flex items-center justify-between px-4 py-3">
-          <Link href="/" className="text-xl font-bold text-blue-600">
-            EventSponsor
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/logo.png"
+              alt="EventSponsor"
+              width={100}
+              height={32}
+              className="h-6 w-auto"
+            />
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -130,8 +138,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         }`}
       >
         <div className="flex h-16 items-center px-6 border-b">
-          <Link href="/" className="text-xl font-bold text-blue-600">
-            EventSponsor
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/logo.png"
+              alt="EventSponsor"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+            />
           </Link>
         </div>
 
@@ -175,14 +189,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {userProfile && userProfile.firstName
-                  ? userProfile.firstName
-                  : ""}{" "}
-                {userProfile && userProfile.lastName
-                  ? userProfile.lastName
-                  : ""}
-              </p>
+              <div className="flex items-center space-x-2">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {userProfile && userProfile.firstName
+                    ? userProfile.firstName
+                    : ""}{" "}
+                  {userProfile && userProfile.lastName
+                    ? userProfile.lastName
+                    : ""}
+                </p>
+                {userProfile?.verificationStatus === "approved" && (
+                  <VerifiedBadge
+                    verificationStatus={userProfile.verificationStatus}
+                    size="sm"
+                    showText={false}
+                  />
+                )}
+              </div>
               <p className="text-xs text-gray-500 truncate capitalize">
                 {userProfile && userProfile.userType
                   ? userProfile.userType
@@ -206,10 +229,26 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="lg:pl-64">
         {/* Header - Hidden on mobile when sidebar is visible */}
         <header className="bg-white shadow-sm border-b lg:block hidden">
-          <div className="px-4 lg:px-6 py-4">
+          <div className="px-4 lg:px-6 py-4 flex items-center justify-between">
             <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
               {title || "Dashboard"}
             </h1>
+            {userProfile && (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">
+                    {userProfile.firstName} {userProfile.lastName}
+                  </span>
+                  {userProfile.verificationStatus && (
+                    <VerifiedBadge
+                      verificationStatus={userProfile.verificationStatus}
+                      size="sm"
+                      showText={true}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </header>
 

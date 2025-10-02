@@ -188,6 +188,77 @@ const SponsorshipsDashboardPage: React.FC = () => {
     }
   };
 
+  // Alternative function for messaging organizer when we have enquiry data
+  const handleMessageOrganizerFromEnquiry = async (
+    enquiry: SponsorshipEnquiry
+  ) => {
+    if (!user) {
+      toast.error("Please log in to send messages");
+      return;
+    }
+
+    try {
+      console.log("Creating chat from enquiry:", enquiry);
+
+      // Show loading toast while creating chat
+      const loadingToast = toast.loading("Creating conversation...");
+
+      // Try to get event and organizer info from Firestore
+      const { doc, getDoc } = await import("firebase/firestore");
+      const { db } = await import("@/lib/firebase/config");
+
+      const eventDoc = await getDoc(doc(db, "events", enquiry.eventId));
+      if (!eventDoc.exists()) {
+        toast.dismiss(loadingToast);
+        toast.error("Event not found");
+        return;
+      }
+
+      const eventData = eventDoc.data();
+      if (!eventData.organizerId) {
+        toast.dismiss(loadingToast);
+        toast.error("Event organizer information not available");
+        return;
+      }
+
+      const chatId = await findOrCreateChatForEnquiry(
+        eventData.organizerId,
+        user.uid,
+        "Event Organizer", // Default name - will be fetched by the messaging system
+        user.displayName || "Sponsor",
+        "", // Organizer email - will be fetched by the messaging system
+        user.email || "",
+        enquiry.id || "",
+        enquiry.eventTitle,
+        enquiry.eventId
+      );
+
+      toast.dismiss(loadingToast);
+      console.log("Chat created successfully:", chatId);
+      toast.success("Conversation started successfully!");
+
+      // Navigate to messages page with the chat opened
+      router.push(`/dashboard/messages?chat=${chatId}`);
+    } catch (error) {
+      console.error("Error creating chat from enquiry:", error);
+
+      // Provide more specific error messages
+      if (error instanceof Error) {
+        if (error.message.includes("User not authenticated")) {
+          toast.error("Please log in to send messages");
+        } else if (error.message.includes("Could not fetch user information")) {
+          toast.error(
+            "Could not find organizer information. Please try again later."
+          );
+        } else {
+          toast.error(`Failed to start conversation: ${error.message}`);
+        }
+      } else {
+        toast.error("Failed to start conversation. Please try again.");
+      }
+    }
+  };
+
   const handleMessageOrganizerByEvent = async (
     eventId: string,
     eventTitle: string,
@@ -199,8 +270,28 @@ const SponsorshipsDashboardPage: React.FC = () => {
     }
 
     try {
-      // Find the event to get organizer information
-      const event = events.find((e) => e.id === eventId);
+      // First try to find the event in the loaded events
+      let event = events.find((e) => e.id === eventId);
+
+      // If event not found in loaded events, try to fetch it directly from Firestore
+      if (!event) {
+        console.log(
+          "Event not found in loaded events, fetching from Firestore..."
+        );
+        try {
+          const { doc, getDoc } = await import("firebase/firestore");
+          const { db } = await import("@/lib/firebase/config");
+
+          const eventDoc = await getDoc(doc(db, "events", eventId));
+          if (eventDoc.exists()) {
+            event = { id: eventDoc.id, ...eventDoc.data() } as Event;
+            console.log("Event fetched from Firestore:", event);
+          }
+        } catch (fetchError) {
+          console.error("Error fetching event from Firestore:", fetchError);
+        }
+      }
+
       if (!event) {
         toast.error("Event information not found");
         console.error("Event not found with ID:", eventId);
@@ -915,13 +1006,20 @@ const SponsorshipsDashboardPage: React.FC = () => {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() =>
-                                      handleMessageOrganizerByEvent(
-                                        enquiry.eventId,
-                                        enquiry.eventTitle,
-                                        enquiry.id
-                                      )
-                                    }
+                                    onClick={() => {
+                                      console.log(
+                                        "Message organizer clicked for enquiry:",
+                                        {
+                                          eventId: enquiry.eventId,
+                                          eventTitle: enquiry.eventTitle,
+                                          enquiryId: enquiry.id,
+                                          availableEvents: events.length,
+                                        }
+                                      );
+                                      handleMessageOrganizerFromEnquiry(
+                                        enquiry
+                                      );
+                                    }}
                                     className="text-blue-600 border-blue-200 hover:bg-blue-50"
                                   >
                                     <MessageCircle size={16} className="mr-1" />
@@ -1241,7 +1339,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       value={companyInfo}
                       onChange={(e) => setCompanyInfo(e.target.value)}
                       rows={3}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Tell us about your company, industry, and why you're interested in sponsoring this event..."
                       required
                     />
@@ -1256,7 +1354,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       value={enquiryMessage}
                       onChange={(e) => setEnquiryMessage(e.target.value)}
                       rows={4}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Any specific requirements, questions, or additional information you'd like to share..."
                     />
                   </div>
@@ -1280,7 +1378,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                     <Button
                       variant="outline"
                       onClick={() => setShowEnquiryModal(false)}
-                      className="flex-1"
+                      className="flex-1 text-gray-700 hover:bg-gray-100"
                     >
                       Cancel
                     </Button>
@@ -1345,7 +1443,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
                       rows={6}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Type your message to the event organizer here..."
                       required
                     />
@@ -1374,7 +1472,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                         setMessageText("");
                         setSelectedEventForMessage(null);
                       }}
-                      className="flex-1"
+                      className="flex-1 text-gray-700 hover:bg-gray-100"
                     >
                       Cancel
                     </Button>

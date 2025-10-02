@@ -361,7 +361,7 @@ const BrowseEventsPage: React.FC = () => {
                       value={companyInfo}
                       onChange={(e) => setCompanyInfo(e.target.value)}
                       rows={3}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Tell us about your company, industry, and why you're interested in sponsoring this event..."
                       required
                     />
@@ -376,7 +376,7 @@ const BrowseEventsPage: React.FC = () => {
                       value={enquiryMessage}
                       onChange={(e) => setEnquiryMessage(e.target.value)}
                       rows={4}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Any specific requirements, questions, or additional information you'd like to share..."
                     />
                   </div>

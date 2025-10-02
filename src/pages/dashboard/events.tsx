@@ -521,19 +521,19 @@ const EventsDashboardPage: React.FC = () => {
                               <span className="text-gray-600">
                                 Max Capacity:{" "}
                               </span>
-                              <span className="font-medium">
+                              <span className="font-medium text-gray-900">
                                 {event.maxAttendees || "Unlimited"}
                               </span>
                             </div>
                             <div>
                               <span className="text-gray-600">Category: </span>
-                              <span className="font-medium">
+                              <span className="font-medium text-gray-900">
                                 {event.category}
                               </span>
                             </div>
                             <div>
                               <span className="text-gray-600">Tags: </span>
-                              <span className="font-medium">
+                              <span className="font-medium text-gray-900">
                                 {event.tags.length > 0
                                   ? event.tags.join(", ")
                                   : "None"}

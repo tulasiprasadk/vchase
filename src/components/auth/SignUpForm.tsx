@@ -74,13 +74,25 @@ const SignUpForm: React.FC = () => {
         contactNumber,
         userType,
       });
+
       toast.success("Account created successfully!");
-      router.push("/dashboard");
+
+      // Show a welcome message with loading state
+      toast.loading("Setting up your dashboard...", { duration: 1800 });
+
+      // Wait a bit before redirecting to ensure everything is set up
+      setTimeout(() => {
+        // Redirect to appropriate dashboard based on user type
+        const dashboardPath =
+          userType === "sponsor" ? "/dashboard/sponsorships" : "/dashboard";
+
+        router.push(dashboardPath);
+      }, 2000); // 2 second delay
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only set loading to false on error
     }
+    // Don't set loading to false here - keep it true during redirect delay
   };
 
   return (
@@ -193,7 +205,7 @@ const SignUpForm: React.FC = () => {
                 loading={loading}
                 disabled={loading}
               >
-                Create Account
+                {loading ? "Setting up your account..." : "Create Account"}
               </Button>
             </form>
 

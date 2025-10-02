@@ -37,6 +37,7 @@ interface UserInfo {
   companyName?: string;
   lastSeen?: number;
   isOnline?: boolean;
+  verificationStatus?: "pending" | "approved" | "rejected" | "not_requested";
 }
 
 interface ChatMetadata {
@@ -127,6 +128,7 @@ export const useMessaging = () => {
             companyName: userData.companyName,
             lastSeen: userData.lastSeen || Date.now(),
             isOnline: userData.isOnline || false,
+            verificationStatus: userData.verificationStatus || "not_requested",
           };
         }
       } catch (error) {
@@ -141,6 +143,7 @@ export const useMessaging = () => {
         role: "sponsor",
         lastSeen: Date.now(),
         isOnline: false,
+        verificationStatus: "not_requested",
       };
     },
     []

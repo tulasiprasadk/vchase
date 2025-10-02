@@ -160,7 +160,7 @@ const VerificationRequestForm: React.FC<VerificationRequestFormProps> = ({
                       businessAddress: e.target.value,
                     }))
                   }
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border border-slate-300 rounded-md bg-white text-slate-900 placeholder:text-slate-400 focus:ring-blue-500 focus:border-blue-500"
                   rows={3}
                   required
                 />
@@ -214,7 +214,7 @@ const VerificationRequestForm: React.FC<VerificationRequestFormProps> = ({
                       businessDescription: e.target.value,
                     }))
                   }
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border border-slate-300 rounded-md bg-white text-slate-900 placeholder:text-slate-400 focus:ring-blue-500 focus:border-blue-500"
                   rows={4}
                   placeholder="Describe your business and what you do..."
                   required
@@ -290,7 +290,7 @@ const VerificationRequestForm: React.FC<VerificationRequestFormProps> = ({
                           .filter((event) => event.trim()),
                       }))
                     }
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full p-2 border border-slate-300 rounded-md bg-white text-slate-900 placeholder:text-slate-400 focus:ring-blue-500 focus:border-blue-500"
                     rows={4}
                     placeholder="List your previous events..."
                   />
@@ -389,7 +389,7 @@ const VerificationRequestForm: React.FC<VerificationRequestFormProps> = ({
                           .filter((industry) => industry.trim()),
                       }))
                     }
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full p-2 border border-slate-300 rounded-md bg-white text-slate-900 placeholder:text-slate-400 focus:ring-blue-500 focus:border-blue-500"
                     rows={3}
                     placeholder="Technology&#10;Healthcare&#10;Finance..."
                     required
@@ -410,7 +410,7 @@ const VerificationRequestForm: React.FC<VerificationRequestFormProps> = ({
                           .filter((goal) => goal.trim()),
                       }))
                     }
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full p-2 border border-slate-300 rounded-md bg-white text-slate-900 placeholder:text-slate-400 focus:ring-blue-500 focus:border-blue-500"
                     rows={3}
                     placeholder="Brand awareness&#10;Lead generation&#10;Customer acquisition..."
                     required

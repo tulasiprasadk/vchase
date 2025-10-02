@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 const SignInForm: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -42,12 +43,19 @@ const SignInForm: React.FC = () => {
     try {
       await signIn(email, password);
       toast.success("Signed in successfully!");
-      router.push("/dashboard");
+
+      // Add a small delay to ensure user profile is loaded
+      toast.loading("Loading your dashboard...", { duration: 1500 });
+
+      setTimeout(() => {
+        // The dashboard/index.tsx will handle redirecting sponsors to /dashboard/sponsorships
+        router.push("/dashboard");
+      }, 1800);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only set loading to false on error
     }
+    // Don't set loading to false here - keep it true during redirect delay
   };
 
   const handleGoogleSignIn = async () => {
@@ -55,12 +63,19 @@ const SignInForm: React.FC = () => {
     try {
       await signInWithGoogle();
       toast.success("Signed in with Google!");
-      router.push("/dashboard");
+
+      // Add a small delay to ensure user profile is loaded
+      toast.loading("Loading your dashboard...", { duration: 1500 });
+
+      setTimeout(() => {
+        // The dashboard/index.tsx will handle redirecting sponsors to /dashboard/sponsorships
+        router.push("/dashboard");
+      }, 1800);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Only set loading to false on error
     }
+    // Don't set loading to false here - keep it true during redirect delay
   };
 
   return (
@@ -85,13 +100,53 @@ const SignInForm: React.FC = () => {
               />
 
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 error={errors.password}
                 placeholder="Enter your password"
                 disabled={loading}
+                suffixIcon={
+                  showPassword ? (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                  )
+                }
+                onSuffixClick={() => setShowPassword(!showPassword)}
               />
 
               <Button
@@ -100,7 +155,7 @@ const SignInForm: React.FC = () => {
                 loading={loading}
                 disabled={loading}
               >
-                Sign In
+                {loading ? "Signing you in..." : "Sign In"}
               </Button>
             </form>
 
