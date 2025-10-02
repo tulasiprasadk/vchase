@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 // ***********************************************
-// This example commands.ts shows you how to
+// This example commands.js shows you how to
 // create various custom commands and overwrite
 // existing commands.
 //
@@ -222,9 +222,12 @@ Cypress.Commands.add("createEvent", (eventData) => {
   });
 
   // Add sponsorship packages if section exists
-  if (eventData.packages && eventData.packages.length > 0) {
+  if (
+    eventData.sponsorshipPackages &&
+    eventData.sponsorshipPackages.length > 0
+  ) {
     cy.get("body").then(($body) => {
-      eventData.packages.forEach((pkg, index) => {
+      eventData.sponsorshipPackages.forEach((pkg, index) => {
         // Look for add package button or package forms
         if (
           $body.find(
@@ -288,7 +291,7 @@ Cypress.Commands.add("createEvent", (eventData) => {
  */
 Cypress.Commands.add("submitEnquiry", (enquiryData) => {
   // Select sponsorship package
-  cy.get("button").contains(enquiryData.packageSelection).click();
+  cy.get("button").contains(enquiryData.packageName).click();
 
   // Add message
   cy.get('textarea[placeholder*="message"]').type(enquiryData.message);
@@ -328,19 +331,3 @@ Cypress.Commands.add("clearAuth", () => {
     win.sessionStorage.clear();
   });
 });
-
-// Declare custom command types for TypeScript support
-declare global {
-  namespace Cypress {
-    interface Chainable {
-      signUp(userData: any, userType: "organizer" | "sponsor"): Chainable<void>;
-      signIn(email: string, password: string): Chainable<void>;
-      signOut(): Chainable<void>;
-      createEvent(eventData: any): Chainable<void>;
-      submitEnquiry(enquiryData: any): Chainable<void>;
-      waitForElement(selector: string, timeout?: number): Chainable<void>;
-      uploadFile(selector: string, fileName: string): Chainable<void>;
-      clearAuth(): Chainable<void>;
-    }
-  }
-}
