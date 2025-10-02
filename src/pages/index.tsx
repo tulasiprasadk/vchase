@@ -348,9 +348,9 @@ export default function Home() {
               }`}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-                Events we nurtured into{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
-                  inspiring partnerships
+                Brands we nurtured into{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 italic">
+                  inspiring narratives
                 </span>
               </h2>
             </div>
@@ -397,28 +397,141 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Client Logos Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center opacity-70">
-              {/* Placeholder for client logos */}
-              <div className="h-12 bg-slate-200 rounded-lg flex items-center justify-center">
-                <span className="text-slate-500 font-semibold">TechCorp</span>
-              </div>
-              <div className="h-12 bg-slate-200 rounded-lg flex items-center justify-center">
-                <span className="text-slate-500 font-semibold">StartupHub</span>
-              </div>
-              <div className="h-12 bg-slate-200 rounded-lg flex items-center justify-center">
-                <span className="text-slate-500 font-semibold">MegaEvent</span>
-              </div>
-              <div className="h-12 bg-slate-200 rounded-lg flex items-center justify-center">
-                <span className="text-slate-500 font-semibold">BrandCo</span>
-              </div>
-              <div className="h-12 bg-slate-200 rounded-lg flex items-center justify-center">
-                <span className="text-slate-500 font-semibold">EventPro</span>
-              </div>
-              <div className="h-12 bg-slate-200 rounded-lg flex items-center justify-center">
-                <span className="text-slate-500 font-semibold">
-                  SponsorPlus
-                </span>
+            {/* Client Logos Marquee */}
+            <div className="relative overflow-hidden">
+              <div className="flex animate-marquee whitespace-nowrap">
+                <div className="flex items-center gap-12 mr-12">
+                  {/* Real Client Logos */}
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-1.png"
+                      alt="Client 1"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-2.png"
+                      alt="Client 2"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-3.png"
+                      alt="Client 3"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-4.png"
+                      alt="Client 4"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-5.png"
+                      alt="Client 5"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-6.png"
+                      alt="Client 6"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-7.png"
+                      alt="Client 7"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                </div>
+                {/* Duplicate for seamless loop */}
+                <div className="flex items-center gap-12 mr-12">
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-1.png"
+                      alt="Client 1"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-2.png"
+                      alt="Client 2"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-3.png"
+                      alt="Client 3"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-4.png"
+                      alt="Client 4"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-5.png"
+                      alt="Client 5"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-6.png"
+                      alt="Client 6"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                    <Image
+                      src="/images/clients/client-7.png"
+                      alt="Client 7"
+                      width={120}
+                      height={60}
+                      className="object-contain opacity-70 hover:opacity-100 transition-opacity"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

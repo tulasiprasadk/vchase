@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
 import { signOutUser } from "@/lib/firebase/auth";
@@ -55,21 +56,17 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center space-x-3">
-              {/* Logo SVG */}
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 2L2 7V10C2 16 6 20.5 12 22C18 20.5 22 16 22 10V7L12 2ZM11 14H13V16H11V14ZM11 10V12H13V10C13 8.9 12.1 8 11 8S9 8.9 9 10H11Z" />
-                  <circle cx="12" cy="6" r="2" />
-                </svg>
+            <Link href="/" className="flex items-center">
+              {/* Logo Image */}
+              <div className="w-32 h-32 relative">
+                <Image
+                  src="/images/logo.png"
+                  alt="V Chase Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
               </div>
-              <span className="text-2xl font-bold text-blue-600">
-                EventSponsor
-              </span>
             </Link>
           </div>
 
@@ -143,15 +140,8 @@ const Header: React.FC = () => {
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center space-x-2 text-gray-700">
-                <Link href="/auth/signin">
-                  <Button variant="ghost" size="sm">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/auth/signup">
-                  <Button size="sm">Get Started</Button>
-                </Link>
+              <div className="flex items-center space-x-2">
+                {/* No login/register buttons - users will access via "Let's Get Started" */}
               </div>
             )}
           </div>
