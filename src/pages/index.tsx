@@ -47,19 +47,17 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>
-          EventSponsor - Marketing & Technology Solutions That Accelerate Growth
-        </title>
+        <title>V Chase - Chasing Dreams Through Innovation & Growth</title>
         <meta
           name="description"
-          content="A premier marketing & technology company that accelerates businesses towards sustained growth through strategic digital solutions and innovative partnerships"
+          content="V Chase helps businesses chase their dreams through innovative marketing & technology solutions, event sponsorship opportunities, and strategic partnerships"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Layout>
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+        <section className="relative bg-gradient-to-br from-purple-900 via-blue-800 to-indigo-900 text-white overflow-hidden">
           {/* Background Image */}
           <div className="absolute inset-0">
             <Image
@@ -69,44 +67,44 @@ export default function Home() {
               className="object-cover opacity-10"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/90 via-blue-800/90 to-indigo-900/90"></div>
           </div>
 
           {/* Background decorative elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-10 left-10 w-4 h-4 bg-orange-400 rounded-full animate-pulse"></div>
-            <div className="absolute top-32 right-20 w-3 h-3 bg-green-400 rounded-full animate-pulse delay-300"></div>
-            <div className="absolute bottom-20 left-32 w-5 h-5 bg-purple-400 rounded-full animate-pulse delay-700"></div>
-            <Star className="absolute top-20 right-32 w-6 h-6 text-yellow-400 animate-pulse delay-500" />
+            <div className="absolute top-10 left-10 w-4 h-4 bg-purple-400 rounded-full animate-pulse"></div>
+            <div className="absolute top-32 right-20 w-3 h-3 bg-pink-400 rounded-full animate-pulse delay-300"></div>
+            <div className="absolute bottom-20 left-32 w-5 h-5 bg-indigo-400 rounded-full animate-pulse delay-700"></div>
+            <Star className="absolute top-20 right-32 w-6 h-6 text-purple-400 animate-pulse delay-500" />
 
             {/* Additional floating elements */}
             <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-blue-400 rounded-full animate-float"></div>
-            <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-pink-400 rounded-full animate-float delay-1000"></div>
-            <div className="absolute top-1/2 left-1/6 w-1 h-1 bg-cyan-400 rounded-full animate-pulse delay-1500"></div>
-            <div className="absolute bottom-1/4 right-1/6 w-2 h-2 bg-yellow-400 rounded-full animate-float delay-2000"></div>
+            <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-purple-400 rounded-full animate-float delay-1000"></div>
+            <div className="absolute top-1/2 left-1/6 w-1 h-1 bg-pink-400 rounded-full animate-pulse delay-1500"></div>
+            <div className="absolute bottom-1/4 right-1/6 w-2 h-2 bg-indigo-400 rounded-full animate-float delay-2000"></div>
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
             <div className="text-center">
               <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-                We are a{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500">
-                  marketing & technology
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                  Chasing Dreams
                 </span>{" "}
-                company that accelerates businesses towards sustained growth
+                through innovation & growth partnerships
               </h1>
               <p className="text-xl md:text-2xl mb-12 text-slate-300 max-w-4xl mx-auto">
-                The catalysts of transformation, propelling brands to new
-                heights through our unwavering commitment to digital innovation,
-                strategic marketing, and cutting-edge technology solutions
+                V Chase empowers businesses to reach their full potential
+                through strategic marketing, cutting-edge technology solutions,
+                and meaningful event sponsorship opportunities that drive
+                sustainable growth
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <Link href="/auth/signup">
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white border-0 px-8 py-4 text-lg font-semibold"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 px-8 py-4 text-lg font-semibold"
                   >
-                    Enquire Now
+                    Let&apos;s Get Started
                   </Button>
                 </Link>
                 <Link href="/events">
@@ -115,7 +113,7 @@ export default function Home() {
                     variant="outline"
                     className="border-slate-300 text-slate-300 hover:bg-slate-300 hover:text-slate-900 px-8 py-4 text-lg"
                   >
-                    Our Services
+                    Browse Events
                   </Button>
                 </Link>
               </div>
@@ -168,7 +166,7 @@ export default function Home() {
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 A plethora of{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
                   solutions
                 </span>{" "}
                 that leads you to success
@@ -551,22 +549,22 @@ export default function Home() {
               >
                 <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
                   About{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
-                    EventSponsor
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
+                    V Chase
                   </span>
                 </h2>
                 <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  EventSponsor is a premier marketing & technology company
-                  founded in 2020 with a mission to accelerate businesses
-                  towards sustained growth. We are the catalysts of
+                  V Chase is a premier marketing & technology company founded in
+                  2020 with a mission to help businesses chase their dreams
+                  through innovative solutions. We are the catalysts of
                   transformation, propelling brands to new heights through our
-                  unwavering commitment to four foundational pillars.
+                  unwavering commitment to excellence and growth.
                 </p>
                 <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                  With offices in multiple locations, we collaborate globally to
-                  craft high-impact strategies, digital experiences, and
-                  comprehensive solutions tailored to elevate your brand to new
-                  heights. Our team of experts combines creativity with
+                  With a global presence and local expertise, we collaborate
+                  with businesses worldwide to craft high-impact strategies,
+                  digital experiences, and comprehensive solutions that turn
+                  dreams into reality. Our team combines creativity with
                   cutting-edge technology to deliver exceptional results.
                 </p>
                 <div
@@ -685,10 +683,10 @@ export default function Home() {
                       For general inquiries and business opportunities
                     </p>
                     <a
-                      href="mailto:hello@eventsponsor.com"
-                      className="text-orange-600 hover:text-orange-700 font-semibold"
+                      href="mailto:hello@vchase.com"
+                      className="text-purple-600 hover:text-purple-700 font-semibold"
                     >
-                      hello@eventsponsor.com
+                      hello@vchase.com
                     </a>
                   </div>
                 </div>
@@ -1077,23 +1075,23 @@ export default function Home() {
           >
             <h2 className="text-4xl md:text-6xl font-bold mb-8">
               Ready to{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500">
-                build
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                chase your dreams
               </span>{" "}
-              your stack to success?
+              to success?
             </h2>
             <p className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto">
-              Join thousands of event organizers and sponsors who trust
-              EventSponsor to accelerate their growth and create meaningful
-              partnerships
+              Join thousands of event organizers and sponsors who are building
+              meaningful partnerships and accelerating their growth with V Chase
+              today
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link href="/auth/signup">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white border-0 px-10 py-4 text-lg font-semibold"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 px-10 py-4 text-lg font-semibold"
                 >
-                  Enquire Now
+                  Let&apos;s Get Started
                 </Button>
               </Link>
               <Link href="/auth/signin">
