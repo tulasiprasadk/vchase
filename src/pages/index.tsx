@@ -132,7 +132,7 @@ export default function Home() {
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Explore our{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
                   innovative
                 </span>{" "}
                 solutions
@@ -287,7 +287,7 @@ export default function Home() {
                   servicesStagger.visibleItems[4] ? "scroll-visible" : ""
                 }`}
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <TrendingUp className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-4">
@@ -300,7 +300,7 @@ export default function Home() {
                 </p>
                 <Link
                   href="/services/marketing-sales"
-                  className="inline-flex items-center text-orange-600 font-semibold hover:text-orange-700 transition-colors"
+                  className="inline-flex items-center text-purple-600 font-semibold hover:text-purple-700 transition-colors"
                 >
                   See More{" "}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -366,11 +366,10 @@ export default function Home() {
                       Event Director, TechConf 2024
                     </p>
                     <p className="text-slate-700 leading-relaxed">
-                      &ldquo;EventSponsor transformed our approach to
-                      partnerships. Their platform connected us with sponsors
-                      who truly understood our vision, resulting in our most
-                      successful event yet with 300% increased sponsorship
-                      revenue.&rdquo;
+                      &ldquo;V Chase transformed our approach to partnerships.
+                      Their platform connected us with sponsors who truly
+                      understood our vision, resulting in our most successful
+                      event yet with 300% increased sponsorship revenue.&rdquo;
                     </p>
                   </div>
                 </div>
@@ -385,10 +384,10 @@ export default function Home() {
                     </h4>
                     <p className="text-slate-600 mb-4">CMO, Innovation Corp</p>
                     <p className="text-slate-700 leading-relaxed">
-                      &ldquo;The EventSponsor team proved to be extremely
-                      passionate and dedicated. Their business acumen and
-                      strategic matching helped us find the perfect events to
-                      sponsor, maximizing our brand exposure and ROI.&rdquo;
+                      &ldquo;The V Chase team proved to be extremely passionate
+                      and dedicated. Their business acumen and strategic
+                      matching helped us find the perfect events to sponsor,
+                      maximizing our brand exposure and ROI.&rdquo;
                     </p>
                   </div>
                 </div>
@@ -576,7 +575,7 @@ export default function Home() {
                       statsStagger.visibleItems[0] ? "scroll-visible" : ""
                     }`}
                   >
-                    <Users className="w-6 h-6 text-orange-500" />
+                    <Users className="w-6 h-6 text-purple-500" />
                     <span className="text-slate-700 font-semibold">
                       500+ Clients Served
                     </span>
@@ -650,7 +649,7 @@ export default function Home() {
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Contact{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
                   Us
                 </span>
               </h2>
@@ -672,7 +671,7 @@ export default function Home() {
                 }`}
               >
                 <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -740,7 +739,7 @@ export default function Home() {
                 }`}
               >
                 <div className="flex items-center space-x-3 mb-6">
-                  <MessageCircle className="w-6 h-6 text-orange-500" />
+                  <MessageCircle className="w-6 h-6 text-purple-500" />
                   <h3 className="text-xl font-bold text-slate-900">
                     Quick Message
                   </h3>
@@ -753,7 +752,7 @@ export default function Home() {
                     <input
                       type="text"
                       placeholder="Your full name"
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -763,14 +762,14 @@ export default function Home() {
                     <input
                       type="email"
                       placeholder="your.email@example.com"
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Service Interest
                     </label>
-                    <select className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <select className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                       <option>Business Consultancy</option>
                       <option>Turn Key Projects</option>
                       <option>Personal Consultancy</option>
@@ -786,10 +785,10 @@ export default function Home() {
                     <textarea
                       rows={4}
                       placeholder="Tell us about your project or inquiry..."
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     ></textarea>
                   </div>
-                  <Button className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600">
+                  <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
                     Send Message
                   </Button>
                 </form>
@@ -809,7 +808,7 @@ export default function Home() {
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Service{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
                   Policy
                 </span>
               </h2>
@@ -826,7 +825,7 @@ export default function Home() {
                 }`}
               >
                 <div className="flex items-start space-x-4">
-                  <Shield className="w-8 h-8 text-orange-500 flex-shrink-0 mt-1" />
+                  <Shield className="w-8 h-8 text-purple-500 flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-3">
                       Quality Assurance
@@ -919,7 +918,7 @@ export default function Home() {
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Memorandum of{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
                   Understanding
                 </span>
               </h2>
@@ -1063,7 +1062,7 @@ export default function Home() {
         <section className="py-24 bg-gradient-to-br from-slate-900 to-slate-800 text-white relative overflow-hidden">
           {/* Background decorative elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-10 right-10 w-32 h-32 bg-gradient-to-br from-orange-400/20 to-pink-500/20 rounded-full blur-xl"></div>
+            <div className="absolute top-10 right-10 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-full blur-xl"></div>
             <div className="absolute bottom-10 left-10 w-40 h-40 bg-gradient-to-br from-purple-400/20 to-blue-500/20 rounded-full blur-xl"></div>
           </div>
 
