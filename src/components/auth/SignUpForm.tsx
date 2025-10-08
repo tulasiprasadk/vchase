@@ -4,8 +4,68 @@ import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import Link from "next/link";
 import toast from "react-hot-toast";
+
+// Define account types - easily extensible for future additions
+const ACCOUNT_TYPES = [
+  { value: "sponsor", label: "Brand Sponsor", category: "event-services" },
+  { value: "organizer", label: "Event Organizer", category: "event-services" },
+  {
+    value: "sales-marketing",
+    label: "Sales & Marketing Consultant",
+    category: "consulting",
+  },
+  {
+    value: "personal-coaching",
+    label: "Personal Coaching",
+    category: "consulting",
+  },
+  {
+    value: "digital-marketing",
+    label: "Digital Marketing",
+    category: "consulting",
+  },
+  {
+    value: "turnkey-projects",
+    label: "Turnkey Projects",
+    category: "consulting",
+  },
+  {
+    value: "business-consultancy",
+    label: "Business Consultancy",
+    category: "consulting",
+  },
+  {
+    value: "organiser-sponsor",
+    label: "Organiser & Sponsor Services",
+    category: "consulting",
+  },
+  {
+    value: "marketing-sales",
+    label: "Marketing & Sales",
+    category: "consulting",
+  },
+];
+
+// Personal email domains to reject
+const PERSONAL_EMAIL_DOMAINS = [
+  "gmail.com",
+  "yahoo.com",
+  "hotmail.com",
+  "outlook.com",
+  "aol.com",
+  "icloud.com",
+  "live.com",
+  "msn.com",
+  "protonmail.com",
+  "mail.com",
+  "yandex.com",
+  "zoho.com",
+  "gmx.com",
+  "tutanota.com",
+];
 
 const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -14,46 +74,100 @@ const SignUpForm: React.FC = () => {
   const [lastName, setLastName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
-  const [userType, setUserType] = useState<"organizer" | "sponsor">(
-    "organizer"
-  );
+  const [userType, setUserType] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const { signUp } = useAuth();
   const router = useRouter();
 
+  const validateBusinessEmail = (email: string) => {
+    if (!email) return "Email is required";
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+
+    const domain = email.split("@")[1]?.toLowerCase();
+    if (!domain) return "Invalid email format";
+
+    // Reject personal email domains
+    if (PERSONAL_EMAIL_DOMAINS.includes(domain)) {
+      return "Please use your company/business email address. Personal email domains (gmail.com, yahoo.com, etc.) are not accepted.";
+    }
+
+    // Basic business email validation - should have a proper domain
+    if (domain.length < 4 || !domain.includes(".")) {
+      return "Please enter a valid business email address";
+    }
+
+    return null;
+  };
+
+  const validatePhoneNumber = (phone: string) => {
+    if (!phone) return "Phone number is required";
+
+    // Remove all non-numeric characters for validation
+    const cleanPhone = phone.replace(/[\s\-\(\)\+\.]/g, "");
+
+    // Check if it's all numbers
+    if (!/^\d+$/.test(cleanPhone)) {
+      return "Phone number should contain only numbers";
+    }
+
+    // Check length (allow 7-15 digits for international numbers)
+    if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+      return "Phone number should be between 7-15 digits";
+    }
+
+    // Reject obvious dummy numbers
+    const dummyPatterns = [
+      /^0{7,}$/, // All zeros
+      /^1{7,}$/, // All ones
+      /^2{7,}$/, // All twos
+      /^1234567890/, // Sequential numbers
+      /^9876543210/, // Reverse sequential
+    ];
+
+    if (dummyPatterns.some((pattern) => pattern.test(cleanPhone))) {
+      return "Please enter a valid phone number";
+    }
+
+    return null;
+  };
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Email is invalid";
-    }
+    // Email validation with business email check
+    const emailError = validateBusinessEmail(email);
+    if (emailError) newErrors.email = emailError;
 
     if (!password) {
       newErrors.password = "Password is required";
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     }
 
-    if (!firstName) {
+    if (!firstName.trim()) {
       newErrors.firstName = "First name is required";
     }
 
-    if (!lastName) {
+    if (!lastName.trim()) {
       newErrors.lastName = "Last name is required";
     }
 
-    if (!companyName) {
+    if (!companyName.trim()) {
       newErrors.companyName = "Company name is required";
     }
 
-    if (!contactNumber) {
-      newErrors.contactNumber = "Contact number is required";
-    } else if (!/^\+?[\d\s\-\(\)]+$/.test(contactNumber)) {
-      newErrors.contactNumber = "Please enter a valid contact number";
+    // Phone validation
+    const phoneError = validatePhoneNumber(contactNumber);
+    if (phoneError) newErrors.contactNumber = phoneError;
+
+    if (!userType) {
+      newErrors.userType = "Please select an account type";
     }
 
     setErrors(newErrors);
@@ -72,28 +186,49 @@ const SignUpForm: React.FC = () => {
         lastName,
         companyName,
         contactNumber,
-        userType,
+        userType: userType as
+          | "organizer"
+          | "sponsor"
+          | "admin"
+          | "sales-marketing"
+          | "personal-coaching"
+          | "digital-marketing"
+          | "turnkey-projects"
+          | "business-consultancy"
+          | "organiser-sponsor"
+          | "marketing-sales",
       });
 
       toast.success("Account created successfully!");
 
       // Show a welcome message with loading state
-      toast.loading("Setting up your dashboard...", { duration: 1800 });
+      toast.loading("Setting up your account...", { duration: 2000 });
 
       // Wait a bit before redirecting to ensure everything is set up
       setTimeout(() => {
-        // Redirect to appropriate dashboard based on user type
-        const dashboardPath =
-          userType === "sponsor" ? "/dashboard/sponsorships" : "/dashboard";
+        // Redirect based on user type
+        let redirectPath = "/dashboard";
 
-        router.push(dashboardPath);
-      }, 2000); // 2 second delay
+        if (userType === "sponsor") {
+          redirectPath = "/dashboard/sponsorships";
+        } else if (userType === "organizer") {
+          redirectPath = "/dashboard/events";
+        } else {
+          // For service providers, redirect to a general dashboard
+          redirectPath = "/dashboard";
+        }
+
+        router.push(redirectPath);
+      }, 2500); // 2.5 second delay
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
-      setLoading(false); // Only set loading to false on error
+      setLoading(false);
     }
-    // Don't set loading to false here - keep it true during redirect delay
   };
+
+  const selectedAccountType = ACCOUNT_TYPES.find(
+    (type) => type.value === userType
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -101,7 +236,7 @@ const SignUpForm: React.FC = () => {
         <Card>
           <CardHeader className="text-center">
             <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
-            <p className="text-gray-600">Join EventSponsor today</p>
+            <p className="text-gray-600">Join our professional network</p>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -136,22 +271,22 @@ const SignUpForm: React.FC = () => {
               />
 
               <Input
-                label="Contact Number"
-                type="tel"
-                value={contactNumber}
-                onChange={(e) => setContactNumber(e.target.value)}
-                error={errors.contactNumber}
-                placeholder="Enter your contact number"
+                type="email"
+                label="Business Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={errors.email}
+                placeholder="your.name@company.com"
                 disabled={loading}
               />
 
               <Input
-                type="email"
-                label="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                error={errors.email}
-                placeholder="Enter your email"
+                label="Phone Number"
+                type="tel"
+                value={contactNumber}
+                onChange={(e) => setContactNumber(e.target.value)}
+                error={errors.contactNumber}
+                placeholder="+1 (555) 123-4567"
                 disabled={loading}
               />
 
@@ -161,42 +296,40 @@ const SignUpForm: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 error={errors.password}
-                placeholder="Create a password"
+                placeholder="Create a strong password"
                 disabled={loading}
               />
 
               <div className="space-y-2">
                 <label className="block text-sm text-gray-800 font-semibold">
-                  Account Type
+                  Account Type *
                 </label>
-                <div className="flex space-x-4">
-                  <label className="flex items-center text-gray-600 text-sm">
-                    <input
-                      type="radio"
-                      name="userType"
-                      value="organizer"
-                      checked={userType === "organizer"}
-                      onChange={(e) =>
-                        setUserType(e.target.value as "organizer")
-                      }
-                      className="mr-2"
-                      disabled={loading}
-                    />
-                    Event Organizer
-                  </label>
-                  <label className="flex items-center text-gray-600 text-sm">
-                    <input
-                      type="radio"
-                      name="userType"
-                      value="sponsor"
-                      checked={userType === "sponsor"}
-                      onChange={(e) => setUserType(e.target.value as "sponsor")}
-                      className="mr-2"
-                      disabled={loading}
-                    />
-                    Sponsor
-                  </label>
-                </div>
+                <SearchableSelect
+                  options={ACCOUNT_TYPES}
+                  value={userType}
+                  onSelect={setUserType}
+                  placeholder="Select your account type..."
+                  searchPlaceholder="Search account types..."
+                  className={errors.userType ? "border-red-300" : ""}
+                />
+                {errors.userType && (
+                  <p className="text-sm text-red-600 mt-1">{errors.userType}</p>
+                )}
+                {selectedAccountType && (
+                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-blue-700">
+                        {selectedAccountType.label}
+                      </span>
+                    </div>
+                    <p className="text-xs text-blue-600 mt-1">
+                      {selectedAccountType.category === "event-services"
+                        ? "Connect with businesses in the events industry"
+                        : "Provide professional consulting services"}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <Button
@@ -205,27 +338,9 @@ const SignUpForm: React.FC = () => {
                 loading={loading}
                 disabled={loading}
               >
-                {loading ? "Setting up your account..." : "Create Account"}
+                {loading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
-
-            {/* <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or</span>
-              </div>
-            </div>
-
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleGoogleSignUp}
-              disabled={loading}
-            >
-              Continue with Google
-            </Button> */}
 
             <div className="text-center">
               <p className="text-sm text-gray-600">

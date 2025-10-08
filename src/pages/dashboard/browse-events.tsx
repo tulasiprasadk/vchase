@@ -109,7 +109,7 @@ const BrowseEventsPage: React.FC = () => {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 🔍 Filter Events
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Category
@@ -147,6 +147,36 @@ const BrowseEventsPage: React.FC = () => {
                         {location}
                       </option>
                     ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Expertise
+                  </label>
+                  <select
+                    value={filters.expertise || ""}
+                    onChange={(e) =>
+                      setFilters({ ...filters, expertise: e.target.value })
+                    }
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">All Expertise</option>
+                    <option value="sponsor">Brand Sponsor</option>
+                    <option value="organizer">Event Organizer</option>
+                    <option value="sales-marketing">
+                      Sales & Marketing Consultant
+                    </option>
+                    <option value="personal-coaching">Personal Coaching</option>
+                    <option value="digital-marketing">Digital Marketing</option>
+                    <option value="turnkey-projects">Turnkey Projects</option>
+                    <option value="business-consultancy">
+                      Business Consultancy
+                    </option>
+                    <option value="organiser-sponsor">
+                      Organiser & Sponsor Services
+                    </option>
+                    <option value="marketing-sales">Marketing & Sales</option>
                   </select>
                 </div>
 

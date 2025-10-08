@@ -79,6 +79,13 @@ const Header: React.FC = () => {
               Browse Events
             </Link>
 
+            <Link
+              href="/blogs"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              Blog
+            </Link>
+
             {/* Smooth scroll navigation links */}
             <button
               onClick={() => scrollToSection("about-us")}

@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 export interface EventFilters {
   category?: string;
   location?: string;
+  expertise?: string;
   minBudget?: number;
   maxBudget?: number;
   search?: string;
@@ -114,6 +115,15 @@ export const useSponsorEvents = (filters?: EventFilters) => {
                   .toLowerCase()
                   .includes(filters.location.toLowerCase())
               ) {
+                return false;
+              }
+            }
+
+            // Expertise filter (if event has expertise field or we can derive it)
+            if (filters.expertise) {
+              // For now, we'll assume events might have an expertise field
+              // This can be updated when the Event interface includes organizer expertise
+              if (event.expertise && event.expertise !== filters.expertise) {
                 return false;
               }
             }

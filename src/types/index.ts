@@ -24,7 +24,17 @@ export interface UserProfile extends BaseDocument {
   lastName: string;
   companyName: string;
   contactNumber: string;
-  userType: "organizer" | "sponsor" | "admin";
+  userType:
+    | "organizer"
+    | "sponsor"
+    | "admin"
+    | "sales-marketing"
+    | "personal-coaching"
+    | "digital-marketing"
+    | "turnkey-projects"
+    | "business-consultancy"
+    | "organiser-sponsor"
+    | "marketing-sales";
   profileImage?: string;
   displayName?: string;
   company?: string;
@@ -56,6 +66,7 @@ export interface Event extends BaseDocument {
   };
   organizerId: string;
   category: string;
+  expertise?: string; // Organizer's expertise area
   tags: string[];
   imageUrl?: string;
   website?: string;
@@ -203,6 +214,7 @@ export interface APIResponse<T> {
 export interface EventFilters {
   category?: string;
   location?: string;
+  expertise?: string;
   dateRange?: {
     start: Date;
     end: Date;
