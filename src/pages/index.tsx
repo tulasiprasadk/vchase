@@ -47,10 +47,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>V Chase - Chasing Dreams Through Innovation & Growth</title>
+        <title>VChase - Chasing Dreams Through Innovation & Growth</title>
         <meta
           name="description"
-          content="V Chase helps businesses chase their dreams through innovative marketing & technology solutions, event sponsorship opportunities, and strategic partnerships"
+          content="VChase helps businesses chase their dreams through innovative marketing & technology solutions, event sponsorship opportunities, and strategic partnerships"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -93,9 +93,9 @@ export default function Home() {
                 through innovation & growth partnerships
               </h1>
               <p className="text-xl md:text-2xl mb-12 text-slate-300 max-w-4xl mx-auto">
-                V Chase empowers businesses to reach their full potential
-                through strategic marketing, cutting-edge technology solutions,
-                and meaningful event sponsorship opportunities that drive
+                VChase empowers businesses to reach their full potential through
+                strategic marketing, cutting-edge technology solutions, and
+                meaningful event sponsorship opportunities that drive
                 sustainable growth
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -366,7 +366,7 @@ export default function Home() {
                       Event Director, TechConf 2024
                     </p>
                     <p className="text-slate-700 leading-relaxed">
-                      &ldquo;V Chase transformed our approach to partnerships.
+                      &ldquo;VChase transformed our approach to partnerships.
                       Their platform connected us with sponsors who truly
                       understood our vision, resulting in our most successful
                       event yet with 300% increased sponsorship revenue.&rdquo;
@@ -384,7 +384,7 @@ export default function Home() {
                     </h4>
                     <p className="text-slate-600 mb-4">CMO, Innovation Corp</p>
                     <p className="text-slate-700 leading-relaxed">
-                      &ldquo;The V Chase team proved to be extremely passionate
+                      &ldquo;The VChase team proved to be extremely passionate
                       and dedicated. Their business acumen and strategic
                       matching helped us find the perfect events to sponsor,
                       maximizing our brand exposure and ROI.&rdquo;
@@ -549,11 +549,11 @@ export default function Home() {
                 <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
                   About{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
-                    V Chase
+                    VChase
                   </span>
                 </h2>
                 <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  V Chase is a premier marketing & technology company founded in
+                  VChase is a premier marketing & technology company founded in
                   2020 with a mission to help businesses chase their dreams
                   through innovative solutions. We are the catalysts of
                   transformation, propelling brands to new heights through our
@@ -1081,7 +1081,7 @@ export default function Home() {
             </h2>
             <p className="text-xl text-slate-300 mb-12 max-w-2xl mx-auto">
               Join thousands of event organizers and sponsors who are building
-              meaningful partnerships and accelerating their growth with V Chase
+              meaningful partnerships and accelerating their growth with VChase
               today
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">

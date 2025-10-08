@@ -101,7 +101,7 @@ const EventsPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Browse Events - V Chase</title>
+        <title>Browse Events - VChase</title>
         <meta
           name="description"
           content="Discover events perfect for your brand sponsorship"
