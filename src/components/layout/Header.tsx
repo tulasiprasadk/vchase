@@ -93,6 +93,13 @@ const Header: React.FC = () => {
               Careers
             </Link>
 
+            <Link
+              href="/roi-calculator"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              ROI Calculator
+            </Link>
+
             {/* Smooth scroll navigation links */}
             <button
               onClick={() => scrollToSection("about-us")}
