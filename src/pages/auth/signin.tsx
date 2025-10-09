@@ -1,7 +1,11 @@
 import React from "react";
 import { NextPage } from "next";
 import Head from "next/head";
-import SignInForm from "@/components/auth/SignInForm";
+import dynamic from "next/dynamic";
+
+const SignInForm = dynamic(() => import("@/components/auth/SignInForm"), {
+  ssr: false,
+});
 
 const SignInPage: NextPage = () => {
   return (
