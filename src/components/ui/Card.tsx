@@ -4,15 +4,18 @@ import { cn } from "@/utils/cn";
 interface CardProps {
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ children, className }) => {
+const Card: React.FC<CardProps> = ({ children, className, onClick }) => {
   return (
     <div
       className={cn(
         "rounded-lg border border-gray-200 bg-white shadow-sm",
+        onClick && "cursor-pointer",
         className
       )}
+      onClick={onClick}
     >
       {children}
     </div>

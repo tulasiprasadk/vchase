@@ -67,14 +67,14 @@ const PERSONAL_EMAIL_DOMAINS = [
   "tutanota.com",
 ];
 
-const SignUpForm: React.FC = () => {
+const SignUpForm: React.FC<{ selectedRole?: string }> = ({ selectedRole }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
-  const [userType, setUserType] = useState<string>("");
+  const [userType, setUserType] = useState<string>(selectedRole || "");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 

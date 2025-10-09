@@ -99,7 +99,7 @@ export default function Home() {
                 sustainable growth
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Link href="/auth/signup">
+                <Link href="/auth/role-selection">
                   <Button
                     size="lg"
                     className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 px-8 py-4 text-lg font-semibold"
@@ -1085,7 +1085,7 @@ export default function Home() {
               today
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Link href="/auth/signup">
+              <Link href="/auth/role-selection">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 px-10 py-4 text-lg font-semibold"
