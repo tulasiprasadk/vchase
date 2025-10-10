@@ -38,7 +38,14 @@ export default function MarketingSales() {
                 growth, build customer relationships, and optimize your sales
                 funnel for maximum conversions.
               </p>
-              <Button size="lg" className="bg-orange-600 hover:bg-orange-700">
+              <Button
+                size="lg"
+                className="bg-orange-600 hover:bg-orange-700"
+                onClick={() =>
+                  (window.location.href =
+                    "/services/request?type=marketing-sales")
+                }
+              >
                 Boost Your Sales
               </Button>
             </div>
@@ -308,6 +315,10 @@ export default function MarketingSales() {
             <Button
               size="lg"
               className="bg-white text-orange-900 hover:bg-orange-50"
+              onClick={() =>
+                (window.location.href =
+                  "/services/request?type=marketing-sales")
+              }
             >
               Supercharge Your Sales
             </Button>

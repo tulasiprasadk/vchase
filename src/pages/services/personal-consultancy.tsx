@@ -31,7 +31,14 @@ export default function PersonalConsultancy() {
                 helping professionals and entrepreneurs achieve their personal
                 and business objectives.
               </p>
-              <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+              <Button
+                size="lg"
+                className="bg-purple-600 hover:bg-purple-700"
+                onClick={() =>
+                  (window.location.href =
+                    "/services/request?type=personal-consultancy")
+                }
+              >
                 Book Your Session
               </Button>
             </div>
@@ -203,6 +210,10 @@ export default function PersonalConsultancy() {
             <Button
               size="lg"
               className="bg-white text-purple-900 hover:bg-purple-50"
+              onClick={() =>
+                (window.location.href =
+                  "/services/request?type=personal-consultancy")
+              }
             >
               Schedule Free Consultation
             </Button>

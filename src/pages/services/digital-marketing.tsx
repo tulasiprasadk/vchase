@@ -38,7 +38,14 @@ export default function DigitalMarketing() {
                 presence, drive engagement, and accelerate business growth
                 through strategic campaigns.
               </p>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() =>
+                  (window.location.href =
+                    "/services/request?type=digital-marketing")
+                }
+              >
                 Get Started Today
               </Button>
             </div>
@@ -259,6 +266,10 @@ export default function DigitalMarketing() {
             <Button
               size="lg"
               className="bg-white text-blue-900 hover:bg-blue-50"
+              onClick={() =>
+                (window.location.href =
+                  "/services/request?type=digital-marketing")
+              }
             >
               Start Your Digital Journey
             </Button>

@@ -31,7 +31,14 @@ export default function BusinessConsultancy() {
                 accelerates growth through data-driven insights and proven
                 methodologies.
               </p>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button
+                size="lg"
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() =>
+                  (window.location.href =
+                    "/services/request?type=business-consultancy")
+                }
+              >
                 Get Started Today
               </Button>
             </div>
@@ -157,6 +164,10 @@ export default function BusinessConsultancy() {
             <Button
               size="lg"
               className="bg-white text-blue-900 hover:bg-blue-50"
+              onClick={() =>
+                (window.location.href =
+                  "/services/request?type=business-consultancy")
+              }
             >
               Schedule a Consultation
             </Button>

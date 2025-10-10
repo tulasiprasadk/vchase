@@ -38,7 +38,14 @@ export default function OrganiserSponsor() {
                 successful partnerships, maximize event impact, and achieve
                 mutual business objectives.
               </p>
-              <Button size="lg" className="bg-teal-600 hover:bg-teal-700">
+              <Button
+                size="lg"
+                className="bg-teal-600 hover:bg-teal-700"
+                onClick={() =>
+                  (window.location.href =
+                    "/services/request?type=organiser-sponsor")
+                }
+              >
                 Partner With Us
               </Button>
             </div>
@@ -168,7 +175,12 @@ export default function OrganiserSponsor() {
                   </li>
                 </ul>
 
-                <Button className="bg-teal-600 hover:bg-teal-700">
+                <Button
+                  className="bg-teal-600 hover:bg-teal-700"
+                  onClick={() =>
+                    (window.location.href = "/services/request?type=organiser")
+                  }
+                >
                   Register as Organizer
                 </Button>
               </div>
@@ -209,7 +221,12 @@ export default function OrganiserSponsor() {
                   </li>
                 </ul>
 
-                <Button className="bg-teal-600 hover:bg-teal-700">
+                <Button
+                  className="bg-teal-600 hover:bg-teal-700"
+                  onClick={() =>
+                    (window.location.href = "/services/request?type=sponsor")
+                  }
+                >
                   Become a Sponsor
                 </Button>
               </div>
@@ -355,6 +372,9 @@ export default function OrganiserSponsor() {
               <Button
                 size="lg"
                 className="bg-white text-teal-900 hover:bg-teal-50"
+                onClick={() =>
+                  (window.location.href = "/services/request?type=organiser")
+                }
               >
                 Join as Organizer
               </Button>
@@ -362,6 +382,9 @@ export default function OrganiserSponsor() {
                 size="lg"
                 variant="outline"
                 className="border-white text-white hover:bg-teal-800"
+                onClick={() =>
+                  (window.location.href = "/services/request?type=sponsor")
+                }
               >
                 Become a Sponsor
               </Button>

@@ -31,7 +31,14 @@ export default function TurnkeyProjects() {
                 delivery, ensuring seamless execution and exceptional results
                 for your business goals.
               </p>
-              <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+              <Button
+                size="lg"
+                className="bg-emerald-600 hover:bg-emerald-700"
+                onClick={() =>
+                  (window.location.href =
+                    "/services/request?type=turnkey-projects")
+                }
+              >
                 Start Your Project
               </Button>
             </div>
@@ -181,6 +188,10 @@ export default function TurnkeyProjects() {
             <Button
               size="lg"
               className="bg-white text-emerald-900 hover:bg-emerald-50"
+              onClick={() =>
+                (window.location.href =
+                  "/services/request?type=turnkey-projects")
+              }
             >
               Get Project Quote
             </Button>
