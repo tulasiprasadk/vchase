@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
+import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import {
@@ -85,101 +87,116 @@ const RoleSelectionPage: React.FC = () => {
         />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Welcome to EventSponsor
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Choose your role to get started with the platform that connects
-              event organizers, sponsors, and consultants
-            </p>
+      <Layout>
+        <div className="min-h-screen relative py-12 px-4">
+          {/* Background image (local) */}
+          <div className="absolute inset-0 -z-10">
+            <Image
+              src="/images/people-taking-part-high-protocol-event.jpg"
+              alt="Event participants"
+              fill
+              style={{ objectFit: "cover" }}
+              priority={false}
+            />
+            {/* gradient overlay for improved contrast (stronger at top) */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/10" />
           </div>
 
-          {/* Role Selection Cards */}
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {roles.map((role) => {
-              const Icon = role.icon;
-              const isSelected = selectedRole === role.id;
+          <div className="max-w-6xl mx-auto relative z-10">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-white mb-4 drop-shadow-lg">
+                Welcome to EventSponsor
+              </h1>
+              <p className="text-xl text-white/90 max-w-2xl mx-auto drop-shadow">
+                Choose your role to get started with the platform that connects
+                event organizers, sponsors, and consultants
+              </p>
+            </div>
 
-              return (
-                <Card
-                  key={role.id}
-                  className={`cursor-pointer transition-all duration-300 hover:shadow-xl ${
-                    isSelected
-                      ? `${role.borderColor} border-2 shadow-lg scale-105`
-                      : "border border-gray-200 hover:border-gray-300"
-                  } ${role.bgColor}`}
-                  onClick={() => setSelectedRole(role.id)}
-                >
-                  <CardHeader className="text-center pb-4">
-                    <div
-                      className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-r ${role.color} flex items-center justify-center mb-4`}
-                    >
-                      <Icon className="h-8 w-8 text-white" />
-                    </div>
-                    <CardTitle className="text-2xl font-bold text-gray-900">
-                      {role.title}
-                    </CardTitle>
-                    <p className="text-gray-600 mt-2">{role.description}</p>
-                  </CardHeader>
+            {/* Role Selection Cards */}
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              {roles.map((role) => {
+                const Icon = role.icon;
+                const isSelected = selectedRole === role.id;
 
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {role.features.map((feature, index) => (
-                        <li
-                          key={index}
-                          className="flex items-center text-sm text-gray-700"
-                        >
-                          <CheckCircle className="h-4 w-4 text-green-500 mr-3 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    {isSelected && (
-                      <div className="mt-6 flex items-center justify-center">
-                        <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                          Selected
-                        </div>
+                return (
+                  <Card
+                    key={role.id}
+                    className={`cursor-pointer transition-all duration-300 backdrop-blur-md bg-white/10 border border-white/20 text-white/90 ${
+                      isSelected
+                        ? `ring-1 ring-white/30 shadow-2xl scale-105`
+                        : `hover:shadow-lg`
+                    }`}
+                    onClick={() => setSelectedRole(role.id)}
+                  >
+                    <CardHeader className="text-center pb-4">
+                      <div
+                        className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-r ${role.color} flex items-center justify-center mb-4 shadow-lg`}
+                      >
+                        <Icon className="h-8 w-8 text-white" />
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                      <CardTitle className="text-2xl font-bold text-white">
+                        {role.title}
+                      </CardTitle>
+                      <p className="text-white/85 mt-2">{role.description}</p>
+                    </CardHeader>
 
-          {/* Continue Button */}
-          <div className="text-center">
-            <Button
-              onClick={handleContinue}
-              disabled={!selectedRole}
-              size="lg"
-              className={`px-12 py-4 text-lg font-semibold transition-all duration-300 ${
-                selectedRole
-                  ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              Continue to Sign Up
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+                    <CardContent>
+                      <ul className="space-y-3">
+                        {role.features.map((feature, index) => (
+                          <li
+                            key={index}
+                            className="flex items-center text-sm text-white/90"
+                          >
+                            <CheckCircle className="h-4 w-4 text-green-200 mr-3 flex-shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
 
-            <p className="mt-6 text-gray-600">
-              Already have an account?{" "}
-              <Link
-                href="/auth/signin"
-                className="text-purple-600 hover:text-purple-800 font-medium"
+                      {isSelected && (
+                        <div className="mt-6 flex items-center justify-center">
+                          <div className="bg-white/10 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur">
+                            Selected
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Continue Button */}
+            <div className="text-center">
+              <Button
+                onClick={handleContinue}
+                disabled={!selectedRole}
+                size="lg"
+                className={`px-12 py-4 text-lg font-semibold transition-all duration-300 ${
+                  selectedRole
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               >
-                Sign in here
-              </Link>
-            </p>
+                Continue to Sign Up
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+
+              <p className="mt-6 text-gray-600">
+                Already have an account?{" "}
+                <Link
+                  href="/auth/signin"
+                  className="text-purple-600 hover:text-purple-800 font-medium"
+                >
+                  Sign in here
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </Layout>
     </>
   );
 };
