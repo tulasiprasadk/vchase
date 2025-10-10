@@ -38,11 +38,6 @@ const ACCOUNT_TYPES = [
     category: "consulting",
   },
   {
-    value: "organiser-sponsor",
-    label: "Organiser & Sponsor Services",
-    category: "consulting",
-  },
-  {
     value: "marketing-sales",
     label: "Marketing & Sales",
     category: "consulting",
@@ -195,7 +190,6 @@ const SignUpForm: React.FC<{ selectedRole?: string }> = ({ selectedRole }) => {
           | "digital-marketing"
           | "turnkey-projects"
           | "business-consultancy"
-          | "organiser-sponsor"
           | "marketing-sales",
       });
 
@@ -304,17 +298,43 @@ const SignUpForm: React.FC<{ selectedRole?: string }> = ({ selectedRole }) => {
                 <label className="block text-sm text-gray-800 font-semibold">
                   Account Type *
                 </label>
-                <SearchableSelect
-                  options={ACCOUNT_TYPES}
-                  value={userType}
-                  onSelect={setUserType}
-                  placeholder="Select your account type..."
-                  searchPlaceholder="Search account types..."
-                  className={errors.userType ? "border-red-300" : ""}
-                />
-                {errors.userType && (
-                  <p className="text-sm text-red-600 mt-1">{errors.userType}</p>
+
+                {/* If a role was selected on the role-selection page, show a read-only badge
+                    and keep the value in state. Otherwise render the searchable select. */}
+                {selectedRole ? (
+                  <div>
+                    <input type="hidden" name="userType" value={userType} />
+                    <div className="mt-1 p-3 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium text-gray-900">
+                          {selectedAccountType
+                            ? selectedAccountType.label
+                            : userType}
+                        </span>
+                        <p className="text-xs text-gray-500">
+                          Pre-selected from role choice
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <SearchableSelect
+                      options={ACCOUNT_TYPES}
+                      value={userType}
+                      onSelect={setUserType}
+                      placeholder="Select your account type..."
+                      searchPlaceholder="Search account types..."
+                      className={errors.userType ? "border-red-300" : ""}
+                    />
+                    {errors.userType && (
+                      <p className="text-sm text-red-600 mt-1">
+                        {errors.userType}
+                      </p>
+                    )}
+                  </>
                 )}
+
                 {selectedAccountType && (
                   <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <div className="flex items-center space-x-2">

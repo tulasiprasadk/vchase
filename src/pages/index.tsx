@@ -307,31 +307,7 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Organiser Sponsor Collaboration */}
-              <div
-                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${
-                  servicesStagger.visibleItems[5] ? "scroll-visible" : ""
-                }`}
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Handshake className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">
-                  Organiser Sponsor Collaboration
-                </h3>
-                <p className="text-slate-600 mb-6 leading-relaxed">
-                  Strategic partnership facilitation between event organizers
-                  and sponsors, creating mutually beneficial relationships that
-                  drive success.
-                </p>
-                <Link
-                  href="/services/organiser-sponsor"
-                  className="inline-flex items-center text-indigo-600 font-semibold hover:text-indigo-700 transition-colors"
-                >
-                  See More{" "}
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
+              {/* Organiser Sponsor Collaboration removed per request */}
             </div>
           </div>
         </section>
@@ -775,7 +751,6 @@ export default function Home() {
                       <option>Personal Consultancy</option>
                       <option>Digital Marketing</option>
                       <option>Marketing & Sales</option>
-                      <option>Organiser Sponsor Collaboration</option>
                     </select>
                   </div>
                   <div>

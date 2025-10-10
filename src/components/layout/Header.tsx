@@ -70,36 +70,8 @@ const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Navigation */}
+          {/* Navigation - only keep anchor scroll links and dashboard links */}
           <nav className="hidden md:flex space-x-8">
-            <Link
-              href="/events"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Browse Events
-            </Link>
-
-            <Link
-              href="/blogs"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Blog
-            </Link>
-
-            <Link
-              href="/careers"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Careers
-            </Link>
-
-            <Link
-              href="/roi-calculator"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              ROI Calculator
-            </Link>
-
             {/* Smooth scroll navigation links */}
             <button
               onClick={() => scrollToSection("about-us")}

@@ -20,7 +20,8 @@ const RoleSelectionPage: React.FC = () => {
     {
       id: "organizer",
       title: "Event Organizer",
-      description: "Create and manage events, find sponsors, and grow your event business",
+      description:
+        "Create and manage events, find sponsors, and grow your event business",
       icon: Calendar,
       features: [
         "Create unlimited events",
@@ -35,7 +36,8 @@ const RoleSelectionPage: React.FC = () => {
     {
       id: "sponsor",
       title: "Sponsor",
-      description: "Find events to sponsor, manage sponsorships, and maximize ROI",
+      description:
+        "Find events to sponsor, manage sponsorships, and maximize ROI",
       icon: DollarSign,
       features: [
         "Browse events to sponsor",
@@ -50,7 +52,8 @@ const RoleSelectionPage: React.FC = () => {
     {
       id: "business-consultancy",
       title: "Consultant",
-      description: "Offer consulting services for event management and sponsorship",
+      description:
+        "Offer consulting services for event management and sponsorship",
       icon: Briefcase,
       features: [
         "Offer consulting services",
@@ -90,8 +93,8 @@ const RoleSelectionPage: React.FC = () => {
               Welcome to EventSponsor
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Choose your role to get started with the platform that connects event organizers,
-              sponsors, and consultants
+              Choose your role to get started with the platform that connects
+              event organizers, sponsors, and consultants
             </p>
           </div>
 
@@ -126,7 +129,10 @@ const RoleSelectionPage: React.FC = () => {
                   <CardContent>
                     <ul className="space-y-3">
                       {role.features.map((feature, index) => (
-                        <li key={index} className="flex items-center text-sm text-gray-700">
+                        <li
+                          key={index}
+                          className="flex items-center text-sm text-gray-700"
+                        >
                           <CheckCircle className="h-4 w-4 text-green-500 mr-3 flex-shrink-0" />
                           {feature}
                         </li>
@@ -164,7 +170,10 @@ const RoleSelectionPage: React.FC = () => {
 
             <p className="mt-6 text-gray-600">
               Already have an account?{" "}
-              <Link href="/auth/signin" className="text-purple-600 hover:text-purple-800 font-medium">
+              <Link
+                href="/auth/signin"
+                className="text-purple-600 hover:text-purple-800 font-medium"
+              >
                 Sign in here
               </Link>
             </p>

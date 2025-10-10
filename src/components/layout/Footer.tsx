@@ -20,40 +20,8 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            {/* <h4 className="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">
-              For Organizers
-            </h4> */}
-            {/* <ul className="space-y-2">
-              <li>
-                <a
-                  href="/events/create"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Create Event
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/dashboard/events"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Manage Events
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/pricing"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  Pricing
-                </a>
-              </li>
-            </ul> */}
-          </div>
-
-          <div>
-            {/* <h4 className="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">
-              For Sponsors
+            <h4 className="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">
+              Explore
             </h4>
             <ul className="space-y-2">
               <li>
@@ -62,22 +30,19 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a
-                  href="/dashboard/sponsorships"
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  My Sponsorships
+                <a href="/blogs" className="text-gray-600 hover:text-gray-900">
+                  Blog
                 </a>
               </li>
               <li>
                 <a
-                  href="/how-it-works"
+                  href="/careers"
                   className="text-gray-600 hover:text-gray-900"
                 >
-                  How It Works
+                  Careers
                 </a>
               </li>
-            </ul> */}
+            </ul>
           </div>
         </div>
 
