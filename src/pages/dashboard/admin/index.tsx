@@ -49,7 +49,7 @@ interface EventData {
 }
 
 const AdminDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
     totalOrganizers: 0,
@@ -152,7 +152,10 @@ const AdminDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+      <ProtectedRoute
+        requireAuth={true}
+        allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+      >
         <DashboardLayout title="Admin Dashboard">
           <div className="flex justify-center items-center py-12">
             <div className="text-gray-600">Loading admin dashboard...</div>
@@ -163,7 +166,10 @@ const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+    <ProtectedRoute
+      requireAuth={true}
+      allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+    >
       <Head>
         <title>Admin Dashboard - EventSponsor</title>
         <meta
@@ -178,7 +184,14 @@ const AdminDashboard: React.FC = () => {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-6 text-white">
             <div className="flex items-center mb-2">
               <Shield className="h-8 w-8 mr-3" />
-              <h1 className="text-2xl font-bold">Welcome, Admin!</h1>
+              <h1 className="text-2xl font-bold">
+                Welcome,{" "}
+                {userProfile?.userType
+                  ? userProfile.userType.charAt(0).toUpperCase() +
+                    userProfile.userType.slice(1)
+                  : "Admin"}
+                !
+              </h1>
             </div>
             <p className="opacity-90">
               Monitor platform activity, moderate content, and manage users from

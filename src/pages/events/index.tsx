@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import Layout from "@/components/layout/Layout";
 import Button from "@/components/ui/Button";
+import SponsorshipROICalculator from "@/components/SponsorshipROICalculator";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { useSponsorEvents } from "@/hooks/useSponsorEvents";
 import { useAuth } from "@/context/AuthContext";
@@ -22,6 +23,11 @@ import {
 import toast from "react-hot-toast";
 
 const EventsPage: React.FC = () => {
+  const [showROIModal, setShowROIModal] = useState(false);
+  const [roiInitialCost, setRoiInitialCost] = useState<number | undefined>(
+    undefined
+  );
+  const [roiTitle, setRoiTitle] = useState<string | undefined>(undefined);
   const router = useRouter();
   const { user, userProfile } = useAuth();
   const { events, loading } = useSponsorEvents();
@@ -346,6 +352,24 @@ const EventsPage: React.FC = () => {
                               </Button>
                             </Link>
                           )}
+                          {user && userProfile?.userType === "sponsor" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="ml-2"
+                              onClick={() => {
+                                // prefill with first package price if available
+                                const firstPkg = event.sponsorshipPackages
+                                  ? event.sponsorshipPackages[0]
+                                  : undefined;
+                                setRoiInitialCost(firstPkg?.price);
+                                setRoiTitle(`ROI Calculator - ${event.title}`);
+                                setShowROIModal(true);
+                              }}
+                            >
+                              View ROI
+                            </Button>
+                          )}
                         </div>
                       </CardContent>
                     </Card>
@@ -381,6 +405,18 @@ const EventsPage: React.FC = () => {
             )}
           </div>
         </div>
+        {/* ROI Modal */}
+        {showROIModal && (
+          <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg w-full max-w-3xl p-6">
+              <SponsorshipROICalculator
+                initialCost={roiInitialCost}
+                title={roiTitle}
+                onClose={() => setShowROIModal(false)}
+              />
+            </div>
+          </div>
+        )}
       </Layout>
     </>
   );

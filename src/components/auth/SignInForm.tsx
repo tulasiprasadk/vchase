@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
+import { auth } from "@/lib/firebase/config";
+import { getDocument } from "@/lib/firebase/firestore";
+import { signOutUser } from "@/lib/firebase/auth";
+import { UserProfile } from "@/types";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
@@ -13,8 +17,10 @@ const SignInForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [showSuspendedModal, setShowSuspendedModal] = useState(false);
+  const [suspendedStatus, setSuspendedStatus] = useState<string | null>(null);
 
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn } = useAuth();
   const router = useRouter();
 
   const validateForm = () => {
@@ -47,25 +53,40 @@ const SignInForm: React.FC = () => {
       // Add a small delay to ensure user profile is loaded
       toast.loading("Loading your dashboard...", { duration: 1500 });
 
-      setTimeout(() => {
-        // The dashboard/index.tsx will handle redirecting sponsors to /dashboard/sponsorships
-        router.push("/dashboard");
-      }, 1800);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An error occurred");
-      setLoading(false); // Only set loading to false on error
-    }
-    // Don't set loading to false here - keep it true during redirect delay
-  };
+      // Immediately check the user's profile from Firestore and enforce approval rules
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        toast.error("Unable to verify user after sign in");
+        setLoading(false);
+        return;
+      }
 
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    try {
-      await signInWithGoogle();
-      toast.success("Signed in with Google!");
+      const result = await getDocument("users", currentUser.uid);
+      const profile = result.data as UserProfile | null;
 
-      // Add a small delay to ensure user profile is loaded
-      toast.loading("Loading your dashboard...", { duration: 1500 });
+      // If the user is not a super_admin, enforce centralized status-based login
+      if (profile && String(profile.userType) !== "super_admin") {
+        // Determine status: prefer explicit profile.status, fallback to legacy fields
+        const p = profile as unknown as Record<string, unknown>;
+        const rawStatus =
+          (p.status as string) ||
+          (p.isActive === false
+            ? "blocked"
+            : p.isApproved
+            ? "active"
+            : "pending");
+        const status = String(rawStatus);
+
+        // Allow login only when status is 'active' (accept 'approved' for legacy)
+        if (!(status === "active" || status === "approved")) {
+          await signOutUser();
+          // show modal with status information
+          setSuspendedStatus(status);
+          setShowSuspendedModal(true);
+          setLoading(false);
+          return;
+        }
+      }
 
       setTimeout(() => {
         // The dashboard/index.tsx will handle redirecting sponsors to /dashboard/sponsorships
@@ -212,6 +233,42 @@ const SignInForm: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+      {/* Suspended account modal */}
+      {showSuspendedModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
+            <h3 className="text-xl font-semibold mb-2">Account not active</h3>
+            <p className="text-sm text-gray-700 mb-4">
+              Your account is not active.
+              {suspendedStatus && (
+                <span className="block mt-2">
+                  Current status: <strong>{suspendedStatus}</strong>
+                </span>
+              )}
+              <span className="block mt-2">
+                If you believe this is a mistake, please contact support or your
+                account administrator for help.
+              </span>
+            </p>
+            <div className="flex items-center justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowSuspendedModal(false)}
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  window.location.href =
+                    "mailto:support@example.com?subject=Account%20Suspended";
+                }}
+              >
+                Contact Support
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

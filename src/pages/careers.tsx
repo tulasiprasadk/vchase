@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import { getCollection } from "@/lib/firebase/firestore";
+import CareerApplicationForm from "@/components/careers/CareerApplicationForm";
+import toast from "react-hot-toast";
 
 // Job interface
 interface Job {
@@ -22,164 +25,6 @@ interface Job {
 }
 
 // Sample job data
-const SAMPLE_JOBS: Job[] = [
-  {
-    id: "1",
-    title: "Senior Event Marketing Specialist",
-    department: "Marketing",
-    location: "New York, NY",
-    type: "full-time",
-    description:
-      "Lead marketing campaigns for high-profile events and sponsorship partnerships. Develop comprehensive marketing strategies that drive engagement and maximize ROI for our clients.",
-    requirements: [
-      "5+ years of event marketing experience",
-      "Strong understanding of digital marketing channels",
-      "Experience with CRM systems and analytics tools",
-      "Excellent communication and project management skills",
-      "Bachelor's degree in Marketing, Business, or related field",
-    ],
-    benefits: [
-      "Competitive salary + performance bonuses",
-      "Health, dental, and vision insurance",
-      "Flexible work arrangements",
-      "Professional development budget",
-      "Team building events and retreats",
-    ],
-    salary: "$80,000 - $110,000",
-    postedAt: "2024-01-10",
-    isRemote: false,
-  },
-  {
-    id: "2",
-    title: "Full Stack Developer",
-    department: "Engineering",
-    location: "Remote",
-    type: "full-time",
-    description:
-      "Build and maintain scalable web applications that power our event sponsorship platform. Work with modern technologies and contribute to all aspects of the development lifecycle.",
-    requirements: [
-      "3+ years of full-stack development experience",
-      "Proficiency in React, Node.js, and TypeScript",
-      "Experience with Firebase or similar backend services",
-      "Knowledge of modern web development practices",
-      "Strong problem-solving and collaboration skills",
-    ],
-    benefits: [
-      "Competitive salary + equity package",
-      "100% remote work flexibility",
-      "Health and wellness stipend",
-      "Latest development tools and equipment",
-      "Learning and development opportunities",
-    ],
-    salary: "$90,000 - $130,000",
-    postedAt: "2024-01-08",
-    isRemote: true,
-  },
-  {
-    id: "3",
-    title: "Business Development Manager",
-    department: "Sales",
-    location: "San Francisco, CA",
-    type: "full-time",
-    description:
-      "Drive business growth by identifying and securing new partnership opportunities. Build relationships with event organizers and sponsors to expand our platform's reach.",
-    requirements: [
-      "3+ years in business development or sales",
-      "Experience in B2B partnerships",
-      "Strong negotiation and presentation skills",
-      "Understanding of event industry dynamics",
-      "Track record of meeting/exceeding targets",
-    ],
-    benefits: [
-      "Base salary + uncapped commission",
-      "Health, dental, and vision coverage",
-      "Company car or transportation allowance",
-      "Professional development opportunities",
-      "Team incentives and rewards",
-    ],
-    salary: "$70,000 - $100,000 + commission",
-    postedAt: "2024-01-05",
-    isRemote: false,
-  },
-  {
-    id: "4",
-    title: "UX/UI Designer",
-    department: "Design",
-    location: "Austin, TX",
-    type: "full-time",
-    description:
-      "Create intuitive and beautiful user experiences for our event sponsorship platform. Work closely with product and engineering teams to design interfaces that delight users.",
-    requirements: [
-      "3+ years of UX/UI design experience",
-      "Proficiency in Figma, Sketch, or similar tools",
-      "Strong portfolio demonstrating design process",
-      "Understanding of user-centered design principles",
-      "Experience with design systems",
-    ],
-    benefits: [
-      "Competitive salary + design tool stipend",
-      "Health and wellness benefits",
-      "Flexible work schedule",
-      "Creative work environment",
-      "Conference attendance budget",
-    ],
-    salary: "$75,000 - $105,000",
-    postedAt: "2024-01-03",
-    isRemote: false,
-  },
-  {
-    id: "5",
-    title: "Customer Success Specialist",
-    department: "Customer Success",
-    location: "Remote",
-    type: "full-time",
-    description:
-      "Ensure our clients achieve their goals through proactive support and guidance. Help event organizers and sponsors maximize their success on our platform.",
-    requirements: [
-      "2+ years in customer success or account management",
-      "Experience with SaaS platforms",
-      "Strong communication and problem-solving skills",
-      "Understanding of event industry",
-      "Data-driven approach to customer success",
-    ],
-    benefits: [
-      "Competitive salary + performance bonuses",
-      "100% remote work",
-      "Health and wellness benefits",
-      "Professional development support",
-      "Flexible PTO policy",
-    ],
-    salary: "$55,000 - $75,000",
-    postedAt: "2023-12-28",
-    isRemote: true,
-  },
-  {
-    id: "6",
-    title: "Content Marketing Manager",
-    department: "Marketing",
-    location: "Chicago, IL",
-    type: "full-time",
-    description:
-      "Develop and execute content strategies that position us as thought leaders in the event sponsorship space. Create compelling content that drives engagement and conversions.",
-    requirements: [
-      "3+ years of content marketing experience",
-      "Strong writing and editing skills",
-      "Experience with content management systems",
-      "SEO knowledge and analytics experience",
-      "Understanding of B2B marketing",
-    ],
-    benefits: [
-      "Competitive salary + performance incentives",
-      "Health, dental, and vision insurance",
-      "Flexible work arrangements",
-      "Content creation budget",
-      "Team collaboration events",
-    ],
-    salary: "$65,000 - $85,000",
-    postedAt: "2023-12-20",
-    isRemote: false,
-  },
-];
 
 const DEPARTMENTS = [
   { value: "all", label: "All Departments" },
@@ -204,18 +49,25 @@ const CareersPage: React.FC = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [applyingFor, setApplyingFor] = useState<string | null>(null);
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [expandedJob, setExpandedJob] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simulate API call
+    let mounted = true;
     const loadJobs = async () => {
       setLoading(true);
-      // In a real app, this would be an API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setJobs(SAMPLE_JOBS);
+      const { data, error } = await getCollection("careers");
+      if (!mounted) return;
       setLoading(false);
+      if (error) return toast.error("Failed to load jobs: " + error);
+      // data is expected to be an array of job objects
+      setJobs((data || []) as Job[]);
     };
-
     loadJobs();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const filteredJobs = jobs.filter((job) => {
@@ -452,22 +304,33 @@ const CareersPage: React.FC = () => {
                       </div>
                     )}
 
+                    {/* Requirements (preview or full when expanded) */}
                     <div className="mb-4">
                       <h4 className="text-sm font-medium text-gray-900 mb-2">
                         Requirements:
                       </h4>
                       <ul className="text-sm text-gray-600 space-y-1">
-                        {job.requirements.slice(0, 3).map((req, index) => (
+                        {(expandedJob === job.id
+                          ? job.requirements
+                          : job.requirements.slice(0, 3)
+                        ).map((req, index) => (
                           <li key={index} className="flex items-start">
                             <span className="text-blue-500 mr-2">•</span>
-                            <span className="line-clamp-1">{req}</span>
+                            <span
+                              className={
+                                expandedJob === job.id ? "" : "line-clamp-1"
+                              }
+                            >
+                              {req}
+                            </span>
                           </li>
                         ))}
-                        {job.requirements.length > 3 && (
-                          <li className="text-blue-600 font-medium">
-                            +{job.requirements.length - 3} more requirements
-                          </li>
-                        )}
+                        {expandedJob !== job.id &&
+                          job.requirements.length > 3 && (
+                            <li className="text-blue-600 font-medium">
+                              +{job.requirements.length - 3} more requirements
+                            </li>
+                          )}
                       </ul>
                     </div>
 
@@ -476,12 +339,61 @@ const CareersPage: React.FC = () => {
                         Posted {formatDate(job.postedAt)}
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          Learn More
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-gray-700"
+                          onClick={() =>
+                            setExpandedJob((prev) =>
+                              prev === job.id ? null : job.id
+                            )
+                          }
+                        >
+                          {expandedJob === job.id
+                            ? "Hide details"
+                            : "Learn More"}
                         </Button>
-                        <Button size="sm">Apply Now</Button>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setApplyingFor(job.id);
+                            setShowApplyModal(true);
+                          }}
+                        >
+                          Apply Now
+                        </Button>
                       </div>
                     </div>
+
+                    {/* Expanded details shown below the apply form or description */}
+                    {expandedJob === job.id && (
+                      <div className="mt-4 border-t pt-4">
+                        <div className="mb-4">
+                          <h4 className="text-sm font-medium text-gray-900 mb-2">
+                            Full Description
+                          </h4>
+                          <p className="text-sm text-gray-700">
+                            {job.description}
+                          </p>
+                        </div>
+
+                        {job.benefits && job.benefits.length > 0 && (
+                          <div className="mb-4">
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">
+                              Benefits
+                            </h4>
+                            <ul className="text-sm text-gray-600 space-y-1">
+                              {job.benefits.map((b, i) => (
+                                <li key={i} className="flex items-start">
+                                  <span className="text-green-500 mr-2">•</span>
+                                  <span>{b}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -522,6 +434,42 @@ const CareersPage: React.FC = () => {
           </div>
         </div>
       </Layout>
+      {/* Application Modal */}
+      {showApplyModal && applyingFor && (
+        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">
+                Apply for Role
+              </h3>
+              <button
+                onClick={() => {
+                  setShowApplyModal(false);
+                  setApplyingFor(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            {(() => {
+              const job = jobs.find((j) => j.id === applyingFor);
+              if (!applyingFor) return null;
+              return (
+                <CareerApplicationForm
+                  jobId={applyingFor}
+                  jobTitle={job?.title || ""}
+                  onApplied={() => {
+                    setShowApplyModal(false);
+                    setApplyingFor(null);
+                  }}
+                />
+              );
+            })()}
+          </div>
+        </div>
+      )}
     </>
   );
 };

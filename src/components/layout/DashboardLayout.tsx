@@ -50,6 +50,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       label: "Sponsorship Enquiries",
       icon: CreditCard,
     },
+    {
+      href: "/dashboard/roi-calculator",
+      label: "ROI Calculator",
+      icon: BarChart3,
+    },
     { href: "/dashboard/messages", label: "Messages", icon: MessageCircle },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
@@ -59,6 +64,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       href: "/dashboard/sponsorships",
       label: "Sponsorships",
       icon: CreditCard,
+    },
+    {
+      href: "/dashboard/roi-calculator",
+      label: "ROI Calculator",
+      icon: BarChart3,
     },
     { href: "/dashboard/messages", label: "Messages", icon: MessageCircle },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
@@ -71,7 +81,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       label: "Moderate",
       icon: AlertTriangle,
     },
-    { href: "/dashboard/admin/users", label: "Users", icon: Users },
+    { href: "/dashboard/admin/users", label: "User Management", icon: Users },
+    {
+      href: "/dashboard/admin/careers",
+      label: "Careers Management",
+      icon: Calendar,
+    },
+    {
+      href: "/dashboard/admin/applications",
+      label: "Application Management",
+      icon: MessageCircle,
+    },
     {
       href: "/dashboard/admin/verification-requests",
       label: "Verification Requests",
@@ -82,12 +102,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   ];
 
   const getNavItems = () => {
-    switch (userProfile && userProfile.userType) {
+    const role = String(userProfile?.userType || "").toLowerCase();
+    switch (role) {
       case "organizer":
         return organizerNavItems;
       case "sponsor":
         return sponsorNavItems;
       case "admin":
+      case "supervisor":
+      case "executive":
+      case "super_admin":
         return adminNavItems;
       default:
         return organizerNavItems;

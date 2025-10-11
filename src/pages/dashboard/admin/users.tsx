@@ -17,6 +17,9 @@ import {
   deleteDoc,
   Timestamp,
   orderBy,
+  getDoc,
+  addDoc,
+  increment,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import {
@@ -25,7 +28,6 @@ import {
   Filter,
   CheckCircle,
   XCircle,
-  Trash2,
   User,
   Mail,
   Calendar,
@@ -49,10 +51,36 @@ interface UserData {
   verificationStatus?: "pending" | "approved" | "rejected" | "not_requested";
   verifiedAt?: Timestamp;
   verifiedBy?: string;
+  // Admin controls
+  isReadOnly?: boolean;
+  isActive?: boolean;
+  callsDone?: number;
 }
 
 const UserManagementPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
+  const currentRole = String(userProfile?.userType || "");
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [newUser, setNewUser] = useState<{
+    firstName: string;
+    lastName: string;
+    email: string;
+    userType: string;
+    status?: string;
+  }>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    userType: "organizer",
+    status: "active",
+  });
+  const [showCallsModal, setShowCallsModal] = useState(false);
+  const [callsToAdd, setCallsToAdd] = useState(0);
+  const [callsTargetUserId, setCallsTargetUserId] = useState<string | null>(
+    null
+  );
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -109,12 +137,33 @@ const UserManagementPage: React.FC = () => {
     currentStatus: boolean
   ) => {
     try {
-      await updateDoc(doc(db, "users", userId), {
-        isApproved: !currentStatus,
-        [!currentStatus ? "approvedAt" : "rejectedAt"]: Timestamp.now(),
-      });
+      // safety: don't allow modifying super_admin accounts
+      const targetSnap = await getDoc(doc(db, "users", userId));
+      if (targetSnap.exists()) {
+        const td = targetSnap.data() as unknown as Record<string, unknown>;
+        const targetType = String(td.userType || "");
+        if (targetType === "super_admin") {
+          toast.error("Cannot modify super_admin account");
+          return;
+        }
+        // additional safety: supervisors and executives cannot modify admin accounts
+        if (
+          (currentRole === "supervisor" || currentRole === "executive") &&
+          targetType === "admin"
+        ) {
+          toast.error("You are not allowed to modify admin accounts");
+          return;
+        }
+      }
+      const newApproved = !currentStatus;
+      const updates: Record<string, unknown> = {
+        isApproved: newApproved,
+        [newApproved ? "approvedAt" : "rejectedAt"]: Timestamp.now(),
+        status: newApproved ? "active" : "suspended",
+      };
+      await updateDoc(doc(db, "users", userId), updates);
       toast.success(
-        `User ${!currentStatus ? "approved" : "suspended"} successfully`
+        `User ${newApproved ? "approved" : "suspended"} successfully`
       );
     } catch (error) {
       console.error("Error updating user status:", error);
@@ -132,6 +181,23 @@ const UserManagementPage: React.FC = () => {
     }
 
     try {
+      // prevent deleting super_admin via UI
+      const targetSnap = await getDoc(doc(db, "users", userId));
+      if (targetSnap.exists()) {
+        const td = targetSnap.data() as unknown as Record<string, unknown>;
+        const targetType = String(td.userType || "");
+        if (targetType === "super_admin") {
+          toast.error("Cannot delete a super_admin account");
+          return;
+        }
+        if (
+          (currentRole === "supervisor" || currentRole === "executive") &&
+          targetType === "admin"
+        ) {
+          toast.error("You are not allowed to delete admin accounts");
+          return;
+        }
+      }
       await deleteDoc(doc(db, "users", userId));
       toast.success("User deleted successfully");
     } catch (error) {
@@ -140,9 +206,79 @@ const UserManagementPage: React.FC = () => {
     }
   };
 
+  const handleSaveUser = async () => {
+    try {
+      if (editingUserId) {
+        // update existing user
+        await updateDoc(doc(db, "users", editingUserId), {
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          email: newUser.email,
+          userType: newUser.userType,
+          // keep status if provided, otherwise leave unchanged
+          status: newUser.status || undefined,
+        });
+        toast.success("User updated");
+      } else {
+        // create new user
+        await addDoc(collection(db, "users"), {
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          email: newUser.email,
+          userType: newUser.userType,
+          createdAt: Timestamp.now(),
+          isApproved: true,
+          isActive: true,
+          isReadOnly: false,
+          callsDone: 0,
+          status: "active",
+        });
+        toast.success(
+          "User record added. Note: create an auth account separately if needed."
+        );
+      }
+
+      setShowAddModal(false);
+      setEditingUserId(null);
+      setNewUser({
+        firstName: "",
+        lastName: "",
+        email: "",
+        userType: "organizer",
+        status: "active",
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to save user");
+    }
+  };
+
+  const handleUpdateCalls = async () => {
+    if (!callsTargetUserId) return;
+    if (callsToAdd <= 0) {
+      toast.error("Enter a positive number of calls");
+      return;
+    }
+    try {
+      await updateDoc(doc(db, "users", callsTargetUserId), {
+        callsDone: increment(callsToAdd),
+      });
+      toast.success("Calls updated");
+      setCallsToAdd(0);
+      setShowCallsModal(false);
+      setCallsTargetUserId(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update calls");
+    }
+  };
+
   if (loading) {
     return (
-      <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+      <ProtectedRoute
+        requireAuth={true}
+        allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+      >
         <DashboardLayout title="User Management">
           <div className="flex justify-center items-center py-12">
             <div className="text-gray-600">Loading users...</div>
@@ -153,7 +289,10 @@ const UserManagementPage: React.FC = () => {
   }
 
   return (
-    <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+    <ProtectedRoute
+      requireAuth={true}
+      allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+    >
       <Head>
         <title>User Management - Admin Panel</title>
         <meta name="description" content="Manage platform users" />
@@ -166,6 +305,20 @@ const UserManagementPage: React.FC = () => {
             <div className="flex items-center mb-2">
               <Users className="h-8 w-8 mr-3" />
               <h1 className="text-2xl font-bold">User Management</h1>
+              <div className="ml-auto">
+                {(currentRole === "admin" || currentRole === "super_admin") && (
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setEditingUserId(null);
+                      setShowAddModal(true);
+                    }}
+                    className="ml-4"
+                  >
+                    + Add User
+                  </Button>
+                )}
+              </div>
             </div>
             <p className="opacity-90">
               Manage all platform users, approve accounts, and monitor activity.
@@ -236,7 +389,7 @@ const UserManagementPage: React.FC = () => {
                             | "admin"
                         )
                       }
-                      className="border border-gray-300 rounded-md px-3 py-1 text-sm"
+                      className="border border-gray-300 rounded-md px-3 py-1 text-sm text-gray-500"
                     >
                       <option value="all">All Types</option>
                       <option value="organizer">Organizers</option>
@@ -252,7 +405,7 @@ const UserManagementPage: React.FC = () => {
                         e.target.value as "all" | "approved" | "pending"
                       )
                     }
-                    className="border border-gray-300 rounded-md px-3 py-1 text-sm"
+                    className="border border-gray-300 rounded-md px-3 py-1 text-sm text-gray-500"
                   >
                     <option value="all">All Status</option>
                     <option value="approved">Approved</option>
@@ -299,7 +452,7 @@ const UserManagementPage: React.FC = () => {
                           {/* User Info */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2 mb-2">
-                              <h3 className="text-lg font-semibold truncate">
+                              <h3 className="text-lg font-semibold truncate text-gray-900">
                                 {userData.firstName} {userData.lastName}
                               </h3>
                               <Badge
@@ -321,10 +474,19 @@ const UserManagementPage: React.FC = () => {
                               />
                               <Badge
                                 variant={
-                                  userData.isApproved ? "default" : "secondary"
+                                  userData.status === "active"
+                                    ? "default"
+                                    : userData.status === "pending"
+                                    ? "secondary"
+                                    : userData.status === "suspended" ||
+                                      userData.status === "blocked"
+                                    ? "outline"
+                                    : "outline"
                                 }
+                                className="ml-2"
                               >
-                                {userData.isApproved ? "Approved" : "Pending"}
+                                {userData.status ||
+                                  (userData.isApproved ? "active" : "pending")}
                               </Badge>
                             </div>
 
@@ -371,42 +533,228 @@ const UserManagementPage: React.FC = () => {
 
                         {/* Actions */}
                         <div className="flex items-center space-x-2 ml-4 flex-shrink-0">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() =>
-                              handleToggleApproval(
-                                userData.id,
-                                userData.isApproved || false
-                              )
-                            }
-                            className={
-                              userData.isApproved
-                                ? "text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                                : "text-green-600 hover:text-green-700 hover:bg-green-50"
-                            }
-                          >
-                            {userData.isApproved ? (
+                          {userData.userType === "super_admin" ? (
+                            <div className="text-sm text-gray-500">
+                              Protected
+                            </div>
+                          ) : (
+                            (currentRole === "admin" ||
+                              currentRole === "super_admin" ||
+                              currentRole === "supervisor") && (
                               <>
-                                <XCircle className="h-4 w-4 mr-1" />
-                                Suspend
-                              </>
-                            ) : (
-                              <>
-                                <CheckCircle className="h-4 w-4 mr-1" />
-                                Approve
-                              </>
-                            )}
-                          </Button>
+                                {/* Role assignment: super_admin full, admin limited */}
+                                {(currentRole === "super_admin" ||
+                                  currentRole === "admin") && (
+                                  <select
+                                    value={userData.userType}
+                                    onChange={(e) => {
+                                      const newRole = e.target.value;
+                                      // Admins can only assign supervisor/executive; super_admin can assign any
+                                      if (currentRole === "admin") {
+                                        const allowed = [
+                                          "supervisor",
+                                          "executive",
+                                        ];
+                                        if (
+                                          !allowed.includes(newRole) &&
+                                          newRole !== userData.userType
+                                        ) {
+                                          toast.error(
+                                            "Admins can only assign Supervisor or Executive roles"
+                                          );
+                                          return;
+                                        }
+                                      }
+                                      updateDoc(doc(db, "users", userData.id), {
+                                        userType: newRole,
+                                      }).then(() =>
+                                        toast.success("Role updated")
+                                      );
+                                    }}
+                                    className="border border-gray-200 rounded px-2 py-1 text-sm mr-2 text-gray-500"
+                                  >
+                                    {currentRole === "admin" ? (
+                                      <>
+                                        <option value={userData.userType}>
+                                          {userData.userType}
+                                        </option>
+                                        <option value="supervisor">
+                                          Supervisor
+                                        </option>
+                                        <option value="executive">
+                                          Executive
+                                        </option>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <option value="admin">Admin</option>
+                                        <option value="super_admin">
+                                          Super Admin
+                                        </option>
+                                        <option value="supervisor">
+                                          Supervisor
+                                        </option>
+                                        <option value="executive">
+                                          Executive
+                                        </option>
+                                        <option value="organizer">
+                                          Organizer
+                                        </option>
+                                        <option value="sponsor">Sponsor</option>
+                                      </>
+                                    )}
+                                  </select>
+                                )}
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    handleToggleApproval(
+                                      userData.id,
+                                      userData.isApproved || false
+                                    )
+                                  }
+                                  className={
+                                    userData.isApproved
+                                      ? "text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                                      : "text-green-600 hover:text-green-700 hover:bg-green-50"
+                                  }
+                                >
+                                  {userData.isApproved ? (
+                                    <>
+                                      <XCircle className="h-4 w-4 mr-1" />
+                                      Suspend
+                                    </>
+                                  ) : (
+                                    <>
+                                      <CheckCircle className="h-4 w-4 mr-1" />
+                                      Approve
+                                    </>
+                                  )}
+                                </Button>
 
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDeleteUser(userData.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                                {(String(currentRole) === "supervisor" ||
+                                  String(currentRole) === "executive") &&
+                                userData.userType === "admin" ? (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    disabled
+                                    className="opacity-50 cursor-not-allowed"
+                                  >
+                                    Restricted
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={async () => {
+                                      try {
+                                        // double-check target type to be safe
+                                        const targetSnap = await getDoc(
+                                          doc(db, "users", userData.id)
+                                        );
+                                        if (targetSnap.exists()) {
+                                          const td =
+                                            targetSnap.data() as unknown as Record<
+                                              string,
+                                              unknown
+                                            >;
+                                          const targetType = String(
+                                            td.userType || ""
+                                          );
+                                          if (targetType === "super_admin") {
+                                            toast.error(
+                                              "Cannot modify super_admin account"
+                                            );
+                                            return;
+                                          }
+                                          if (
+                                            (String(currentRole) ===
+                                              "supervisor" ||
+                                              String(currentRole) ===
+                                                "executive") &&
+                                            targetType === "admin"
+                                          ) {
+                                            toast.error(
+                                              "You are not allowed to block/unblock admin accounts"
+                                            );
+                                            return;
+                                          }
+                                        }
+
+                                        const newActive = !(
+                                          userData.isActive === false
+                                        );
+                                        const newStatus = newActive
+                                          ? userData.isApproved
+                                            ? "active"
+                                            : "pending"
+                                          : "blocked";
+
+                                        await updateDoc(
+                                          doc(db, "users", userData.id),
+                                          {
+                                            isActive: newActive,
+                                            status: newStatus,
+                                          }
+                                        );
+                                        toast.success(
+                                          newActive ? "Unblocked" : "Blocked"
+                                        );
+                                      } catch (err) {
+                                        console.error(err);
+                                        toast.error(
+                                          "Failed to update active status"
+                                        );
+                                      }
+                                    }}
+                                    className={
+                                      userData.isActive === false
+                                        ? "text-green-600 hover:text-green-700 hover:bg-green-50"
+                                        : "text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    }
+                                  >
+                                    {userData.isActive === false
+                                      ? "Unblock"
+                                      : "Block"}
+                                  </Button>
+                                )}
+                              </>
+                            )
+                          )}
+                          {/* Super admin-only actions: Edit & Delete */}
+                          {currentRole === "super_admin" && (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                onClick={() => {
+                                  setEditingUserId(userData.id);
+                                  setNewUser({
+                                    firstName: userData.firstName || "",
+                                    lastName: userData.lastName || "",
+                                    email: userData.email || "",
+                                    userType: userData.userType || "organizer",
+                                    status: userData.status || "active",
+                                  });
+                                  setShowAddModal(true);
+                                }}
+                              >
+                                Edit
+                              </Button>
+
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDeleteUser(userData.id)}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                Delete
+                              </Button>
+                            </>
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -420,6 +768,101 @@ const UserManagementPage: React.FC = () => {
           {filteredUsers.length > 0 && (
             <div className="text-center text-sm text-gray-500">
               Showing {filteredUsers.length} of {users.length} users
+            </div>
+          )}
+
+          {/* Add User Modal */}
+          {showAddModal && (
+            <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                  User
+                </h3>
+                <div className="space-y-3">
+                  <input
+                    className="w-full border px-3 py-2 rounded text-gray-800 border-gray-300"
+                    placeholder="First name"
+                    value={newUser.firstName}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, firstName: e.target.value })
+                    }
+                  />
+                  <input
+                    className="w-full border px-3 py-2 rounded text-gray-800 border-gray-300"
+                    placeholder="Last name"
+                    value={newUser.lastName}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, lastName: e.target.value })
+                    }
+                  />
+                  <input
+                    className="w-full border px-3 py-2 rounded text-gray-800 border-gray-300"
+                    placeholder="Email"
+                    value={newUser.email}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, email: e.target.value })
+                    }
+                  />
+                  <select
+                    className="w-full border px-3 py-2 rounded text-gray-800 border-gray-300"
+                    value={newUser.userType}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, userType: e.target.value })
+                    }
+                  >
+                    <option value="organizer">Organizer</option>
+                    <option value="sponsor">Sponsor</option>
+                    <option value="executive">Executive</option>
+                    <option value="supervisor">Supervisor</option>
+                  </select>
+                </div>
+                <div className="mt-4 flex justify-end gap-2 text-gray-500">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAddModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-blue-600 text-white hover:bg-blue-700"
+                    onClick={handleSaveUser}
+                  >
+                    {editingUserId ? "Save" : "Create"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Update Calls Modal (executives) */}
+          {showCallsModal && callsTargetUserId && (
+            <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <h3 className="text-lg font-semibold mb-4">
+                  Update Calls/Meetings
+                </h3>
+                <div className="space-y-3">
+                  <input
+                    type="number"
+                    className="w-full border px-3 py-2 rounded"
+                    value={callsToAdd}
+                    onChange={(e) => setCallsToAdd(Number(e.target.value))}
+                  />
+                </div>
+                <div className="mt-4 flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowCallsModal(false);
+                      setCallsTargetUserId(null);
+                      setCallsToAdd(0);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleUpdateCalls}>Update</Button>
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -191,7 +191,10 @@ const VerificationRequestsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+      <ProtectedRoute
+        requireAuth={true}
+        allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+      >
         <DashboardLayout title="Verification Requests">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -202,7 +205,10 @@ const VerificationRequestsPage: React.FC = () => {
   }
 
   return (
-    <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+    <ProtectedRoute
+      requireAuth={true}
+      allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+    >
       <DashboardLayout title="Verification Requests">
         <div className="space-y-6">
           {/* Summary Stats */}

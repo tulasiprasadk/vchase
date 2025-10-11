@@ -24,6 +24,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { getCollection } from "@/lib/firebase/firestore";
 
 const DashboardPage: React.FC = () => {
   const { userProfile, user } = useAuth();
@@ -37,6 +38,7 @@ const DashboardPage: React.FC = () => {
 
   // Hook for sponsor data - only used for sponsors but called unconditionally
   const { enquiries: sponsorEnquiries } = useSponsorshipEnquiries();
+  const [totalUsersCount, setTotalUsersCount] = useState<number | null>(null);
 
   // Redirect sponsors to their main sponsorships page
   // This acts as a fallback for existing users and ensures sponsors always
@@ -46,6 +48,20 @@ const DashboardPage: React.FC = () => {
       router.replace("/dashboard/sponsorships");
     }
   }, [userProfile, router]);
+
+  // Load total users count for admin dashboard
+  useEffect(() => {
+    let mounted = true;
+    const loadUsers = async () => {
+      const { data, error } = await getCollection("users");
+      if (!mounted) return;
+      if (!error) setTotalUsersCount((data || []).length);
+    };
+    loadUsers();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const getGridClasses = () => {
     const baseClasses = "gap-4 lg:gap-6";
@@ -416,7 +432,8 @@ const DashboardPage: React.FC = () => {
 
   const renderAdminDashboard = () => {
     // Calculate basic admin metrics from available data
-    const totalUsers = events.length > 0 ? "Loading..." : "0"; // We don't have user count access here
+    const totalUsers =
+      totalUsersCount === null ? "Loading..." : totalUsersCount;
     const totalEvents = events.length;
     const totalEnquiries = enquiries.length;
     const publishedEvents = events.filter(
@@ -520,6 +537,12 @@ const DashboardPage: React.FC = () => {
         return renderSponsorDashboard();
       case "admin":
         return renderAdminDashboard();
+      case "super_admin":
+        return renderAdminDashboard();
+      case "supervisor":
+        return renderAdminDashboard();
+      case "executive":
+        return renderAdminDashboard();
       default:
         return renderOrganizerDashboard();
     }
@@ -550,6 +573,8 @@ const DashboardPage: React.FC = () => {
             Customize Layout
           </Button>
         </div>
+        {/* User management moved to the sidebar under Admin > Users */}
+
         {renderDashboardContent()}
 
         <LayoutCustomizer

@@ -4,18 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: (
-    | "organizer"
-    | "sponsor"
-    | "admin"
-    | "sales-marketing"
-    | "personal-coaching"
-    | "digital-marketing"
-    | "turnkey-projects"
-    | "business-consultancy"
-    | "organiser-sponsor"
-    | "marketing-sales"
-  )[];
+  allowedRoles?: string[];
   requireAuth?: boolean;
   redirectTo?: string;
 }
@@ -42,10 +31,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         const hasAllowedRole = allowedRoles.includes(userProfile.userType);
         if (!hasAllowedRole) {
           // Redirect to appropriate dashboard based on user type
-          const userTypeToDashboard = {
+          const userTypeToDashboard: Record<string, string> = {
             organizer: "/dashboard/events",
             sponsor: "/dashboard/sponsorships",
             admin: "/dashboard/admin",
+            super_admin: "/dashboard/admin",
+            supervisor: "/dashboard/admin",
+            executive: "/dashboard/admin",
             "sales-marketing": "/dashboard",
             "personal-coaching": "/dashboard",
             "digital-marketing": "/dashboard",

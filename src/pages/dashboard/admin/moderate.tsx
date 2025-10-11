@@ -149,7 +149,10 @@ const ModerationPage: React.FC = () => {
 
   if (loading) {
     return (
-      <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+      <ProtectedRoute
+        requireAuth={true}
+        allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+      >
         <DashboardLayout title="Content Moderation">
           <div className="flex justify-center items-center py-12">
             <div className="text-gray-600">Loading moderation queue...</div>
@@ -160,7 +163,10 @@ const ModerationPage: React.FC = () => {
   }
 
   return (
-    <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+    <ProtectedRoute
+      requireAuth={true}
+      allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+    >
       <Head>
         <title>Content Moderation - Admin Panel</title>
         <meta name="description" content="Moderate users and events" />

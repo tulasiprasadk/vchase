@@ -34,7 +34,10 @@ export interface UserProfile extends BaseDocument {
     | "turnkey-projects"
     | "business-consultancy"
     | "organiser-sponsor"
-    | "marketing-sales";
+    | "marketing-sales"
+    | "super_admin"
+    | "supervisor"
+    | "executive";
   profileImage?: string;
   displayName?: string;
   company?: string;

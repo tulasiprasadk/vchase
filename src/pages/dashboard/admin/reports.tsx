@@ -295,7 +295,10 @@ const ReportsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+      <ProtectedRoute
+        requireAuth={true}
+        allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+      >
         <DashboardLayout title="Platform Reports">
           <div className="flex justify-center items-center py-12">
             <div className="text-gray-600">Loading reports...</div>
@@ -306,7 +309,10 @@ const ReportsPage: React.FC = () => {
   }
 
   return (
-    <ProtectedRoute requireAuth={true} allowedRoles={["admin"]}>
+    <ProtectedRoute
+      requireAuth={true}
+      allowedRoles={["admin", "executive", "super_admin", "supervisor"]}
+    >
       <Head>
         <title>Platform Reports - Admin Panel</title>
         <meta name="description" content="Platform analytics and reports" />
