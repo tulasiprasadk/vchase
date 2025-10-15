@@ -38,10 +38,12 @@ export default function SponsorsMemoryOfUnderstanding() {
                 sponsors to secure agreements and protect sponsorship
                 investments.
               </p>
-              <Button size="lg" className="bg-rose-600 hover:bg-rose-700">
-                <Download className="w-5 h-5 mr-2" />
-                Download Sponsor MOU
-              </Button>
+              <a href="/mou/sponsors-mou.pdf" download className="inline-block">
+                <Button size="lg" className="bg-rose-600 hover:bg-rose-700">
+                  <Download className="w-5 h-5 mr-2" />
+                  Download Sponsor MOU
+                </Button>
+              </a>
             </div>
           </div>
         </section>

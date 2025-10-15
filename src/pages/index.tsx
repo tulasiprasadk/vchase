@@ -510,110 +510,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* About Us Section */}
-        <section id="about-us" className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div
-              ref={aboutSection.elementRef}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
-            >
-              <div
-                className={`scroll-slide-left ${
-                  aboutSection.isVisible ? "scroll-visible" : ""
-                }`}
-              >
-                <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
-                  About{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
-                    VChase
-                  </span>
-                </h2>
-                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  VChase is a premier marketing & technology company founded in
-                  2020 with a mission to help businesses chase their dreams
-                  through innovative solutions. We are the catalysts of
-                  transformation, propelling brands to new heights through our
-                  unwavering commitment to excellence and growth.
-                </p>
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                  With a global presence and local expertise, we collaborate
-                  with businesses worldwide to craft high-impact strategies,
-                  digital experiences, and comprehensive solutions that turn
-                  dreams into reality. Our team combines creativity with
-                  cutting-edge technology to deliver exceptional results.
-                </p>
-                <div
-                  ref={statsStagger.elementRef}
-                  className="grid grid-cols-2 gap-6"
-                >
-                  <div
-                    className={`flex items-center space-x-3 scroll-stagger ${
-                      statsStagger.visibleItems[0] ? "scroll-visible" : ""
-                    }`}
-                  >
-                    <Users className="w-6 h-6 text-purple-500" />
-                    <span className="text-slate-700 font-semibold">
-                      500+ Clients Served
-                    </span>
-                  </div>
-                  <div
-                    className={`flex items-center space-x-3 scroll-stagger ${
-                      statsStagger.visibleItems[1] ? "scroll-visible" : ""
-                    }`}
-                  >
-                    <CheckCircle className="w-6 h-6 text-green-500" />
-                    <span className="text-slate-700 font-semibold">
-                      99% Success Rate
-                    </span>
-                  </div>
-                  <div
-                    className={`flex items-center space-x-3 scroll-stagger ${
-                      statsStagger.visibleItems[2] ? "scroll-visible" : ""
-                    }`}
-                  >
-                    <MapPin className="w-6 h-6 text-blue-500" />
-                    <span className="text-slate-700 font-semibold">
-                      Global Presence
-                    </span>
-                  </div>
-                  <div
-                    className={`flex items-center space-x-3 scroll-stagger ${
-                      statsStagger.visibleItems[3] ? "scroll-visible" : ""
-                    }`}
-                  >
-                    <Clock className="w-6 h-6 text-purple-500" />
-                    <span className="text-slate-700 font-semibold">
-                      24/7 Support
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div
-                className={`relative scroll-slide-right ${
-                  aboutSection.isVisible ? "scroll-visible" : ""
-                }`}
-              >
-                <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
-                  <Image
-                    src="/images/team.jpg"
-                    alt="Our professional team"
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-8 left-8 right-8 text-white">
-                    <h3 className="text-2xl font-bold mb-2">Our Expert Team</h3>
-                    <p className="text-white/90">
-                      Passionate professionals dedicated to accelerating your
-                      business growth
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Contact Us Section */}
         <section id="contact-us" className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1032,7 +928,109 @@ export default function Home() {
             </div>
           </div>
         </section>
-
+        {/* About Us Section */}
+        <section id="about-us" className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+              ref={aboutSection.elementRef}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
+            >
+              <div
+                className={`scroll-slide-left ${
+                  aboutSection.isVisible ? "scroll-visible" : ""
+                }`}
+              >
+                <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
+                  About{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">
+                    VChase
+                  </span>
+                </h2>
+                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+                  VChase is a premier marketing & technology company founded in
+                  2020 with a mission to help businesses chase their dreams
+                  through innovative solutions. We are the catalysts of
+                  transformation, propelling brands to new heights through our
+                  unwavering commitment to excellence and growth.
+                </p>
+                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                  With a global presence and local expertise, we collaborate
+                  with businesses worldwide to craft high-impact strategies,
+                  digital experiences, and comprehensive solutions that turn
+                  dreams into reality. Our team combines creativity with
+                  cutting-edge technology to deliver exceptional results.
+                </p>
+                <div
+                  ref={statsStagger.elementRef}
+                  className="grid grid-cols-2 gap-6"
+                >
+                  <div
+                    className={`flex items-center space-x-3 scroll-stagger ${
+                      statsStagger.visibleItems[0] ? "scroll-visible" : ""
+                    }`}
+                  >
+                    <Users className="w-6 h-6 text-purple-500" />
+                    <span className="text-slate-700 font-semibold">
+                      500+ Clients Served
+                    </span>
+                  </div>
+                  <div
+                    className={`flex items-center space-x-3 scroll-stagger ${
+                      statsStagger.visibleItems[1] ? "scroll-visible" : ""
+                    }`}
+                  >
+                    <CheckCircle className="w-6 h-6 text-green-500" />
+                    <span className="text-slate-700 font-semibold">
+                      99% Success Rate
+                    </span>
+                  </div>
+                  <div
+                    className={`flex items-center space-x-3 scroll-stagger ${
+                      statsStagger.visibleItems[2] ? "scroll-visible" : ""
+                    }`}
+                  >
+                    <MapPin className="w-6 h-6 text-blue-500" />
+                    <span className="text-slate-700 font-semibold">
+                      Global Presence
+                    </span>
+                  </div>
+                  <div
+                    className={`flex items-center space-x-3 scroll-stagger ${
+                      statsStagger.visibleItems[3] ? "scroll-visible" : ""
+                    }`}
+                  >
+                    <Clock className="w-6 h-6 text-purple-500" />
+                    <span className="text-slate-700 font-semibold">
+                      24/7 Support
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div
+                className={`relative scroll-slide-right ${
+                  aboutSection.isVisible ? "scroll-visible" : ""
+                }`}
+              >
+                <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
+                  <Image
+                    src="/images/team.jpg"
+                    alt="Our professional team"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                  <div className="absolute bottom-8 left-8 right-8 text-white">
+                    <h3 className="text-2xl font-bold mb-2">Our Expert Team</h3>
+                    <p className="text-white/90">
+                      Passionate professionals dedicated to accelerating your
+                      business growth
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         {/* CTA Section */}
         <section className="py-24 bg-gradient-to-br from-slate-900 to-slate-800 text-white relative overflow-hidden">
           {/* Background decorative elements */}

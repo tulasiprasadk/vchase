@@ -38,10 +38,16 @@ export default function OrganizersMemoryOfUnderstanding() {
                 specifically for event organizers to formalize partnerships and
                 agreements.
               </p>
-              <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700">
-                <Download className="w-5 h-5 mr-2" />
-                Download MOU Template
-              </Button>
+              <a
+                href="/mou/organizers-mou.pdf"
+                download
+                className="inline-block"
+              >
+                <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700">
+                  <Download className="w-5 h-5 mr-2" />
+                  Download MOU Template
+                </Button>
+              </a>
             </div>
           </div>
         </section>

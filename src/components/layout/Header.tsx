@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -50,8 +50,43 @@ const Header: React.FC = () => {
     }
   }, [router, scrollToSection]);
 
+  // MOU dropdown state + refs for accessibility
+  const [isMouOpen, setIsMouOpen] = useState(false);
+  const mouButtonRef = useRef<HTMLButtonElement | null>(null);
+  const mouMenuRef = useRef<HTMLDivElement | null>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as Node;
+      if (
+        isMouOpen &&
+        mouMenuRef.current &&
+        mouButtonRef.current &&
+        !mouMenuRef.current.contains(target) &&
+        !mouButtonRef.current.contains(target)
+      ) {
+        setIsMouOpen(false);
+      }
+    }
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (isMouOpen && e.key === "Escape") {
+        setIsMouOpen(false);
+        mouButtonRef.current?.focus();
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMouOpen]);
+
   return (
-    <header className="bg-white shadow-sm border-b w-full max-w-full overflow-x-hidden">
+    <header className="bg-white shadow-sm border-b w-full max-w-full overflow-visible relative z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -71,7 +106,7 @@ const Header: React.FC = () => {
           </div>
 
           {/* Navigation - only keep anchor scroll links and dashboard links */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-8 overflow-visible">
             {/* Smooth scroll navigation links */}
             <button
               onClick={() => scrollToSection("about-us")}
@@ -93,6 +128,69 @@ const Header: React.FC = () => {
             >
               Service Policy
             </button>
+
+            {/* MOU dropdown (click to toggle, collapsed by default) */}
+            <div className="relative">
+              <button
+                ref={mouButtonRef}
+                aria-haspopup="true"
+                aria-expanded={isMouOpen}
+                onClick={() => setIsMouOpen((s) => !s)}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setIsMouOpen(true);
+                    // focus first menu item after open
+                    setTimeout(() => {
+                      mouMenuRef.current
+                        ?.querySelector<HTMLAnchorElement>("a")
+                        ?.focus();
+                    }, 0);
+                  }
+                }}
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
+              >
+                MOU
+                <span className="text-xs">▾</span>
+              </button>
+
+              {isMouOpen && (
+                <div
+                  ref={mouMenuRef}
+                  role="menu"
+                  aria-label="MOU options"
+                  className="absolute left-0 mt-2 w-44 bg-white border rounded-md shadow-lg z-50"
+                >
+                  <Link
+                    href="/mou/organizers"
+                    role="menuitem"
+                    tabIndex={0}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-100"
+                    onClick={() => setIsMouOpen(false)}
+                  >
+                    Organiser
+                  </Link>
+                  <Link
+                    href="/mou/sponsors"
+                    role="menuitem"
+                    tabIndex={0}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-100"
+                    onClick={() => setIsMouOpen(false)}
+                  >
+                    Sponsor
+                  </Link>
+                  <Link
+                    href="/mou/consultation"
+                    role="menuitem"
+                    tabIndex={0}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-100"
+                    onClick={() => setIsMouOpen(false)}
+                  >
+                    Consultant
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {isAuthenticated &&
               userProfile &&

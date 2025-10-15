@@ -38,10 +38,16 @@ export default function ConsultationMemoryOfUnderstanding() {
                 consultation services, ensuring clear agreements between
                 consultants and clients.
               </p>
-              <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
-                <Download className="w-5 h-5 mr-2" />
-                Download Consultation MOU
-              </Button>
+              <a
+                href="/mou/consultation-mou.pdf"
+                download
+                className="inline-block"
+              >
+                <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
+                  <Download className="w-5 h-5 mr-2" />
+                  Download Consultation MOU
+                </Button>
+              </a>
             </div>
           </div>
         </section>
