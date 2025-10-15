@@ -27,6 +27,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import ChatbotWidget from "@/components/ui/ChatbotWidget";
+import AdPlaceholder from "@/components/ui/AdPlaceholder";
 
 export default function Home() {
   // Scroll animation hooks
@@ -118,8 +119,17 @@ export default function Home() {
                 </Link>
               </div>
             </div>
+            {/* Subtle sponsor placements removed from hero and added inline in sections for flow */}
           </div>
         </section>
+
+        {/* Mobile floating sponsor pill (non-blocking) */}
+        <div className="lg:hidden fixed bottom-6 right-4 z-50">
+          <AdPlaceholder
+            label="Sponsor"
+            className="px-3 py-2 rounded-full shadow"
+          />
+        </div>
 
         {/* Interactive Pills Section */}
         <section className="py-24 bg-slate-100">
@@ -177,6 +187,10 @@ export default function Home() {
               ref={servicesStagger.elementRef}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
+              {/* Inline sponsor card that fits the service grid on large screens */}
+              <div className="hidden lg:flex lg:col-span-1 items-stretch">
+                <AdPlaceholder label="Sponsor" className="w-full h-full p-6" />
+              </div>
               {/* Business Consultancy */}
               <div
                 className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${
@@ -510,6 +524,28 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Advertisement Section */}
+        <section id="advertisement" className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">
+                Advertisement
+              </h2>
+              <p className="text-slate-600 max-w-2xl mx-auto">
+                Advertisement sections — promote your brand in strategic
+                locations across our platform.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <AdPlaceholder label="Featured" />
+              <AdPlaceholder label="Leaderboard" />
+              <AdPlaceholder label="Sidebar" />
+              <AdPlaceholder label="Mobile" />
+            </div>
+          </div>
+        </section>
+
         {/* Contact Us Section */}
         <section id="contact-us" className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -534,11 +570,11 @@ export default function Home() {
 
             <div
               ref={contactStagger.elementRef}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-16"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start"
             >
-              {/* Contact Information */}
+              {/* Email */}
               <div
-                className={`space-y-8 scroll-slide-left ${
+                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${
                   contactStagger.visibleItems[0] ? "scroll-visible" : ""
                 }`}
               >
@@ -547,52 +583,62 @@ export default function Home() {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    <h3 className="text-xl font-bold text-slate-900 mb-1">
                       Email Us
                     </h3>
-                    <p className="text-slate-600 mb-2">
-                      For general inquiries and business opportunities
-                    </p>
+                    <p className="text-slate-600 mb-2">For general inquiries</p>
                     <a
                       href="mailto:hello@vchase.com"
-                      className="text-purple-600 hover:text-purple-700 font-semibold"
+                      className="text-purple-600 font-semibold"
                     >
                       hello@vchase.com
                     </a>
                   </div>
                 </div>
+              </div>
 
+              {/* Call */}
+              <div
+                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${
+                  contactStagger.visibleItems[1] ? "scroll-visible" : ""
+                }`}
+              >
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    <h3 className="text-xl font-bold text-slate-900 mb-1">
                       Call Us
                     </h3>
                     <p className="text-slate-600 mb-2">
-                      Speak directly with our consultants
+                      Speak with our consultants
                     </p>
                     <a
                       href="tel:+1234567890"
-                      className="text-blue-600 hover:text-blue-700 font-semibold"
+                      className="text-blue-600 font-semibold"
                     >
                       +1 (234) 567-8900
                     </a>
                   </div>
                 </div>
+              </div>
 
+              {/* Visit */}
+              <div
+                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${
+                  contactStagger.visibleItems[2] ? "scroll-visible" : ""
+                }`}
+              >
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    <h3 className="text-xl font-bold text-slate-900 mb-1">
                       Visit Us
                     </h3>
-                    <p className="text-slate-600 mb-2">
-                      Our headquarters location
-                    </p>
+                    <p className="text-slate-600 mb-2">Headquarters</p>
                     <p className="text-slate-700">
                       123 Business Avenue
                       <br />
@@ -603,8 +649,27 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
 
-              {/* Quick Message replaced by Chatbot widget (floating) */}
+        {/* Advertisement Section */}
+        <section id="advertisement" className="py-20 bg-slate-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold text-slate-900">
+                Advertisement
+              </h2>
+              <p className="text-slate-600">
+                Sponsor spaces available. Contact sales to book.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <AdPlaceholder label="Ad Slot" />
+              <AdPlaceholder label="Ad Slot" />
+              <AdPlaceholder label="Ad Slot" />
+              <AdPlaceholder label="Ad Slot" />
             </div>
           </div>
         </section>
