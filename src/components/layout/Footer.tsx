@@ -21,14 +21,9 @@ const Footer: React.FC = () => {
 
           <div>
             <h4 className="text-sm font-semibold text-gray-900 tracking-wider uppercase mb-4">
-              Explore
+              Resources
             </h4>
             <ul className="space-y-2">
-              <li>
-                <a href="/events" className="text-gray-600 hover:text-gray-900">
-                  Browse Events
-                </a>
-              </li>
               <li>
                 <a href="/blogs" className="text-gray-600 hover:text-gray-900">
                   Blog
