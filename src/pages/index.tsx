@@ -20,13 +20,13 @@ import {
   Users,
   Phone,
   FileText,
-  MessageCircle,
   Mail,
   MapPin,
   Clock,
   Shield,
   CheckCircle,
 } from "lucide-react";
+import ChatbotWidget from "@/components/ui/ChatbotWidget";
 
 export default function Home() {
   // Scroll animation hooks
@@ -604,66 +604,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Chat Widget */}
-              <div
-                className={`bg-white rounded-2xl p-8 shadow-xl border border-slate-100 scroll-slide-right ${
-                  contactStagger.visibleItems[1] ? "scroll-visible" : ""
-                }`}
-              >
-                <div className="flex items-center space-x-3 mb-6">
-                  <MessageCircle className="w-6 h-6 text-purple-500" />
-                  <h3 className="text-xl font-bold text-slate-900">
-                    Quick Message
-                  </h3>
-                </div>
-                <form className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Your full name"
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="your.email@example.com"
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Service Interest
-                    </label>
-                    <select className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                      <option>Business Consultancy</option>
-                      <option>Turn Key Projects</option>
-                      <option>Personal Consultancy</option>
-                      <option>Digital Marketing</option>
-                      <option>Marketing & Sales</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Message
-                    </label>
-                    <textarea
-                      rows={4}
-                      placeholder="Tell us about your project or inquiry..."
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    ></textarea>
-                  </div>
-                  <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                    Send Message
-                  </Button>
-                </form>
-              </div>
+              {/* Quick Message replaced by Chatbot widget (floating) */}
             </div>
           </div>
         </section>
@@ -1079,6 +1020,7 @@ export default function Home() {
           </div>
         </section>
       </Layout>
+      <ChatbotWidget />
     </>
   );
 }
