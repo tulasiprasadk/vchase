@@ -59,7 +59,7 @@ interface UserData {
 
 const UserManagementPage: React.FC = () => {
   const { user, userProfile } = useAuth();
-  const currentRole = String(userProfile?.userType || "");
+  const currentRole = String(userProfile?.userType || "") as string;
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
@@ -137,6 +137,11 @@ const UserManagementPage: React.FC = () => {
     currentStatus: boolean
   ) => {
     try {
+      // Only admins and super_admins are allowed to approve/suspend users
+      if (!(currentRole === "admin" || currentRole === "super_admin")) {
+        toast.error("You are not authorized to approve or suspend users");
+        return;
+      }
       // safety: don't allow modifying super_admin accounts
       const targetSnap = await getDoc(doc(db, "users", userId));
       if (targetSnap.exists()) {
@@ -148,7 +153,8 @@ const UserManagementPage: React.FC = () => {
         }
         // additional safety: supervisors and executives cannot modify admin accounts
         if (
-          (currentRole === "supervisor" || currentRole === "executive") &&
+          (String(currentRole) === "supervisor" ||
+            String(currentRole) === "executive") &&
           targetType === "admin"
         ) {
           toast.error("You are not allowed to modify admin accounts");
@@ -191,7 +197,8 @@ const UserManagementPage: React.FC = () => {
           return;
         }
         if (
-          (currentRole === "supervisor" || currentRole === "executive") &&
+          (String(currentRole) === "supervisor" ||
+            String(currentRole) === "executive") &&
           targetType === "admin"
         ) {
           toast.error("You are not allowed to delete admin accounts");
@@ -539,8 +546,7 @@ const UserManagementPage: React.FC = () => {
                             </div>
                           ) : (
                             (currentRole === "admin" ||
-                              currentRole === "super_admin" ||
-                              currentRole === "supervisor") && (
+                              currentRole === "super_admin") && (
                               <>
                                 {/* Role assignment: super_admin full, admin limited */}
                                 {(currentRole === "super_admin" ||
