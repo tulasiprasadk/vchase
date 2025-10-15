@@ -122,12 +122,12 @@ const Header: React.FC = () => {
               Contact Us
             </button>
 
-            <button
-              onClick={() => scrollToSection("service-policy")}
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+            <Link
+              href="/service-policy"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
             >
               Service Policy
-            </button>
+            </Link>
 
             {/* MOU dropdown (click to toggle, collapsed by default) */}
             <div className="relative">
