@@ -225,9 +225,19 @@ const SignUpForm: React.FC<{ selectedRole?: string }> = ({ selectedRole }) => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-white to-indigo-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Freepik background image (place the actual image at public/images/auth/signup-bg.jpg) */}
+      <div className="absolute inset-0 z-0">
+        <div
+          className="w-full h-full bg-cover bg-center"
+          style={{ backgroundImage: `url('/images/auth/signup-bg.jpg')` }}
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-black/35 z-10" aria-hidden />
+      </div>
+
       <div className="max-w-md w-full space-y-8">
-        <Card>
+        <Card className="relative z-20 bg-white/60 backdrop-blur-md border border-gray-100 shadow-lg">
           <CardHeader className="text-center">
             <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
             <p className="text-gray-600">Join our professional network</p>
