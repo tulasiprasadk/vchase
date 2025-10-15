@@ -64,6 +64,52 @@ const PREDEFINED_TAGS = [
   { value: "community", label: "Community" },
 ];
 
+// States / regions list (includes a small India option for demo)
+const LOCATION_REGIONS = [
+  { value: "CA", label: "California" },
+  { value: "NY", label: "New York" },
+  { value: "TX", label: "Texas" },
+  { value: "IL", label: "Illinois" },
+  { value: "FL", label: "Florida" },
+  { value: "IN", label: "India" },
+  { value: "Other", label: "Other" },
+];
+
+const CITIES_BY_STATE: Record<string, { value: string; label: string }[]> = {
+  CA: [
+    { value: "Los Angeles", label: "Los Angeles" },
+    { value: "San Francisco", label: "San Francisco" },
+    { value: "San Diego", label: "San Diego" },
+  ],
+  NY: [
+    { value: "New York", label: "New York" },
+    { value: "Buffalo", label: "Buffalo" },
+    { value: "Rochester", label: "Rochester" },
+  ],
+  TX: [
+    { value: "Houston", label: "Houston" },
+    { value: "Dallas", label: "Dallas" },
+    { value: "Austin", label: "Austin" },
+  ],
+  IL: [
+    { value: "Chicago", label: "Chicago" },
+    { value: "Springfield", label: "Springfield" },
+  ],
+  FL: [
+    { value: "Miami", label: "Miami" },
+    { value: "Orlando", label: "Orlando" },
+  ],
+  // India sample cities
+  IN: [
+    { value: "Mumbai", label: "Mumbai" },
+    { value: "Delhi", label: "Delhi" },
+    { value: "Bengaluru", label: "Bengaluru" },
+    { value: "Chennai", label: "Chennai" },
+    { value: "Kolkata", label: "Kolkata" },
+    { value: "Hyderabad", label: "Hyderabad" },
+  ],
+};
+
 interface EventFormProps {
   event?: Event;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,10 +136,17 @@ export const EventForm: React.FC<EventFormProps> = ({
     date: event?.startDate
       ? new Date(event.startDate.toDate()).toISOString().slice(0, 16)
       : "",
-    location:
+    // Dual location fields
+    officeAddress: event?.location?.address || "",
+    officeCity: event?.location?.city || "",
+    officeState: event?.location?.country || "",
+    eventVenue:
       typeof event?.location === "string"
         ? event.location
         : event?.location?.venue || "",
+    eventAddress: event?.location?.address || "",
+    eventCity: event?.location?.city || "",
+    eventState: event?.location?.country || "",
     ticketPrice: event?.maxAttendees?.toString() || "", // Using maxAttendees as placeholder for price
     maxAttendees: event?.maxAttendees?.toString() || "",
     category: event?.category || "",
@@ -106,6 +159,10 @@ export const EventForm: React.FC<EventFormProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -141,8 +198,12 @@ export const EventForm: React.FC<EventFormProps> = ({
       toast.error("Date is required");
       return false;
     }
-    if (!formData.location.trim()) {
-      toast.error("Location is required");
+    if (!formData.eventVenue.trim()) {
+      toast.error("Event venue is required");
+      return false;
+    }
+    if (!formData.eventCity || !formData.eventState) {
+      toast.error("Event city and state are required");
       return false;
     }
     if (!formData.category.trim()) {
@@ -185,10 +246,15 @@ export const EventForm: React.FC<EventFormProps> = ({
         startDate: new Date(formData.date),
         endDate: new Date(formData.date), // For now, same as start date
         location: {
-          venue: formData.location.trim(),
-          address: formData.location.trim(),
-          city: "Unknown", // TODO: Make these separate fields
-          country: "Unknown",
+          venue: formData.eventVenue.trim(),
+          address: formData.eventAddress.trim() || formData.eventVenue.trim(),
+          city: formData.eventCity || "Unknown",
+          country: formData.eventState || "Unknown",
+        },
+        officeLocation: {
+          address: formData.officeAddress?.trim() || "",
+          city: formData.officeCity || "",
+          state: formData.officeState || "",
         },
         category: formData.category.trim(),
         tags: formData.tags,
@@ -308,19 +374,106 @@ export const EventForm: React.FC<EventFormProps> = ({
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="location" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Location *
-              </Label>
-              <Input
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                placeholder="Event venue or address"
-                required
-              />
+            <div className="grid grid-cols-1 gap-6">
+              {/* Office Location */}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Office Location (optional)
+                </Label>
+                <Input
+                  id="officeAddress"
+                  name="officeAddress"
+                  value={formData.officeAddress}
+                  onChange={handleInputChange}
+                  placeholder="Office address"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <select
+                    value={formData.officeState}
+                    onChange={(e) =>
+                      handleSelectChange("officeState", e.target.value)
+                    }
+                    className="border border-gray-300 rounded px-3 py-2"
+                  >
+                    <option value="">Select state</option>
+                    {LOCATION_REGIONS.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={formData.officeCity}
+                    onChange={(e) =>
+                      handleSelectChange("officeCity", e.target.value)
+                    }
+                    className="border border-gray-300 rounded px-3 py-2"
+                  >
+                    <option value="">Select city</option>
+                    {(CITIES_BY_STATE[formData.officeState] || []).map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Event Location (required) */}
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Event Location *
+                </Label>
+                <Input
+                  id="eventVenue"
+                  name="eventVenue"
+                  value={formData.eventVenue}
+                  onChange={handleInputChange}
+                  placeholder="Event venue or address"
+                  required
+                />
+                <Input
+                  id="eventAddress"
+                  name="eventAddress"
+                  value={formData.eventAddress}
+                  onChange={handleInputChange}
+                  placeholder="Event address (optional)"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <select
+                    value={formData.eventState}
+                    onChange={(e) =>
+                      handleSelectChange("eventState", e.target.value)
+                    }
+                    className="border border-gray-300 rounded px-3 py-2"
+                    required
+                  >
+                    <option value="">Select state</option>
+                    {LOCATION_REGIONS.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={formData.eventCity}
+                    onChange={(e) =>
+                      handleSelectChange("eventCity", e.target.value)
+                    }
+                    className="border border-gray-300 rounded px-3 py-2"
+                    required
+                  >
+                    <option value="">Select city</option>
+                    {(CITIES_BY_STATE[formData.eventState] || []).map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
