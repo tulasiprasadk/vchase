@@ -1,6 +1,185 @@
-# EventSponsor Platform
+## EventSponsor Platform
 
-An event sponsorship platform connecting event organizers with sponsors. Built with Next.js, TypeScr### 6. Authentication Setup
+An event sponsorship platform connecting event organizers with sponsors. Built with Next.js and TypeScript. This README focuses on how to run the project locally and how to deploy it (step-by-step) so a client or operator can self-host or deploy to Vercel.
+
+---
+
+## Quick links
+
+- Dev server: `npm run dev`
+- Build: `npm run build`
+- Tests: Cypress tests in `cypress/e2e`
+
+---
+
+## Prerequisites
+
+- Node.js >= 18 (LTS recommended)
+- npm (or yarn/pnpm)
+- A Firebase project (Authentication, Firestore, Storage)
+- A Cloudinary account (optional, used for uploads)
+
+## 1) Clone & install
+
+```bash
+git clone <repository-url>
+cd mvp-structure-event-sponsor-platform
+npm install
+```
+
+## 2) Environment variables
+
+Copy the example env and populate values:
+
+```bash
+cp .env.example .env.local
+# Edit .env.local and fill values (see below)
+```
+
+Required variables (from `.env.example`):
+
+- NEXT_PUBLIC_FIREBASE_API_KEY
+- NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+- NEXT_PUBLIC_FIREBASE_PROJECT_ID
+- NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+- NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+- NEXT_PUBLIC_FIREBASE_APP_ID
+- NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID (optional)
+- NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME (optional)
+- CLOUDINARY_API_KEY (server-side secret)
+- CLOUDINARY_API_SECRET (server-side secret)
+- NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET (if using unsigned uploads)
+- NEXT_PUBLIC_APP_URL (e.g. https://your-domain.com)
+
+IMPORTANT:
+
+- Never commit `.env.local` to git. Keep sensitive keys (Cloudinary secret, Firebase server secrets) private.
+
+## 3) Run locally
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Open http://localhost:3000
+
+Build for production and run locally:
+
+```bash
+npm run build
+npm run start
+```
+
+## 4) Testing
+
+Run cypress (E2E tests):
+
+```bash
+# install if needed
+npm install --save-dev cypress
+
+# run headless
+npx cypress run
+
+# open interactive runner
+npx cypress open
+```
+
+Unit tests (if present) can be run with `npm test` (project may use Jest).
+
+## 5) Deploying
+
+Recommended: Vercel (best for Next.js)
+
+Steps to deploy on Vercel:
+
+1. Sign in to https://vercel.com and create a new project.
+2. Connect your GitHub (or GitLab/Bitbucket) repository.
+3. In Vercel project settings → Environment Variables, add the same variables you used in `.env.local` (use Production values).
+   - Add server-side secrets (CLOUDINARY_API_SECRET) only to Production/Preview environment values — do not put them in client-side code.
+4. Build & Output settings: default build command `npm run build`. No custom output directory required for Next.js.
+5. Deploy. Vercel will build and serve the site automatically on pushes to the main branch.
+
+Alternative: Self-host
+
+- Build with `npm run build` and serve with `npm run start` on a server with Node.js 18+.
+- Ensure environment variables are set on the host (systemd, Docker, or platform env settings).
+
+## 6) Optimizing assets (recommended)
+
+- The repo may include large images (e.g. `public/images/auth/signup-bg.jpg`). Resize/compress large assets for production (1600px wide is usually enough for hero images).
+- Consider using `next/image` for automatic optimization.
+
+## 7) Security & secret-handling checklist before sharing the repo
+
+Follow these steps before sharing or publishing the repository publicly:
+
+1. Ensure `.env.local` is not committed:
+
+   ```bash
+   git status --porcelain
+   git ls-files --error-unmatch .env.local || echo ".env.local is not tracked"
+   ```
+
+2. If you accidentally committed secrets:
+
+   - Remove them from the repository history (rotate the keys afterwards):
+
+     ```bash
+     git rm --cached .env.local
+     git commit -m "Remove local env"
+     # To purge from history you can use git filter-repo or github's instructions
+     ```
+
+   - Rotate (recreate) the leaked API keys in the provider consoles (Firebase, Cloudinary).
+
+3. Add `.env.local` to `.gitignore` (this repo already has it in most setups) and confirm:
+
+   ```bash
+   grep -n "env.local" .gitignore || echo ".env.local not present in .gitignore"
+   ```
+
+4. Do a final scan for secrets (quick grep):
+
+   ```bash
+   # Search for common secret patterns - quick sanity check
+   grep -R --line-number "API_KEY\|API-KEY\|CLOUDINARY_API_SECRET\|PRIVATE_KEY\|BEGIN RSA PRIVATE" . || true
+   ```
+
+If you find real keys in repo files (not `.env.local`), rotate them immediately and remove the files from git history.
+
+## 8) Troubleshooting
+
+- If the background image doesn't show: confirm `public/images/auth/signup-bg.jpg` exists and the dev server was restarted.
+- If Firebase errors occur: verify the API key and app ID in `.env.local` and check the Firebase console allowed domains for OAuth.
+- If Cloudinary uploads fail: ensure `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` are set and the upload preset matches the name in `.env.local`.
+
+## 9) Handy commands
+
+```bash
+npm run dev          # dev server
+npm run build        # production build
+npm run start        # run production build
+npm run lint         # linting
+npx cypress run      # run E2E tests
+```
+
+---
+
+If you'd like I can also:
+
+- Add a small GitHub Actions workflow to build and run tests on push.
+- Add a one-click Vercel deploy button to this README.
+
+If you want me to add either, say which and I'll add it.
+
+---
+
+## License
+
+MIT
 
 In Firebase Console > Authentication:
 
