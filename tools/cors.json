@@ -1,0 +1,16 @@
+[
+  {
+    "origin": ["http://localhost:3000", "https://vchase.in"],
+    "method": ["GET", "HEAD", "PUT", "POST", "OPTIONS"],
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+      "Origin",
+      "x-goog-resumable",
+      "x-goog-acl"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]

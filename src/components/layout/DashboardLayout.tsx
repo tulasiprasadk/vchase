@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Users,
   BarChart3,
+  Megaphone,
   CheckCircle,
 } from "lucide-react";
 
@@ -103,19 +104,33 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   const getNavItems = () => {
     const role = String(userProfile?.userType || "").toLowerCase();
-    switch (role) {
-      case "organizer":
-        return organizerNavItems;
-      case "sponsor":
-        return sponsorNavItems;
-      case "admin":
-      case "supervisor":
-      case "executive":
-      case "super_admin":
-        return adminNavItems;
-      default:
-        return organizerNavItems;
+
+    if (role === "organizer") return organizerNavItems;
+    if (role === "sponsor") return sponsorNavItems;
+
+    // Admin-like roles: build a copy and conditionally include extra items
+    if (
+      role === "admin" ||
+      role === "supervisor" ||
+      role === "executive" ||
+      role === "super_admin"
+    ) {
+      // clone to avoid mutating the original
+      const items = [...adminNavItems];
+
+      // Add Advertisements management only for admin and super_admin
+      if (role === "admin" || role === "super_admin") {
+        items.splice(items.length - 1, 0, {
+          href: "/dashboard/admin/advertisements",
+          label: "Advertisements",
+          icon: Megaphone,
+        });
+      }
+
+      return items;
     }
+
+    return organizerNavItems;
   };
 
   const navItems = getNavItems();

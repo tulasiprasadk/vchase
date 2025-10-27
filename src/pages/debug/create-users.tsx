@@ -65,6 +65,7 @@ const DebugCreateUsersPage: React.FC = () => {
   type ResultEntry = {
     success: boolean;
     message: string;
+    uid?: string;
     permissions?: string[];
   };
   const [results, setResults] = useState<Record<string, ResultEntry>>({});
@@ -109,6 +110,7 @@ const DebugCreateUsersPage: React.FC = () => {
             success: true,
             message: "Updated existing profile",
             permissions: perms,
+            uid: already.id,
           };
           continue;
         }
@@ -141,6 +143,7 @@ const DebugCreateUsersPage: React.FC = () => {
             success: true,
             message: "Created user",
             permissions: perms,
+            uid: res.user.uid,
           };
         }
       } catch (err: unknown) {
@@ -203,6 +206,32 @@ const DebugCreateUsersPage: React.FC = () => {
                           {r.permissions && (
                             <div className="text-xs text-gray-600 mt-1">
                               Permissions: {r.permissions.join(", ")}
+                            </div>
+                          )}
+
+                          {r.uid && (
+                            <div className="text-xs text-gray-700 mt-2 flex items-center gap-2">
+                              <div>
+                                UID:{" "}
+                                <span className="font-mono text-xs">
+                                  {r.uid}
+                                </span>
+                              </div>
+                              <Button
+                                size="sm"
+                                onClick={async () => {
+                                  try {
+                                    await navigator.clipboard.writeText(
+                                      r.uid as string
+                                    );
+                                    toast.success("Copied UID to clipboard");
+                                  } catch {
+                                    toast.error("Failed to copy UID");
+                                  }
+                                }}
+                              >
+                                Copy UID
+                              </Button>
                             </div>
                           )}
                         </div>

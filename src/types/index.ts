@@ -301,3 +301,20 @@ export interface SponsorFilters {
   };
   location?: string;
 }
+
+// Advertisement interfaces
+export interface Advertisement extends BaseDocument {
+  title: string;
+  imageUrl: string;
+  imagePath: string; // Firebase Storage path
+  link?: string;
+  position: "featured" | "leaderboard" | "sidebar" | "mobile";
+  isActive: boolean;
+  order: number;
+  clickCount: number;
+  impressions: number;
+  advertiserName?: string;
+  advertiserEmail?: string;
+  startDate?: Timestamp;
+  endDate?: Timestamp;
+}

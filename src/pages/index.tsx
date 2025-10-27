@@ -8,6 +8,7 @@ import {
   useScrollAnimation,
   useStaggeredScrollAnimation,
 } from "@/hooks/useScrollAnimation";
+import { useAdvertisements } from "@/hooks/useAdvertisements";
 import {
   Handshake,
   TrendingUp,
@@ -44,6 +45,9 @@ export default function Home() {
   const contactStagger = useStaggeredScrollAnimation(3, 120);
   const mouStagger = useStaggeredScrollAnimation(3, 150);
   const policyStagger = useStaggeredScrollAnimation(4, 200);
+
+  // Advertisement hook
+  const { getAdsByPosition } = useAdvertisements();
 
   return (
     <>
@@ -538,10 +542,120 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <AdPlaceholder label="Featured" />
-              <AdPlaceholder label="Leaderboard" />
-              <AdPlaceholder label="Sidebar" />
-              <AdPlaceholder label="Mobile" />
+              {(() => {
+                const featuredAds = getAdsByPosition("featured");
+                const leaderboardAds = getAdsByPosition("leaderboard");
+                const sidebarAds = getAdsByPosition("sidebar");
+                const mobileAds = getAdsByPosition("mobile");
+
+                return (
+                  <>
+                    {featuredAds.length > 0 ? (
+                      <div className="relative group cursor-pointer">
+                        <Image
+                          src={featuredAds[0].imageUrl}
+                          alt={featuredAds[0].title}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                          onClick={() => {
+                            if (featuredAds[0].link) {
+                              window.open(featuredAds[0].link, "_blank");
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg flex items-center justify-center">
+                          {featuredAds[0].link && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm font-medium">
+                              Click to visit
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <AdPlaceholder label="Featured" />
+                    )}
+
+                    {leaderboardAds.length > 0 ? (
+                      <div className="relative group cursor-pointer">
+                        <Image
+                          src={leaderboardAds[0].imageUrl}
+                          alt={leaderboardAds[0].title}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                          onClick={() => {
+                            if (leaderboardAds[0].link) {
+                              window.open(leaderboardAds[0].link, "_blank");
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg flex items-center justify-center">
+                          {leaderboardAds[0].link && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm font-medium">
+                              Click to visit
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <AdPlaceholder label="Leaderboard" />
+                    )}
+
+                    {sidebarAds.length > 0 ? (
+                      <div className="relative group cursor-pointer">
+                        <Image
+                          src={sidebarAds[0].imageUrl}
+                          alt={sidebarAds[0].title}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                          onClick={() => {
+                            if (sidebarAds[0].link) {
+                              window.open(sidebarAds[0].link, "_blank");
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg flex items-center justify-center">
+                          {sidebarAds[0].link && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm font-medium">
+                              Click to visit
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <AdPlaceholder label="Sidebar" />
+                    )}
+
+                    {mobileAds.length > 0 ? (
+                      <div className="relative group cursor-pointer">
+                        <Image
+                          src={mobileAds[0].imageUrl}
+                          alt={mobileAds[0].title}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                          onClick={() => {
+                            if (mobileAds[0].link) {
+                              window.open(mobileAds[0].link, "_blank");
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg flex items-center justify-center">
+                          {mobileAds[0].link && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm font-medium">
+                              Click to visit
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <AdPlaceholder label="Mobile" />
+                    )}
+                  </>
+                );
+              })()}
             </div>
           </div>
         </section>

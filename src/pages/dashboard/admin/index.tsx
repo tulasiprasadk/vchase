@@ -279,7 +279,7 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardContent className="p-6 text-center">
                 <AlertTriangle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
@@ -315,6 +315,19 @@ const AdminDashboard: React.FC = () => {
                 </p>
                 <Link href="/dashboard/admin/reports">
                   <Button className="w-full">View Reports</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6 text-center">
+                <Eye className="h-12 w-12 text-purple-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Manage Ads</h3>
+                <p className="text-gray-600 mb-4">
+                  Upload and manage advertisement images
+                </p>
+                <Link href="/dashboard/admin/advertisements">
+                  <Button className="w-full">Manage Ads</Button>
                 </Link>
               </CardContent>
             </Card>

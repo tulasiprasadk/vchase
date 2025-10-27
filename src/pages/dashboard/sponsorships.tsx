@@ -1565,7 +1565,6 @@ const SponsorshipsDashboardPage: React.FC = () => {
                         onUpload={handlePaymentProofUpload}
                         placeholder="Click to upload payment proof (receipt, screenshot, etc.)"
                         className="w-full"
-                        uploadPreset="events_preset"
                       />
 
                       {paymentProofUrl && (
