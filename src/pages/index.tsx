@@ -418,7 +418,7 @@ export default function Home() {
                           Event Director, Ichase Fitness
                         </p>
                         <p className="text-slate-700 leading-relaxed">
-                          &ldquo;The platform's intelligent matchmaking saved us months of cold outreach and negotiation. We connected with sponsors who genuinely understood our event's mission and audience.&rdquo;
+                          &ldquo;The platform&apos;s intelligent matchmaking saved us months of cold outreach and negotiation. We connected with sponsors who genuinely understood our event&apos;s mission and audience.&rdquo;
                         </p>
                       </div>
                     </div>
