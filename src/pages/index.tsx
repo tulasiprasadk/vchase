@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import Layout from "@/components/layout/Layout";
+import React, { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import MindBlowingAnimations from "@/components/ui/MindBlowingAnimations";
 import {
@@ -29,6 +31,8 @@ import {
 } from "lucide-react";
 import ChatbotWidget from "@/components/ui/ChatbotWidget";
 import AdPlaceholder from "@/components/ui/AdPlaceholder";
+import { collection, query, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
 
 export default function Home() {
   // Scroll animation hooks
@@ -48,6 +52,18 @@ export default function Home() {
 
   // Advertisement hook
   const { getAdsByPosition } = useAdvertisements();
+
+  // Testimonials fetched from Firestore
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+
+  useEffect(() => {
+    const q = query(collection(db, "testimonials"));
+    const unsub = onSnapshot(q, (snap) => {
+      const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      setTestimonials(items);
+    });
+    return () => unsub();
+  }, []);
 
   return (
     <>
@@ -349,43 +365,83 @@ export default function Home() {
 
             {/* Testimonials */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-              <div className="bg-white rounded-3xl p-8 shadow-xl">
-                <div className="flex items-start space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex-shrink-0"></div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-lg">
-                      Sarah Johnson
-                    </h4>
-                    <p className="text-slate-600 mb-4">
-                      Event Director, TechConf 2024
-                    </p>
-                    <p className="text-slate-700 leading-relaxed">
-                      &ldquo;VChase transformed our approach to partnerships.
-                      Their platform connected us with sponsors who truly
-                      understood our vision, resulting in our most successful
-                      event yet with 300% increased sponsorship revenue.&rdquo;
-                    </p>
-                  </div>
-                </div>
-              </div>
+              {testimonials && testimonials.length > 0 ? (
+                testimonials.slice(0, 2).map((t) => (
+                  <div
+                    key={t.id}
+                    className="bg-white rounded-3xl p-8 shadow-xl"
+                  >
+                    <div className="flex items-start space-x-4">
+                      {t.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={t.imageUrl}
+                          alt={t.name}
+                          className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex-shrink-0" />
+                      )}
 
-              <div className="bg-white rounded-3xl p-8 shadow-xl">
-                <div className="flex items-start space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex-shrink-0"></div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-lg">
-                      Michael Chen
-                    </h4>
-                    <p className="text-slate-600 mb-4">CMO, Innovation Corp</p>
-                    <p className="text-slate-700 leading-relaxed">
-                      &ldquo;The VChase team proved to be extremely passionate
-                      and dedicated. Their business acumen and strategic
-                      matching helped us find the perfect events to sponsor,
-                      maximizing our brand exposure and ROI.&rdquo;
-                    </p>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">
+                          {t.name}
+                        </h4>
+                        {t.title && (
+                          <p className="text-slate-600 mb-4">{t.title}</p>
+                        )}
+                        <p className="text-slate-700 leading-relaxed">
+                          {t.message}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                ))
+              ) : (
+                <>
+                  <div className="bg-white rounded-3xl p-8 shadow-xl">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex-shrink-0"></div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">
+                          Sarah Johnson
+                        </h4>
+                        <p className="text-slate-600 mb-4">
+                          Event Director, TechConf 2024
+                        </p>
+                        <p className="text-slate-700 leading-relaxed">
+                          &ldquo;VChase transformed our approach to
+                          partnerships. Their platform connected us with
+                          sponsors who truly understood our vision, resulting in
+                          our most successful event yet with 300% increased
+                          sponsorship revenue.&rdquo;
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-3xl p-8 shadow-xl">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex-shrink-0"></div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">
+                          Michael Chen
+                        </h4>
+                        <p className="text-slate-600 mb-4">
+                          CMO, Innovation Corp
+                        </p>
+                        <p className="text-slate-700 leading-relaxed">
+                          &ldquo;The VChase team proved to be extremely
+                          passionate and dedicated. Their business acumen and
+                          strategic matching helped us find the perfect events
+                          to sponsor, maximizing our brand exposure and
+                          ROI.&rdquo;
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Client Logos Marquee */}
@@ -447,7 +503,7 @@ export default function Home() {
                       className="object-contain opacity-70 hover:opacity-100 transition-opacity"
                     />
                   </div>
-                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                  {/* <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
                     <Image
                       src="/images/clients/client-7.png"
                       alt="Client 7"
@@ -455,7 +511,7 @@ export default function Home() {
                       height={60}
                       className="object-contain opacity-70 hover:opacity-100 transition-opacity"
                     />
-                  </div>
+                  </div> */}
                 </div>
                 {/* Duplicate for seamless loop */}
                 <div className="flex items-center gap-12 mr-12">

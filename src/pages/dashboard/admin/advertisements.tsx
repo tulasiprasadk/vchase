@@ -47,6 +47,7 @@ const AdminAdvertisements: React.FC = () => {
   // If the image was uploaded by the helper component, store its data here
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
   const [uploadedImagePath, setUploadedImagePath] = useState<string>("");
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!user) return;
@@ -70,8 +71,13 @@ const AdminAdvertisements: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedFile && !editingAd) {
+    if (!selectedFile && !uploadedImageUrl && !editingAd) {
       toast.error("Please select an image");
+      return;
+    }
+
+    if (isUploading) {
+      toast.error("Image is still uploading — please wait");
       return;
     }
 
@@ -94,26 +100,28 @@ const AdminAdvertisements: React.FC = () => {
         imagePath = result.path;
       }
 
-      const adData = {
+      // Build ad data and remove any undefined fields (Firestore rejects undefined values)
+      const adData: Partial<Advertisement> = {
         title: formData.title,
         imageUrl,
         imagePath,
-        link: formData.link || undefined,
         position: formData.position,
         isActive: formData.isActive,
         order: editingAd ? editingAd.order : advertisements.length + 1,
         clickCount: editingAd ? editingAd.clickCount : 0,
         impressions: editingAd ? editingAd.impressions : 0,
-        advertiserName: formData.advertiserName || undefined,
-        advertiserEmail: formData.advertiserEmail || undefined,
-        startDate: formData.startDate
-          ? Timestamp.fromDate(new Date(formData.startDate))
-          : undefined,
-        endDate: formData.endDate
-          ? Timestamp.fromDate(new Date(formData.endDate))
-          : undefined,
         updatedAt: Timestamp.now(),
       };
+
+      if (formData.link) adData.link = formData.link;
+      if (formData.advertiserName)
+        adData.advertiserName = formData.advertiserName;
+      if (formData.advertiserEmail)
+        adData.advertiserEmail = formData.advertiserEmail;
+      if (formData.startDate)
+        adData.startDate = Timestamp.fromDate(new Date(formData.startDate));
+      if (formData.endDate)
+        adData.endDate = Timestamp.fromDate(new Date(formData.endDate));
 
       if (editingAd) {
         await updateDoc(doc(db, "advertisements", editingAd.id!), adData);
@@ -166,9 +174,14 @@ const AdminAdvertisements: React.FC = () => {
         // If this ad was uploaded to Cloudinary (imageUrl contains cloudinary domain), call the server delete API
         if (adToDelete.imageUrl && adToDelete.imageUrl.includes("cloudinary")) {
           try {
-            await fetch(`/api/upload/delete?public_id=${encodeURIComponent(adToDelete.imagePath)}`, {
-              method: "DELETE",
-            });
+            await fetch(
+              `/api/upload/delete?public_id=${encodeURIComponent(
+                adToDelete.imagePath
+              )}`,
+              {
+                method: "DELETE",
+              }
+            );
           } catch (err) {
             console.warn("Cloudinary delete failed (continuing):", err);
           }
@@ -228,7 +241,7 @@ const AdminAdvertisements: React.FC = () => {
       >
         <DashboardLayout title="Manage Advertisements">
           <div className="flex justify-center items-center py-12">
-            <div className="text-gray-600">Loading advertisements...</div>
+            <div className="text-gray-700">Loading advertisements...</div>
           </div>
         </DashboardLayout>
       </ProtectedRoute>
@@ -250,7 +263,7 @@ const AdminAdvertisements: React.FC = () => {
               <h1 className="text-2xl font-bold text-gray-900">
                 Advertisements
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-700">
                 Manage advertisement images displayed on the platform
               </p>
             </div>
@@ -416,6 +429,7 @@ const AdminAdvertisements: React.FC = () => {
                           setUploadedImagePath(res.publicId);
                           setImagePreview(res.url);
                         }}
+                        onUploading={(u) => setIsUploading(!!u)}
                       />
 
                       {/* Keep preview if available */}
@@ -515,7 +529,7 @@ const AdminAdvertisements: React.FC = () => {
                       {ad.link}
                     </div>
                   )}
-                  <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
+                  <div className="flex items-center justify-between text-sm text-gray-700 mb-4">
                     <span>Clicks: {ad.clickCount}</span>
                     <span>Impressions: {ad.impressions}</span>
                   </div>
@@ -523,6 +537,7 @@ const AdminAdvertisements: React.FC = () => {
                     <Button
                       size="sm"
                       variant="outline"
+                      className="text-blue-500"
                       onClick={() => handleEdit(ad)}
                     >
                       <Edit className="h-4 w-4 mr-1" />
@@ -532,9 +547,10 @@ const AdminAdvertisements: React.FC = () => {
                       size="sm"
                       variant="outline"
                       color="red"
+                      className="text-red-600"
                       onClick={() => handleDelete(ad.id!)}
                     >
-                      <Trash2 className="h-4 w-4 mr-1" />
+                      <Trash2 className="h-4 w-4 mr-1 text-red-600" />
                       Delete
                     </Button>
                   </div>
@@ -552,7 +568,7 @@ const AdminAdvertisements: React.FC = () => {
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                   No advertisements yet
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-700 mb-4">
                   Get started by adding your first advertisement
                 </p>
                 <Button onClick={() => setShowForm(true)}>

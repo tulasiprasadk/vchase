@@ -11,7 +11,10 @@ export interface CloudinaryUploadResult {
 }
 
 interface UseCloudinaryUploadReturn {
-  uploadImage: (file: File, folder?: string) => Promise<CloudinaryUploadResult | null>;
+  uploadImage: (
+    file: File,
+    folder?: string
+  ) => Promise<CloudinaryUploadResult | null>;
   uploading: boolean;
   progress: number;
   error: string | null;
@@ -62,8 +65,8 @@ export const useCloudinaryUpload = (): UseCloudinaryUploadReturn => {
         throw new Error("Upload preset not configured");
       }
 
-  formData.append("upload_preset", uploadPreset);
-  formData.append("folder", folder);
+      formData.append("upload_preset", uploadPreset);
+      formData.append("folder", folder);
 
       // Upload to Cloudinary
       const response = await fetch(
