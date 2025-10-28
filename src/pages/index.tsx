@@ -156,9 +156,8 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
               ref={animationSection.elementRef}
-              className={`text-center mb-16 scroll-hidden ${
-                animationSection.isVisible ? "scroll-visible" : ""
-              }`}
+              className={`text-center mb-16 scroll-hidden ${animationSection.isVisible ? "scroll-visible" : ""
+                }`}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Explore our{" "}
@@ -175,9 +174,8 @@ export default function Home() {
               </p>
             </div>
             <div
-              className={`scroll-flip ${
-                animationSection.isVisible ? "scroll-visible" : ""
-              }`}
+              className={`scroll-flip ${animationSection.isVisible ? "scroll-visible" : ""
+                }`}
             >
               <MindBlowingAnimations />
             </div>
@@ -190,9 +188,8 @@ export default function Home() {
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
               ref={servicesSection.elementRef}
-              className={`text-center mb-20 scroll-hidden ${
-                servicesSection.isVisible ? "scroll-visible" : ""
-              }`}
+              className={`text-center mb-20 scroll-hidden ${servicesSection.isVisible ? "scroll-visible" : ""
+                }`}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 A plethora of{" "}
@@ -213,9 +210,8 @@ export default function Home() {
               </div>
               {/* Business Consultancy */}
               <div
-                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${
-                  servicesStagger.visibleItems[0] ? "scroll-visible" : ""
-                }`}
+                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${servicesStagger.visibleItems[0] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <Briefcase className="w-8 h-8 text-white" />
@@ -239,9 +235,8 @@ export default function Home() {
 
               {/* Turn Key Projects */}
               <div
-                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${
-                  servicesStagger.visibleItems[1] ? "scroll-visible" : ""
-                }`}
+                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${servicesStagger.visibleItems[1] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <Lightbulb className="w-8 h-8 text-white" />
@@ -265,9 +260,8 @@ export default function Home() {
 
               {/* Personal Consultancy */}
               <div
-                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${
-                  servicesStagger.visibleItems[2] ? "scroll-visible" : ""
-                }`}
+                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${servicesStagger.visibleItems[2] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <User className="w-8 h-8 text-white" />
@@ -291,9 +285,8 @@ export default function Home() {
 
               {/* Digital Marketing */}
               <div
-                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${
-                  servicesStagger.visibleItems[3] ? "scroll-visible" : ""
-                }`}
+                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${servicesStagger.visibleItems[3] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <Megaphone className="w-8 h-8 text-white" />
@@ -317,9 +310,8 @@ export default function Home() {
 
               {/* Marketing & Sales */}
               <div
-                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${
-                  servicesStagger.visibleItems[4] ? "scroll-visible" : ""
-                }`}
+                className={`group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-100 scroll-stagger ${servicesStagger.visibleItems[4] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <TrendingUp className="w-8 h-8 text-white" />
@@ -351,9 +343,8 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
               ref={successStoriesSection.elementRef}
-              className={`text-center mb-20 scroll-hidden ${
-                successStoriesSection.isVisible ? "scroll-visible" : ""
-              }`}
+              className={`text-center mb-20 scroll-hidden ${successStoriesSection.isVisible ? "scroll-visible" : ""
+                }`}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Brands we nurtured into{" "}
@@ -404,17 +395,13 @@ export default function Home() {
                       <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex-shrink-0"></div>
                       <div>
                         <h4 className="font-bold text-slate-900 text-lg">
-                          Sarah Johnson
+                          Gautham
                         </h4>
                         <p className="text-slate-600 mb-4">
-                          Event Director, TechConf 2024
+                          Marketing Director, Ichase Fitness
                         </p>
                         <p className="text-slate-700 leading-relaxed">
-                          &ldquo;VChase transformed our approach to
-                          partnerships. Their platform connected us with
-                          sponsors who truly understood our vision, resulting in
-                          our most successful event yet with 300% increased
-                          sponsorship revenue.&rdquo;
+                          &ldquo;Our partnership through this platform doubled our brand visibility at the Expo. The targeted audience alignment delivered measurable results that exceeded our projections.&rdquo;
                         </p>
                       </div>
                     </div>
@@ -425,17 +412,13 @@ export default function Home() {
                       <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex-shrink-0"></div>
                       <div>
                         <h4 className="font-bold text-slate-900 text-lg">
-                          Michael Chen
+                          Rajesh D N
                         </h4>
                         <p className="text-slate-600 mb-4">
-                          CMO, Innovation Corp
+                          Event Director, Ichase Fitness
                         </p>
                         <p className="text-slate-700 leading-relaxed">
-                          &ldquo;The VChase team proved to be extremely
-                          passionate and dedicated. Their business acumen and
-                          strategic matching helped us find the perfect events
-                          to sponsor, maximizing our brand exposure and
-                          ROI.&rdquo;
+                          &ldquo;The platform's intelligent matchmaking saved us months of cold outreach and negotiation. We connected with sponsors who genuinely understood our event's mission and audience.&rdquo;
                         </p>
                       </div>
                     </div>
@@ -721,9 +704,8 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
               ref={contactSection.elementRef}
-              className={`text-center mb-16 scroll-hidden ${
-                contactSection.isVisible ? "scroll-visible" : ""
-              }`}
+              className={`text-center mb-16 scroll-hidden ${contactSection.isVisible ? "scroll-visible" : ""
+                }`}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Contact{" "}
@@ -744,9 +726,8 @@ export default function Home() {
             >
               {/* Email */}
               <div
-                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${
-                  contactStagger.visibleItems[0] ? "scroll-visible" : ""
-                }`}
+                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${contactStagger.visibleItems[0] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -758,10 +739,10 @@ export default function Home() {
                     </h3>
                     <p className="text-slate-600 mb-2">For general inquiries</p>
                     <a
-                      href="mailto:hello@vchase.com"
+                      href="mailto:hello@vchase.in"
                       className="text-purple-600 font-semibold"
                     >
-                      hello@vchase.com
+                      hello@vchase.in
                     </a>
                   </div>
                 </div>
@@ -769,9 +750,8 @@ export default function Home() {
 
               {/* Call */}
               <div
-                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${
-                  contactStagger.visibleItems[1] ? "scroll-visible" : ""
-                }`}
+                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${contactStagger.visibleItems[1] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -796,26 +776,25 @@ export default function Home() {
 
               {/* Visit */}
               <div
-                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${
-                  contactStagger.visibleItems[2] ? "scroll-visible" : ""
-                }`}
+                className={`h-48 bg-white rounded-2xl p-6 shadow scroll-slide-up ${contactStagger.visibleItems[2] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-1">
+                    {/* <h3 className="text-xl font-bold text-slate-900 mb-1">
                       Visit Us
-                    </h3>
-                    <p className="text-slate-600 mb-2">Headquarters</p>
-                    <p className="text-slate-700">
+                    </h3> */}
+                    {/* <p className="text-slate-600 mb-2">Headquarters</p> */}
+                    {/* <p className="text-slate-700">
                       123 Business Avenue
                       <br />
                       Tech District, TD 12345
                       <br />
                       Innovation City
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </div>
@@ -849,9 +828,8 @@ export default function Home() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
               ref={policySection.elementRef}
-              className={`text-center mb-16 scroll-hidden ${
-                policySection.isVisible ? "scroll-visible" : ""
-              }`}
+              className={`text-center mb-16 scroll-hidden ${policySection.isVisible ? "scroll-visible" : ""
+                }`}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Service{" "}
@@ -867,9 +845,8 @@ export default function Home() {
 
             <div ref={policyStagger.elementRef} className="space-y-8">
               <div
-                className={`bg-slate-50 rounded-2xl p-8 scroll-stagger ${
-                  policyStagger.visibleItems[0] ? "scroll-visible" : ""
-                }`}
+                className={`bg-slate-50 rounded-2xl p-8 scroll-stagger ${policyStagger.visibleItems[0] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="flex items-start space-x-4">
                   <Shield className="w-8 h-8 text-purple-500 flex-shrink-0 mt-1" />
@@ -889,9 +866,8 @@ export default function Home() {
               </div>
 
               <div
-                className={`bg-slate-50 rounded-2xl p-8 scroll-stagger ${
-                  policyStagger.visibleItems[1] ? "scroll-visible" : ""
-                }`}
+                className={`bg-slate-50 rounded-2xl p-8 scroll-stagger ${policyStagger.visibleItems[1] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="flex items-start space-x-4">
                   <Clock className="w-8 h-8 text-blue-500 flex-shrink-0 mt-1" />
@@ -910,9 +886,8 @@ export default function Home() {
               </div>
 
               <div
-                className={`bg-slate-50 rounded-2xl p-8 scroll-stagger ${
-                  policyStagger.visibleItems[2] ? "scroll-visible" : ""
-                }`}
+                className={`bg-slate-50 rounded-2xl p-8 scroll-stagger ${policyStagger.visibleItems[2] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="flex items-start space-x-4">
                   <Users className="w-8 h-8 text-green-500 flex-shrink-0 mt-1" />
@@ -931,9 +906,8 @@ export default function Home() {
               </div>
 
               <div
-                className={`bg-slate-50 rounded-2xl p-8 scroll-stagger ${
-                  policyStagger.visibleItems[3] ? "scroll-visible" : ""
-                }`}
+                className={`bg-slate-50 rounded-2xl p-8 scroll-stagger ${policyStagger.visibleItems[3] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="flex items-start space-x-4">
                   <FileText className="w-8 h-8 text-purple-500 flex-shrink-0 mt-1" />
@@ -959,9 +933,8 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div
               ref={mouSection.elementRef}
-              className={`text-center mb-16 scroll-hidden ${
-                mouSection.isVisible ? "scroll-visible" : ""
-              }`}
+              className={`text-center mb-16 scroll-hidden ${mouSection.isVisible ? "scroll-visible" : ""
+                }`}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
                 Memorandum of{" "}
@@ -982,9 +955,8 @@ export default function Home() {
             >
               {/* Organizers MOU */}
               <div
-                className={`bg-white rounded-2xl p-8 shadow-xl border border-slate-100 scroll-stagger ${
-                  mouStagger.visibleItems[0] ? "scroll-visible" : ""
-                }`}
+                className={`bg-white rounded-2xl p-8 shadow-xl border border-slate-100 scroll-stagger ${mouStagger.visibleItems[0] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6">
                   <Briefcase className="w-8 h-8 text-white" />
@@ -1022,11 +994,10 @@ export default function Home() {
 
               {/* Sponsors MOU */}
               <div
-                className={`bg-white rounded-2xl p-8 shadow-xl border border-slate-100 ${
-                  mouStagger.visibleItems[1]
+                className={`bg-white rounded-2xl p-8 shadow-xl border border-slate-100 ${mouStagger.visibleItems[1]
                     ? "scroll-visible"
                     : "scroll-hidden"
-                } transition-all duration-700 ease-out transform`}
+                  } transition-all duration-700 ease-out transform`}
               >
                 <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6">
                   <Handshake className="w-8 h-8 text-white" />
@@ -1064,9 +1035,8 @@ export default function Home() {
 
               {/* Consultation Clients MOU */}
               <div
-                className={`bg-white rounded-2xl p-8 shadow-xl border border-slate-100 scroll-stagger ${
-                  mouStagger.visibleItems[2] ? "scroll-visible" : ""
-                }`}
+                className={`bg-white rounded-2xl p-8 shadow-xl border border-slate-100 scroll-stagger ${mouStagger.visibleItems[2] ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
                   <User className="w-8 h-8 text-white" />
@@ -1112,9 +1082,8 @@ export default function Home() {
               className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
             >
               <div
-                className={`scroll-slide-left ${
-                  aboutSection.isVisible ? "scroll-visible" : ""
-                }`}
+                className={`scroll-slide-left ${aboutSection.isVisible ? "scroll-visible" : ""
+                  }`}
               >
                 <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8">
                   About{" "}
@@ -1141,9 +1110,8 @@ export default function Home() {
                   className="grid grid-cols-2 gap-6"
                 >
                   <div
-                    className={`flex items-center space-x-3 scroll-stagger ${
-                      statsStagger.visibleItems[0] ? "scroll-visible" : ""
-                    }`}
+                    className={`flex items-center space-x-3 scroll-stagger ${statsStagger.visibleItems[0] ? "scroll-visible" : ""
+                      }`}
                   >
                     <Users className="w-6 h-6 text-purple-500" />
                     <span className="text-slate-700 font-semibold">
@@ -1151,9 +1119,8 @@ export default function Home() {
                     </span>
                   </div>
                   <div
-                    className={`flex items-center space-x-3 scroll-stagger ${
-                      statsStagger.visibleItems[1] ? "scroll-visible" : ""
-                    }`}
+                    className={`flex items-center space-x-3 scroll-stagger ${statsStagger.visibleItems[1] ? "scroll-visible" : ""
+                      }`}
                   >
                     <CheckCircle className="w-6 h-6 text-green-500" />
                     <span className="text-slate-700 font-semibold">
@@ -1161,9 +1128,8 @@ export default function Home() {
                     </span>
                   </div>
                   <div
-                    className={`flex items-center space-x-3 scroll-stagger ${
-                      statsStagger.visibleItems[2] ? "scroll-visible" : ""
-                    }`}
+                    className={`flex items-center space-x-3 scroll-stagger ${statsStagger.visibleItems[2] ? "scroll-visible" : ""
+                      }`}
                   >
                     <MapPin className="w-6 h-6 text-blue-500" />
                     <span className="text-slate-700 font-semibold">
@@ -1171,9 +1137,8 @@ export default function Home() {
                     </span>
                   </div>
                   <div
-                    className={`flex items-center space-x-3 scroll-stagger ${
-                      statsStagger.visibleItems[3] ? "scroll-visible" : ""
-                    }`}
+                    className={`flex items-center space-x-3 scroll-stagger ${statsStagger.visibleItems[3] ? "scroll-visible" : ""
+                      }`}
                   >
                     <Clock className="w-6 h-6 text-purple-500" />
                     <span className="text-slate-700 font-semibold">
@@ -1183,9 +1148,8 @@ export default function Home() {
                 </div>
               </div>
               <div
-                className={`relative scroll-slide-right ${
-                  aboutSection.isVisible ? "scroll-visible" : ""
-                }`}
+                className={`relative scroll-slide-right ${aboutSection.isVisible ? "scroll-visible" : ""
+                  }`}
               >
                 <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
                   <Image
@@ -1217,9 +1181,8 @@ export default function Home() {
 
           <div
             ref={ctaSection.elementRef}
-            className={`relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 scroll-fade-scale ${
-              ctaSection.isVisible ? "scroll-visible" : ""
-            }`}
+            className={`relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 scroll-fade-scale ${ctaSection.isVisible ? "scroll-visible" : ""
+              }`}
           >
             <h2 className="text-4xl md:text-6xl font-bold mb-8">
               Ready to{" "}
