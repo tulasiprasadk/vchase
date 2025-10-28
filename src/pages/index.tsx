@@ -768,7 +768,7 @@ export default function Home() {
                       href="tel:+1234567890"
                       className="text-blue-600 font-semibold"
                     >
-                      +1 (234) 567-8900
+                      +91 9900993926
                     </a>
                   </div>
                 </div>
