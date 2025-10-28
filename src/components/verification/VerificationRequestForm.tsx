@@ -464,7 +464,6 @@ const VerificationRequestForm: React.FC<VerificationRequestFormProps> = ({
                     onUpload={handleDocumentUpload}
                     placeholder="Upload verification documents"
                     className="w-full"
-                    uploadPreset="events_preset"
                   />
                 </div>
               </div>

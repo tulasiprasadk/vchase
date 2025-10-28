@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useState, useRef } from "react";
-import { CldImage } from "next-cloudinary";
+import Image from "next/image";
 import { useImageUpload, type UploadResult } from "@/hooks/useImageUpload";
 import Button from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -14,7 +14,6 @@ interface ImageUploadProps {
   className?: string;
   multiple?: boolean;
   maxFiles?: number;
-  uploadPreset?: string;
 }
 
 export function ImageUpload({
@@ -25,13 +24,10 @@ export function ImageUpload({
   className = "",
   multiple = false,
   maxFiles = 1,
-  uploadPreset,
 }: ImageUploadProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { uploadImage, isUploading, uploadProgress } = useImageUpload({
-    uploadPreset,
-  });
+  const { uploadImage, isUploading, uploadProgress } = useImageUpload();
 
   const handleFileChange = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +118,7 @@ export function ImageUpload({
         {currentImageUrl ? (
           <div className="space-y-4">
             <div className="relative max-w-xs mx-auto">
-              <CldImage
+              <Image
                 src={currentImageUrl}
                 alt={currentImageAlt}
                 width={300}

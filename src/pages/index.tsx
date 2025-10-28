@@ -1,13 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import Layout from "@/components/layout/Layout";
+import React, { useEffect, useState } from "react";
 import Button from "@/components/ui/Button";
 import MindBlowingAnimations from "@/components/ui/MindBlowingAnimations";
 import {
   useScrollAnimation,
   useStaggeredScrollAnimation,
 } from "@/hooks/useScrollAnimation";
+import { useAdvertisements } from "@/hooks/useAdvertisements";
 import {
   Handshake,
   TrendingUp,
@@ -28,6 +31,8 @@ import {
 } from "lucide-react";
 import ChatbotWidget from "@/components/ui/ChatbotWidget";
 import AdPlaceholder from "@/components/ui/AdPlaceholder";
+import { collection, query, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
 
 export default function Home() {
   // Scroll animation hooks
@@ -44,6 +49,21 @@ export default function Home() {
   const contactStagger = useStaggeredScrollAnimation(3, 120);
   const mouStagger = useStaggeredScrollAnimation(3, 150);
   const policyStagger = useStaggeredScrollAnimation(4, 200);
+
+  // Advertisement hook
+  const { getAdsByPosition } = useAdvertisements();
+
+  // Testimonials fetched from Firestore
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+
+  useEffect(() => {
+    const q = query(collection(db, "testimonials"));
+    const unsub = onSnapshot(q, (snap) => {
+      const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      setTestimonials(items);
+    });
+    return () => unsub();
+  }, []);
 
   return (
     <>
@@ -345,43 +365,83 @@ export default function Home() {
 
             {/* Testimonials */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-              <div className="bg-white rounded-3xl p-8 shadow-xl">
-                <div className="flex items-start space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex-shrink-0"></div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-lg">
-                      Sarah Johnson
-                    </h4>
-                    <p className="text-slate-600 mb-4">
-                      Event Director, TechConf 2024
-                    </p>
-                    <p className="text-slate-700 leading-relaxed">
-                      &ldquo;VChase transformed our approach to partnerships.
-                      Their platform connected us with sponsors who truly
-                      understood our vision, resulting in our most successful
-                      event yet with 300% increased sponsorship revenue.&rdquo;
-                    </p>
-                  </div>
-                </div>
-              </div>
+              {testimonials && testimonials.length > 0 ? (
+                testimonials.slice(0, 2).map((t) => (
+                  <div
+                    key={t.id}
+                    className="bg-white rounded-3xl p-8 shadow-xl"
+                  >
+                    <div className="flex items-start space-x-4">
+                      {t.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={t.imageUrl}
+                          alt={t.name}
+                          className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex-shrink-0" />
+                      )}
 
-              <div className="bg-white rounded-3xl p-8 shadow-xl">
-                <div className="flex items-start space-x-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex-shrink-0"></div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-lg">
-                      Michael Chen
-                    </h4>
-                    <p className="text-slate-600 mb-4">CMO, Innovation Corp</p>
-                    <p className="text-slate-700 leading-relaxed">
-                      &ldquo;The VChase team proved to be extremely passionate
-                      and dedicated. Their business acumen and strategic
-                      matching helped us find the perfect events to sponsor,
-                      maximizing our brand exposure and ROI.&rdquo;
-                    </p>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">
+                          {t.name}
+                        </h4>
+                        {t.title && (
+                          <p className="text-slate-600 mb-4">{t.title}</p>
+                        )}
+                        <p className="text-slate-700 leading-relaxed">
+                          {t.message}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                ))
+              ) : (
+                <>
+                  <div className="bg-white rounded-3xl p-8 shadow-xl">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex-shrink-0"></div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">
+                          Sarah Johnson
+                        </h4>
+                        <p className="text-slate-600 mb-4">
+                          Event Director, TechConf 2024
+                        </p>
+                        <p className="text-slate-700 leading-relaxed">
+                          &ldquo;VChase transformed our approach to
+                          partnerships. Their platform connected us with
+                          sponsors who truly understood our vision, resulting in
+                          our most successful event yet with 300% increased
+                          sponsorship revenue.&rdquo;
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-3xl p-8 shadow-xl">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex-shrink-0"></div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-lg">
+                          Michael Chen
+                        </h4>
+                        <p className="text-slate-600 mb-4">
+                          CMO, Innovation Corp
+                        </p>
+                        <p className="text-slate-700 leading-relaxed">
+                          &ldquo;The VChase team proved to be extremely
+                          passionate and dedicated. Their business acumen and
+                          strategic matching helped us find the perfect events
+                          to sponsor, maximizing our brand exposure and
+                          ROI.&rdquo;
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Client Logos Marquee */}
@@ -443,7 +503,7 @@ export default function Home() {
                       className="object-contain opacity-70 hover:opacity-100 transition-opacity"
                     />
                   </div>
-                  <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
+                  {/* <div className="h-20 w-32 flex items-center justify-center p-4 flex-shrink-0">
                     <Image
                       src="/images/clients/client-7.png"
                       alt="Client 7"
@@ -451,7 +511,7 @@ export default function Home() {
                       height={60}
                       className="object-contain opacity-70 hover:opacity-100 transition-opacity"
                     />
-                  </div>
+                  </div> */}
                 </div>
                 {/* Duplicate for seamless loop */}
                 <div className="flex items-center gap-12 mr-12">
@@ -538,10 +598,120 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <AdPlaceholder label="Featured" />
-              <AdPlaceholder label="Leaderboard" />
-              <AdPlaceholder label="Sidebar" />
-              <AdPlaceholder label="Mobile" />
+              {(() => {
+                const featuredAds = getAdsByPosition("featured");
+                const leaderboardAds = getAdsByPosition("leaderboard");
+                const sidebarAds = getAdsByPosition("sidebar");
+                const mobileAds = getAdsByPosition("mobile");
+
+                return (
+                  <>
+                    {featuredAds.length > 0 ? (
+                      <div className="relative group cursor-pointer">
+                        <Image
+                          src={featuredAds[0].imageUrl}
+                          alt={featuredAds[0].title}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                          onClick={() => {
+                            if (featuredAds[0].link) {
+                              window.open(featuredAds[0].link, "_blank");
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg flex items-center justify-center">
+                          {featuredAds[0].link && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm font-medium">
+                              Click to visit
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <AdPlaceholder label="Featured" />
+                    )}
+
+                    {leaderboardAds.length > 0 ? (
+                      <div className="relative group cursor-pointer">
+                        <Image
+                          src={leaderboardAds[0].imageUrl}
+                          alt={leaderboardAds[0].title}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                          onClick={() => {
+                            if (leaderboardAds[0].link) {
+                              window.open(leaderboardAds[0].link, "_blank");
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg flex items-center justify-center">
+                          {leaderboardAds[0].link && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm font-medium">
+                              Click to visit
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <AdPlaceholder label="Leaderboard" />
+                    )}
+
+                    {sidebarAds.length > 0 ? (
+                      <div className="relative group cursor-pointer">
+                        <Image
+                          src={sidebarAds[0].imageUrl}
+                          alt={sidebarAds[0].title}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                          onClick={() => {
+                            if (sidebarAds[0].link) {
+                              window.open(sidebarAds[0].link, "_blank");
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg flex items-center justify-center">
+                          {sidebarAds[0].link && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm font-medium">
+                              Click to visit
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <AdPlaceholder label="Sidebar" />
+                    )}
+
+                    {mobileAds.length > 0 ? (
+                      <div className="relative group cursor-pointer">
+                        <Image
+                          src={mobileAds[0].imageUrl}
+                          alt={mobileAds[0].title}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                          onClick={() => {
+                            if (mobileAds[0].link) {
+                              window.open(mobileAds[0].link, "_blank");
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-opacity rounded-lg flex items-center justify-center">
+                          {mobileAds[0].link && (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm font-medium">
+                              Click to visit
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <AdPlaceholder label="Mobile" />
+                    )}
+                  </>
+                );
+              })()}
             </div>
           </div>
         </section>

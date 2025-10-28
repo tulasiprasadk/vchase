@@ -1,23 +1,27 @@
 import { useState, useCallback } from "react";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase/config";
 import { toast } from "react-hot-toast";
 
 export interface UploadResult {
   url: string;
-  public_id: string;
+  path: string;
+  name: string;
+  size: number;
+  contentType: string;
 }
 
 export interface UseImageUploadOptions {
   maxFileSize?: number; // in bytes
   acceptedTypes?: string[];
-  uploadPreset?: string;
+  folder?: string;
 }
 
 export function useImageUpload(options: UseImageUploadOptions = {}) {
   const {
     maxFileSize = 5 * 1024 * 1024, // 5MB default
     acceptedTypes = ["image/jpeg", "image/png", "image/webp"],
-    uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ||
-      "default",
+    folder = "images",
   } = options;
 
   const [isUploading, setIsUploading] = useState(false);
@@ -51,90 +55,79 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
       setIsUploading(true);
       setUploadProgress(0);
 
-      // Debug logging
-      console.log("🔄 Starting image upload:", {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type,
-        uploadPreset,
-        cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-      });
-
       try {
-        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-        if (!cloudName) {
-          throw new Error(
-            "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME environment variable is not set"
-          );
-        }
+        // Create a unique filename
+        const timestamp = Date.now();
+        const fileName = `${timestamp}_${file.name.replace(
+          /[^a-zA-Z0-9.]/g,
+          "_"
+        )}`;
+        const storagePath = `${folder}/${fileName}`;
 
-        if (!uploadPreset || uploadPreset === "default") {
-          throw new Error(
-            "NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET environment variable is not set or is using default value"
-          );
-        }
+        // Create storage reference
+        const storageRef = ref(storage, storagePath);
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", uploadPreset);
-
-        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-
-        const xhr = new XMLHttpRequest();
+        // Upload file
+        const uploadTask = uploadBytesResumable(storageRef, file);
 
         return new Promise<UploadResult>((resolve, reject) => {
-          xhr.upload.addEventListener("progress", (event) => {
-            if (event.lengthComputable) {
-              const progress = Math.round((event.loaded / event.total) * 100);
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              // Progress monitoring
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
               setUploadProgress(progress);
-            }
-          });
-
-          xhr.addEventListener("load", () => {
-            if (xhr.status === 200) {
-              const response = JSON.parse(xhr.responseText);
-              resolve({
-                url: response.secure_url,
-                public_id: response.public_id,
-              });
-            } else {
-              let errorMessage = `Upload failed with status ${xhr.status}`;
+            },
+            (error) => {
+              // Handle upload errors
+              console.error("Upload error:", error);
+              const errorMessage = `Upload failed: ${error.message}`;
+              toast.error(errorMessage);
+              setIsUploading(false);
+              setUploadProgress(0);
+              reject(null);
+            },
+            async () => {
               try {
-                const errorResponse = JSON.parse(xhr.responseText);
-                if (errorResponse.error && errorResponse.error.message) {
-                  errorMessage += `: ${errorResponse.error.message}`;
-                }
-              } catch {
-                // If we can't parse the error response, just use the status code
-                errorMessage += `: ${xhr.responseText || "Unknown error"}`;
+                // Upload completed successfully
+                const downloadURL = await getDownloadURL(
+                  uploadTask.snapshot.ref
+                );
+
+                toast.success("Image uploaded successfully!");
+
+                const result: UploadResult = {
+                  url: downloadURL,
+                  path: storagePath,
+                  name: fileName,
+                  size: file.size,
+                  contentType: file.type,
+                };
+
+                setIsUploading(false);
+                setUploadProgress(0);
+                resolve(result);
+              } catch (error) {
+                console.error("Error getting download URL:", error);
+                const errorMessage = "Failed to get download URL";
+                toast.error(errorMessage);
+                setIsUploading(false);
+                setUploadProgress(0);
+                reject(null);
               }
-              console.error("Cloudinary upload error:", {
-                status: xhr.status,
-                response: xhr.responseText,
-                cloudinaryUrl,
-                uploadPreset,
-              });
-              reject(new Error(errorMessage));
             }
-          });
-
-          xhr.addEventListener("error", () => {
-            reject(new Error("Upload failed"));
-          });
-
-          xhr.open("POST", cloudinaryUrl);
-          xhr.send(formData);
+          );
         });
       } catch (error) {
         console.error("Upload error:", error);
         toast.error("Upload failed. Please try again.");
-        return null;
-      } finally {
         setIsUploading(false);
         setUploadProgress(0);
+        return null;
       }
     },
-    [validateFile, uploadPreset]
+    [validateFile, folder]
   );
 
   const uploadMultiple = useCallback(
