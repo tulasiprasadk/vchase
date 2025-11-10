@@ -7,8 +7,8 @@ runConfig:
   # cpu: 1
   # memoryMiB: 512
 
-# Environment variables and secrets.
-# env:
+  # Environment variables and secrets.
+  # env:
   # Configure environment variables.
   # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
   # - variable: MESSAGE
@@ -17,7 +17,56 @@ runConfig:
   #     - BUILD
   #     - RUNTIME
 
-  # Grant access to secrets in Cloud Secret Manager.
-  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
-  # - variable: MY_SECRET
-  #   secret: mySecretRef
+env:
+# Firebase Web Config (publicly exposed to frontend)
+- variable: NEXT_PUBLIC_FIREBASE_API_KEY
+  value: "AIzaSyAjog6sw2Q5hQz1Gxgr6Wa0X_0Dm1dWAnw"
+  availability:
+  - BUILD
+  - RUNTIME
+
+- variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+  value: "vchase-in.firebaseapp.com"
+  availability:
+  - BUILD
+  - RUNTIME
+
+- variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+  value: "vchase-in"
+  availability:
+  - BUILD
+  - RUNTIME
+
+- variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+  value: "vchase-in.firebasestorage.app"
+  availability:
+  - BUILD
+  - RUNTIME
+
+- variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+  value: "941893276273"
+  availability:
+  - BUILD
+  - RUNTIME
+
+- variable: NEXT_PUBLIC_FIREBASE_APP_ID
+  value: "1:941893276273:web:3841e8dcadb81bf84f41d0"
+  availability:
+  - BUILD
+  - RUNTIME
+
+- variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  value: "G-2PNJ37QLLJ"
+  availability:
+  - BUILD
+  - RUNTIME
+
+- variable: NEXT_PUBLIC_FIREBASE_DATABASE_URL
+  value: "https://vchase-in-default-rtdb.firebaseio.com"
+  availability:
+  - BUILD
+  - RUNTIME
+# Grant access to secrets in Cloud Secret Manager.
+# See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
+# - variable: MY_SECRET
+#   secret: mySecretRef
