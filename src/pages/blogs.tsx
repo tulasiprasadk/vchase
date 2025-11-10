@@ -28,7 +28,7 @@ const SAMPLE_BLOGS: BlogPost[] = [
     excerpt:
       "Learn how to maximize your ROI from event sponsorships with proven strategies and real-world examples.",
     content: "Full content here...",
-    author: "krishna Chavan",
+    author: "Sarah Johnson",
     publishedAt: "2024-01-15",
     category: "Sponsorship",
     tags: ["events", "marketing", "ROI"],

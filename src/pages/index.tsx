@@ -350,7 +350,7 @@ export default function Home() {
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex-shrink-0"></div>
                   <div>
                     <h4 className="font-bold text-slate-900 text-lg">
-                      Krishna Chavan
+                      Sarah Johnson
                     </h4>
                     <p className="text-slate-600 mb-4">
                       Event Director, TechConf 2024
