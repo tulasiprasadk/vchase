@@ -19,10 +19,16 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
 *.pem
+build.zip
+*.zip
+*.tar
+*.tar.gz
+*.tgz
 
 # debug
 npm-debug.log*
