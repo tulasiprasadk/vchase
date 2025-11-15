@@ -61,8 +61,7 @@ jobs:
             local value=$2
             if [ -n "$value" ]; then
               firebase apphosting:env:set "${APP_HOSTING_SERVICE}" "$name" "$value" \
-                --project "${PROJECT_ID}" \
-                --region "${APP_HOSTING_REGION}"
+                --project "${PROJECT_ID}"
             fi
           }
           set_env NEXT_PUBLIC_FIREBASE_API_KEY "$NEXT_PUBLIC_FIREBASE_API_KEY"
