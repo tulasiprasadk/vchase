@@ -52,6 +52,5 @@ jobs:
         run: |
           firebase apphosting:deploy \
             --project "${PROJECT_ID}" \
-            --service "${APP_HOSTING_SERVICE}" \
             --region "${APP_HOSTING_REGION}"
 
