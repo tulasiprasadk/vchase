@@ -60,9 +60,8 @@ jobs:
             local name=$1
             local value=$2
             if [ -n "$value" ]; then
-              firebase apphosting:env:set "$name" "$value" \
+              firebase apphosting:env:set "${APP_HOSTING_SERVICE}" "$name" "$value" \
                 --project "${PROJECT_ID}" \
-                --service "${APP_HOSTING_SERVICE}" \
                 --region "${APP_HOSTING_REGION}"
             fi
           }
