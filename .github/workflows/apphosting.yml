@@ -26,8 +26,6 @@ jobs:
         run: npm ci
 
       - name: Build Next.js locally (sanity check)
-        # These vars are used only for the local sanity-check build.
-        # App Hosting reads its env vars from apphosting.yaml + stored secrets.
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
@@ -51,6 +49,4 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/serviceAccount.json
         run: |
           firebase apphosting:deploy \
-            --project "${PROJECT_ID}" \
-            --region "${APP_HOSTING_REGION}"
-
+            --project "${PROJECT_ID}"
