@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
 import { signOutUser } from "@/lib/firebase/auth";
 import Button from "@/components/ui/Button";
-import { Menu, X } from "lucide-react";
 
 const Header: React.FC = () => {
   const { user, userProfile, isAuthenticated } = useAuth();
@@ -84,17 +83,15 @@ const Header: React.FC = () => {
     };
   }, [isMouOpen]);
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
-    <header className="bg-white shadow-sm border-b w-full max-w-full overflow-visible sticky top-0 z-50">
+    <header className="bg-white shadow-md border-b border-slate-200 w-full max-w-full overflow-visible sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
               {/* Logo Image */}
-              <div className="w-28 h-10 md:w-32 md:h-12 relative">
+              <div className="w-24 h-8 md:w-32 md:h-10 relative">
                 <Image
                   src="/images/logo.png"
                   alt="V Chase Logo"
@@ -106,19 +103,19 @@ const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Navigation - only keep anchor scroll links and dashboard links */}
-          <nav className="hidden md:flex space-x-8 overflow-visible">
+          {/* Navigation - single row across sizes, scrollable on small screens */}
+          <nav className="flex items-center gap-3 md:gap-8 overflow-x-auto whitespace-nowrap">
             {/* Smooth scroll navigation links */}
             <button
               onClick={() => scrollToSection("about-us")}
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+              className="text-gray-600 hover:text-gray-900 px-2 py-1 md:px-3 md:py-2 rounded-md text-xs sm:text-sm font-medium cursor-pointer"
             >
               About Us
             </button>
 
             <button
               onClick={() => scrollToSection("contact-us")}
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+              className="text-gray-600 hover:text-gray-900 px-2 py-1 md:px-3 md:py-2 rounded-md text-xs sm:text-sm font-medium cursor-pointer"
             >
               Contact
             </button>
@@ -140,7 +137,7 @@ const Header: React.FC = () => {
                     }, 0);
                   }
                 }}
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
+                className="text-gray-600 hover:text-gray-900 px-2 py-1 md:px-3 md:py-2 rounded-md text-xs sm:text-sm font-medium flex items-center gap-1"
               >
                 MOU
                 <span className="text-xs">▾</span>
@@ -185,7 +182,7 @@ const Header: React.FC = () => {
 
             <Link
               href="/blogs"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              className="text-gray-600 hover:text-gray-900 px-2 py-1 md:px-3 md:py-2 rounded-md text-xs sm:text-sm font-medium"
             >
               Blog
             </Link>
@@ -195,7 +192,7 @@ const Header: React.FC = () => {
               userProfile.userType === "organizer" && (
                 <Link
                   href="/dashboard/events"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-1 md:px-3 md:py-2 rounded-md text-xs sm:text-sm font-medium"
                 >
                   My Events
                 </Link>
@@ -205,14 +202,14 @@ const Header: React.FC = () => {
               userProfile.userType === "sponsor" && (
                 <Link
                   href="/dashboard/sponsorships"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-1 md:px-3 md:py-2 rounded-md text-xs sm:text-sm font-medium"
                 >
                   My Sponsorships
                 </Link>
               )}
           </nav>
 
-          {/* User menu + Mobile toggle */}
+          {/* User menu */}
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
@@ -233,110 +230,8 @@ const Header: React.FC = () => {
                 {/* No login/register buttons - users will access via "Let's Get Started" */}
               </div>
             )}
-            <button
-              className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              aria-label="Toggle menu"
-              onClick={() => setMobileMenuOpen((v) => !v)}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
           </div>
         </div>
-        {/* Mobile menu panel */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-2">
-            <div className="flex flex-col space-y-1">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  scrollToSection("about-us");
-                }}
-                className="text-gray-700 hover:bg-gray-50 text-left px-4 py-2"
-              >
-                About Us
-              </button>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  scrollToSection("contact-us");
-                }}
-                className="text-gray-700 hover:bg-gray-50 text-left px-4 py-2"
-              >
-                Contact
-              </button>
-              <div className="px-2">
-                <div className="border rounded-md overflow-hidden">
-                  <button
-                    ref={mouButtonRef}
-                    onClick={() => setIsMouOpen((prev) => !prev)}
-                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50"
-                  >
-                    MOU
-                  </button>
-                  {isMouOpen && (
-                    <div ref={mouMenuRef} className="border-t">
-                      <Link
-                        href="/mou/organizers"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        onClick={() => {
-                          setIsMouOpen(false);
-                          setMobileMenuOpen(false);
-                        }}
-                      >
-                        Organizers MOU
-                      </Link>
-                      <Link
-                        href="/mou/sponsors"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        onClick={() => {
-                          setIsMouOpen(false);
-                          setMobileMenuOpen(false);
-                        }}
-                      >
-                        Sponsors MOU
-                      </Link>
-                      <Link
-                        href="/mou/consultation"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        onClick={() => {
-                          setIsMouOpen(false);
-                          setMobileMenuOpen(false);
-                        }}
-                      >
-                        Consultation MOU
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <Link
-                href="/blogs"
-                className="px-4 py-2 text-gray-700 hover:bg-gray-50"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Blog
-              </Link>
-              {isAuthenticated && userProfile?.userType === "organizer" && (
-                <Link
-                  href="/dashboard/events"
-                  className="px-4 py-2 text-gray-700 hover:bg-gray-50"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  My Events
-                </Link>
-              )}
-              {isAuthenticated && userProfile?.userType === "sponsor" && (
-                <Link
-                  href="/dashboard/sponsorships"
-                  className="px-4 py-2 text-gray-700 hover:bg-gray-50"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  My Sponsorships
-                </Link>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );
