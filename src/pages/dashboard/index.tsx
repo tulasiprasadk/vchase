@@ -13,7 +13,6 @@ import { useEvents } from "@/hooks/useEvents";
 import { useSponsorshipEnquiries } from "@/hooks/useSponsorshipEnquiries";
 import {
   Calendar,
-  DollarSign,
   Handshake,
   Users,
   CreditCard,
@@ -25,6 +24,16 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { getCollection } from "@/lib/firebase/firestore";
+
+// Rupee Icon Component - matches LucideIcon interface
+const RupeeIcon: React.FC<{ className?: string }> = ({ className = "" }) => (
+  <span 
+    className={`font-bold flex items-center justify-center ${className}`} 
+    style={{ fontSize: '1.5em', lineHeight: 1, display: 'inline-flex' }}
+  >
+    ₹
+  </span>
+);
 
 const DashboardPage: React.FC = () => {
   const { userProfile, user } = useAuth();
@@ -114,8 +123,8 @@ const DashboardPage: React.FC = () => {
       },
       {
         title: "Total Revenue",
-        value: `$${totalRevenue.toLocaleString()}`,
-        icon: DollarSign,
+        value: `₹${totalRevenue.toLocaleString()}`,
+        icon: RupeeIcon,
         color: "green",
         trend: { value: 8.3, isPositive: true },
       },
@@ -293,8 +302,8 @@ const DashboardPage: React.FC = () => {
       },
       {
         title: "Total Invested",
-        value: `$${totalInvested.toLocaleString()}`,
-        icon: DollarSign,
+        value: `₹${totalInvested.toLocaleString()}`,
+        icon: RupeeIcon,
         color: "green",
         trend: { value: 12.1, isPositive: true },
       },
@@ -458,7 +467,7 @@ const DashboardPage: React.FC = () => {
       {
         title: "Published Events",
         value: publishedEvents,
-        icon: DollarSign,
+        icon: Calendar,
         color: "purple",
         trend: { value: 23.4, isPositive: true },
       },

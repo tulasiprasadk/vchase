@@ -341,11 +341,11 @@ const VerificationRequestForm: React.FC<VerificationRequestFormProps> = ({
                     required
                   >
                     <option value="">Select Budget Range</option>
-                    <option value="under_10k">Under $10,000</option>
-                    <option value="10k_50k">$10,000 - $50,000</option>
-                    <option value="50k_100k">$50,000 - $100,000</option>
-                    <option value="100k_500k">$100,000 - $500,000</option>
-                    <option value="over_500k">Over $500,000</option>
+                    <option value="under_10k">Under ₹10,000</option>
+                    <option value="10k_50k">₹10,000 - ₹50,000</option>
+                    <option value="50k_100k">₹50,000 - ₹100,000</option>
+                    <option value="100k_500k">₹100,000 - ₹500,000</option>
+                    <option value="over_500k">Over ₹500,000</option>
                   </select>
                 </div>
 

@@ -182,7 +182,7 @@ const BrowseEventsPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Min Budget ($)
+                    Min Budget (₹)
                   </label>
                   <input
                     type="number"
@@ -200,7 +200,7 @@ const BrowseEventsPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Max Budget ($)
+                    Max Budget (₹)
                   </label>
                   <input
                     type="number"
@@ -372,7 +372,7 @@ const BrowseEventsPage: React.FC = () => {
                     <div className="text-sm text-gray-600 space-y-1">
                       <div>Package: {selectedPackage.name}</div>
                       <div>
-                        Price: ${selectedPackage.price.toLocaleString()}
+                        Price: ₹{selectedPackage.price.toLocaleString()}
                       </div>
                       <div>Event: {selectedEvent.title}</div>
                       <div>

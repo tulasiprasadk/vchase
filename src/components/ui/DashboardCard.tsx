@@ -5,7 +5,7 @@ import { useLayout } from "@/context/LayoutContext";
 interface DashboardCardProps {
   title: string;
   value: string | number;
-  icon: LucideIcon;
+  icon: LucideIcon | React.ComponentType<{ className?: string }>;
   color: string;
   trend?: {
     value: number;

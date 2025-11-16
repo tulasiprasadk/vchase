@@ -219,7 +219,7 @@ const SponsorshipsDashboard: React.FC = () => {
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">
                     {totalReach > 0
-                      ? `$${((totalInvestment / totalReach) * 1000).toFixed(2)}`
+                      ? `₹${((totalInvestment / totalReach) * 1000).toFixed(2)}`
                       : "N/A"}
                   </div>
                   <div className="text-sm text-gray-600">
@@ -229,7 +229,7 @@ const SponsorshipsDashboard: React.FC = () => {
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">
                     {totalLeads > 0
-                      ? `$${(totalInvestment / totalLeads).toFixed(2)}`
+                      ? `₹${(totalInvestment / totalLeads).toFixed(2)}`
                       : "N/A"}
                   </div>
                   <div className="text-sm text-gray-600">Cost per Lead</div>

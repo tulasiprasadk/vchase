@@ -740,7 +740,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                                             Cost per Lead:{" "}
                                           </span>
                                           <span className="font-medium">
-                                            $
+                                            ₹
                                             {(
                                               sponsorship.amount /
                                               sponsorship.leads
@@ -1259,7 +1259,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600">
                       {totalReach > 0
-                        ? `$${((totalInvestment / totalReach) * 1000).toFixed(
+                        ? `₹${((totalInvestment / totalReach) * 1000).toFixed(
                             2
                           )}`
                         : "N/A"}
@@ -1271,7 +1271,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                   <div className="text-center">
                     <div className="text-2xl font-bold text-green-600">
                       {totalLeads > 0
-                        ? `$${(totalInvestment / totalLeads).toFixed(2)}`
+                        ? `₹${(totalInvestment / totalLeads).toFixed(2)}`
                         : "N/A"}
                     </div>
                     <div className="text-sm text-gray-600">Cost per Lead</div>
@@ -1320,7 +1320,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                     <div className="text-sm text-gray-600 space-y-1">
                       <div>Package: {selectedPackage.name}</div>
                       <div>
-                        Price: ${selectedPackage.price.toLocaleString()}
+                        Price: ₹{selectedPackage.price.toLocaleString()}
                       </div>
                       <div>Event: {selectedEvent.title}</div>
                       <div>
@@ -1523,7 +1523,7 @@ const SponsorshipsDashboardPage: React.FC = () => {
                         Package: {selectedEnquiryForPayment.packageName}
                       </div>
                       <div>
-                        Amount: $
+                        Amount: ₹
                         {(
                           selectedEnquiryForPayment.finalAmount ||
                           selectedEnquiryForPayment.proposedAmount ||

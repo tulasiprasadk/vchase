@@ -270,7 +270,7 @@ export default function OrganiserSponsor() {
 
               <div className="text-center p-6">
                 <div className="text-4xl font-bold text-teal-600 mb-4">
-                  $10M+
+                  ₹10M+
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">
                   Sponsorship Value

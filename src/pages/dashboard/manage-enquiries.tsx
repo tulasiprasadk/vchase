@@ -232,7 +232,7 @@ const ManageEnquiriesPage: React.FC = () => {
                             <strong>Contact:</strong> {enquiry.contactEmail}
                           </div>
                           <div>
-                            <strong>Amount:</strong> $
+                            <strong>Amount:</strong> ₹
                             {(enquiry.proposedAmount || 0).toLocaleString()}
                           </div>
                         </div>

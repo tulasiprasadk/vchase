@@ -52,7 +52,7 @@ const BrowseEventsBasic: React.FC = () => {
                     <div>
                       <h5 className="font-medium text-gray-900">Platinum</h5>
                       <p className="text-2xl font-bold text-green-600">
-                        $25,000
+                        ₹25,000
                       </p>
                     </div>
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
@@ -81,7 +81,7 @@ const BrowseEventsBasic: React.FC = () => {
                     <div>
                       <h5 className="font-medium text-gray-900">Gold</h5>
                       <p className="text-2xl font-bold text-green-600">
-                        $15,000
+                        ₹15,000
                       </p>
                     </div>
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
@@ -135,7 +135,7 @@ const BrowseEventsBasic: React.FC = () => {
                     <div>
                       <h5 className="font-medium text-gray-900">Silver</h5>
                       <p className="text-2xl font-bold text-green-600">
-                        $8,000
+                        ₹8,000
                       </p>
                     </div>
                     <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
