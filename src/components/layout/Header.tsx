@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
 import { signOutUser } from "@/lib/firebase/auth";
 import Button from "@/components/ui/Button";
+import { Menu, X } from "lucide-react";
 
 const Header: React.FC = () => {
   const { user, userProfile, isAuthenticated } = useAuth();
@@ -82,6 +83,8 @@ const Header: React.FC = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isMouOpen]);
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="bg-white shadow-sm border-b w-full max-w-full overflow-visible sticky top-0 z-50">
@@ -209,7 +212,7 @@ const Header: React.FC = () => {
               )}
           </nav>
 
-          {/* User menu */}
+          {/* User menu + Mobile toggle */}
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
@@ -230,8 +233,110 @@ const Header: React.FC = () => {
                 {/* No login/register buttons - users will access via "Let's Get Started" */}
               </div>
             )}
+            <button
+              className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              aria-label="Toggle menu"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
         </div>
+        {/* Mobile menu panel */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-200 py-2">
+            <div className="flex flex-col space-y-1">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  scrollToSection("about-us");
+                }}
+                className="text-gray-700 hover:bg-gray-50 text-left px-4 py-2"
+              >
+                About Us
+              </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  scrollToSection("contact-us");
+                }}
+                className="text-gray-700 hover:bg-gray-50 text-left px-4 py-2"
+              >
+                Contact
+              </button>
+              <div className="px-2">
+                <div className="border rounded-md overflow-hidden">
+                  <button
+                    ref={mouButtonRef}
+                    onClick={() => setIsMouOpen((prev) => !prev)}
+                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50"
+                  >
+                    MOU
+                  </button>
+                  {isMouOpen && (
+                    <div ref={mouMenuRef} className="border-t">
+                      <Link
+                        href="/mou/organizers"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => {
+                          setIsMouOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        Organizers MOU
+                      </Link>
+                      <Link
+                        href="/mou/sponsors"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => {
+                          setIsMouOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        Sponsors MOU
+                      </Link>
+                      <Link
+                        href="/mou/consultation"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => {
+                          setIsMouOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        Consultation MOU
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <Link
+                href="/blogs"
+                className="px-4 py-2 text-gray-700 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
+              {isAuthenticated && userProfile?.userType === "organizer" && (
+                <Link
+                  href="/dashboard/events"
+                  className="px-4 py-2 text-gray-700 hover:bg-gray-50"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Events
+                </Link>
+              )}
+              {isAuthenticated && userProfile?.userType === "sponsor" && (
+                <Link
+                  href="/dashboard/sponsorships"
+                  className="px-4 py-2 text-gray-700 hover:bg-gray-50"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Sponsorships
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
