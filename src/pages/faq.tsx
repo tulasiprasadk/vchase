@@ -1,11 +1,12 @@
 import Head from "next/head";
+import Link from "next/link";
 import Layout from "@/components/layout/Layout";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
 
 interface FAQItem {
   question: string;
-  answer: string | JSX.Element;
+  answer: ReactNode;
 }
 
 const faqs: FAQItem[] = [
@@ -222,12 +223,12 @@ export default function FAQPage() {
                 Can&apos;t find the answer you&apos;re looking for? Please reach
                 out to our friendly team.
               </p>
-              <a
+              <Link
                 href="/#contact-us"
                 className="inline-block text-purple-600 font-semibold hover:text-purple-700 transition-colors"
               >
                 Contact Us →
-              </a>
+              </Link>
             </div>
           </div>
         </section>
