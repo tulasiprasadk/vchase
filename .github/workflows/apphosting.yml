@@ -38,10 +38,9 @@ jobs:
 
       - name: Deploy to Firebase Hosting (CLI using token)
         env:
-          FIREBASE_DEPLOY_TOKEN: ${{ secrets.FIREBASE_DEPLOY_TOKEN }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_DEPLOY_TOKEN }}
           PROJECT_ID: ${{ env.PROJECT_ID }}
         run: |
-          # show firebase version for debugging
           firebase --version
-          # Deploy only hosting (change if you need other targets)
           firebase deploy --project "${PROJECT_ID}" --only hosting
+
