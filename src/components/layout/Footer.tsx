@@ -21,11 +21,14 @@ const Footer: React.FC = () => {
               <a href="/terms" className="hover:text-gray-900">
                 Terms of Service
               </a>
+              <a href="/service-policy" className="hover:text-gray-900">
+                Service Policy
+              </a>
               <a href="/careers" className="hover:text-gray-900">
                 Careers
               </a>
-              <a href="/service-policy" className="hover:text-gray-900">
-                Service Policy
+              <a href="/faq" className="hover:text-gray-900">
+                FAQs
               </a>
             </div>
             <p className="mt-6 text-sm text-gray-500">
