@@ -84,14 +84,14 @@ const Header: React.FC = () => {
   }, [isMouOpen]);
 
   return (
-    <header className="bg-white shadow-sm border-b w-full max-w-full overflow-visible relative z-50">
+    <header className="bg-white shadow-sm border-b w-full max-w-full overflow-visible sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
               {/* Logo Image */}
-              <div className="w-32 h-32 relative">
+              <div className="w-28 h-10 md:w-32 md:h-12 relative">
                 <Image
                   src="/images/logo.png"
                   alt="V Chase Logo"
