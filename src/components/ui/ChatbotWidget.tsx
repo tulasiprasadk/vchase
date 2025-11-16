@@ -38,7 +38,7 @@ export default function ChatbotWidget() {
   }
 
   return (
-    <div className="fixed bottom-5 right-4 sm:bottom-6 sm:right-6 z-40">
+    <div className="fixed bottom-8 right-4 sm:bottom-6 sm:right-6 z-30">
       <div className="flex flex-col items-end">
         {open && (
           <div

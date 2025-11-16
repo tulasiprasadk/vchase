@@ -89,12 +89,12 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white shadow-md border-b border-slate-200 w-full max-w-full overflow-visible sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14">
+        <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
               {/* Logo Image */}
-              <div className="w-28 h-10 md:w-36 md:h-12 relative">
+              <div className="w-40 h-14 md:w-48 md:h-16 relative">
                 <Image
                   src="/images/logo.png"
                   alt="V Chase Logo"

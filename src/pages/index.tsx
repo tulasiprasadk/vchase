@@ -123,14 +123,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Mobile floating sponsor pill (non-blocking) */}
-        <div className="lg:hidden fixed bottom-6 right-4 z-50">
-          <AdPlaceholder
-            label="Sponsor"
-            className="px-3 py-2 rounded-full shadow"
-          />
-        </div>
-
         {/* Interactive Pills Section */}
         <section className="py-24 bg-slate-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
