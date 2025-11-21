@@ -1,0 +1,87 @@
+### Create Super Admin Account for VChase Platform
+### This file can be used with HTTPyac extension in VS Code or similar HTTP clients
+### Make sure your Next.js development server is running on localhost:3000
+
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### Create Primary Super Admin Account
+POST http://localhost:3000/api/create-super-admin
+Content-Type: application/json
+
+{
+  "firstName": "Prasad",
+  "lastName": "KT",
+  "email": "prasad@vchase.in",
+  "password": "vchase@123",
+  "companyName": "VChase Technologies",
+  "contactNumber": "+91-9900993926"
+}
+
+### Create Secondary Super Admin Account
+POST {{baseUrl}}/api/create-super-admin
+Content-Type: {{contentType}}
+
+{
+  "firstName": "System",
+  "lastName": "Administrator",
+  "email": "sysadmin@vchase.in",
+  "password": "SysAdmin@2024",
+  "companyName": "VChase Technologies",
+  "contactNumber": "+91-9876543211"
+}
+
+### Create Development Super Admin Account
+POST {{baseUrl}}/api/create-super-admin
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Dev",
+  "lastName": "Admin",
+  "email": "devadmin@vchase.in",
+  "password": "DevAdmin@2024",
+  "companyName": "VChase Development",
+  "contactNumber": "+91-9876543212"
+}
+
+### Create Test Super Admin Account (for testing)
+POST {{baseUrl}}/api/create-super-admin
+Content-Type: {{contentType}}
+
+{
+  "firstName": "Test",
+  "lastName": "SuperAdmin",
+  "email": "test.superadmin@vchase.in",
+  "password": "TestSuper@2024",
+  "companyName": "VChase Testing",
+  "contactNumber": "+91-9876543213"
+}
+
+### Create Super Admin with Custom Details
+POST {{baseUrl}}/api/create-super-admin
+Content-Type: {{contentType}}
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@vchase.in",
+  "password": "JohnDoe@2024",
+  "companyName": "VChase Management",
+  "contactNumber": "+91-9876543214"
+}
+
+###
+### USAGE INSTRUCTIONS:
+### 1. Make sure your Next.js development server is running: npm run dev
+### 2. Install HTTPyac extension in VS Code or use any HTTP client
+### 3. Click "Send Request" above any of the POST requests
+### 4. The API will create both Firebase Auth account and Firestore user profile
+### 5. Super admin will have all permissions and can access all dashboard features
+###
+### IMPORTANT NOTES:
+### - Change passwords before using in production
+### - Each email can only be used once
+### - Super admin accounts are automatically approved and activated
+### - Super admin accounts have full system permissions
+### - Use strong passwords in production environment
+###

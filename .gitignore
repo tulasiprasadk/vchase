@@ -45,3 +45,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Crackers project files (exclude from commits)
+/src/pages/crackers/
+/src/components/crackers/
+/src/hooks/useCrackers.ts
+/src/types/crackers.ts
+/src/utils/indianStatesCities.ts
+/src/utils/indianCities.ts
+/cracker.html
+/create-admin.http
+/scripts/create-cracker-admin.js
+/scripts/create-cracker-admin.bat
+/scripts/create-cracker-admin.sh
+/docs/CRACKER_ADMIN_SETUP.md

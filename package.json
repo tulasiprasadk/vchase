@@ -11,9 +11,11 @@
     "test:e2e:open": "cypress open",
     "test:e2e:headless": "cypress run --spec 'cypress/e2e/event-sponsorship-flow.cy.js'",
     "cy:verify": "./scripts/verify-test-data.sh",
-    "cy:run": "./scripts/run-e2e-tests.sh"
+    "cy:run": "./scripts/run-e2e-tests.sh",
+    "create-admin": "node scripts/create-cracker-admin.js"
   },
   "dependencies": {
+    "@types/qrcode": "^1.5.6",
     "class-variance-authority": "^0.7.0",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
@@ -22,12 +24,14 @@
     "lucide-react": "^0.544.0",
     "next": "15.5.4",
     "next-cloudinary": "^6.16.0",
+    "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.53.0",
     "react-hot-toast": "^2.4.1",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

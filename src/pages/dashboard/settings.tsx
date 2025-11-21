@@ -32,6 +32,12 @@ const SettingsPage: React.FC = () => {
     confirm: "",
   });
 
+  const [showPassword, setShowPassword] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
+
   const [notifications, setNotifications] = useState({
     emailUpdates: true,
     sponsorshipAlerts: true,
@@ -74,6 +80,7 @@ const SettingsPage: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Mock delay
       toast.success("Password changed successfully!");
       setPassword({ current: "", new: "", confirm: "" });
+      setShowPassword({ current: false, new: false, confirm: false });
     } catch {
       toast.error("Failed to change password");
     } finally {
@@ -269,7 +276,7 @@ const SettingsPage: React.FC = () => {
             <CardContent>
               <form onSubmit={handlePasswordChange} className="space-y-4">
                 <Input
-                  type="password"
+                  type={showPassword.current ? "text" : "password"}
                   label="Current Password"
                   value={password.current}
                   onChange={(e) =>
@@ -277,11 +284,56 @@ const SettingsPage: React.FC = () => {
                   }
                   placeholder="Enter your current password"
                   disabled={loading}
+                  suffixIcon={
+                    showPassword.current ? (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                    )
+                  }
+                  onSuffixClick={() =>
+                    setShowPassword({
+                      ...showPassword,
+                      current: !showPassword.current,
+                    })
+                  }
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
-                    type="password"
+                    type={showPassword.new ? "text" : "password"}
                     label="New Password"
                     value={password.new}
                     onChange={(e) =>
@@ -289,9 +341,54 @@ const SettingsPage: React.FC = () => {
                     }
                     placeholder="Enter new password"
                     disabled={loading}
+                    suffixIcon={
+                      showPassword.new ? (
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      )
+                    }
+                    onSuffixClick={() =>
+                      setShowPassword({
+                        ...showPassword,
+                        new: !showPassword.new,
+                      })
+                    }
                   />
                   <Input
-                    type="password"
+                    type={showPassword.confirm ? "text" : "password"}
                     label="Confirm New Password"
                     value={password.confirm}
                     onChange={(e) =>
@@ -299,6 +396,51 @@ const SettingsPage: React.FC = () => {
                     }
                     placeholder="Confirm new password"
                     disabled={loading}
+                    suffixIcon={
+                      showPassword.confirm ? (
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      )
+                    }
+                    onSuffixClick={() =>
+                      setShowPassword({
+                        ...showPassword,
+                        confirm: !showPassword.confirm,
+                      })
+                    }
                   />
                 </div>
 

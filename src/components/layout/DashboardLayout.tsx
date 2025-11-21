@@ -18,6 +18,8 @@ import {
   Users,
   BarChart3,
   CheckCircle,
+  Shield,
+  FileText,
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -101,6 +103,44 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];
 
+  const superAdminNavItems = [
+    { href: "/dashboard/admin", label: "Overview", icon: Home },
+    {
+      href: "/dashboard/admin/moderate",
+      label: "Moderate",
+      icon: AlertTriangle,
+    },
+    { href: "/dashboard/admin/users", label: "User Management", icon: Users },
+    {
+      href: "/dashboard/admin/user-approval",
+      label: "User Approval",
+      icon: CheckCircle,
+    },
+    {
+      href: "/dashboard/admin/system",
+      label: "System Management",
+      icon: Shield,
+    },
+    {
+      href: "/dashboard/admin/careers",
+      label: "Careers Management",
+      icon: Calendar,
+    },
+    {
+      href: "/dashboard/admin/applications",
+      label: "Application Management",
+      icon: MessageCircle,
+    },
+    {
+      href: "/dashboard/admin/verification-requests",
+      label: "Verification Requests",
+      icon: CheckCircle,
+    },
+    { href: "/dashboard/admin/reports", label: "Reports", icon: BarChart3 },
+    { href: "/dashboard/admin/logs", label: "System Logs", icon: FileText },
+    { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  ];
+
   const getNavItems = () => {
     const role = String(userProfile?.userType || "").toLowerCase();
     switch (role) {
@@ -108,10 +148,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         return organizerNavItems;
       case "sponsor":
         return sponsorNavItems;
+      case "super_admin":
+        return superAdminNavItems;
       case "admin":
       case "supervisor":
       case "executive":
-      case "super_admin":
         return adminNavItems;
       default:
         return organizerNavItems;
