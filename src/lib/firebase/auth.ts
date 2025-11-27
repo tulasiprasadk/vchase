@@ -7,6 +7,9 @@ import {
   onAuthStateChanged,
   User,
   updateProfile,
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
 } from "firebase/auth";
 import { auth } from "./config";
 
@@ -74,6 +77,32 @@ export const signOutUser = async () => {
 // Auth state observer
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
   return onAuthStateChanged(auth, callback);
+};
+
+export const updateUserPassword = async (
+  currentPassword: string,
+  newPassword: string
+) => {
+  try {
+    const currentUser = auth.currentUser;
+    if (!currentUser || !currentUser.email) {
+      throw new Error("You must be signed in to change your password");
+    }
+
+    const credential = EmailAuthProvider.credential(
+      currentUser.email,
+      currentPassword
+    );
+
+    await reauthenticateWithCredential(currentUser, credential);
+    await updatePassword(currentUser, newPassword);
+
+    return { error: null };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return { error: errorMessage };
+  }
 };
 
 export type { User };

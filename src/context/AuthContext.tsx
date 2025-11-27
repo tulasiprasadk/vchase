@@ -14,6 +14,7 @@ import {
   signUpWithEmailAndPassword,
   signInWithGoogle as firebaseGoogleSignIn,
   signOutUser,
+  updateUserPassword,
 } from "@/lib/firebase/auth";
 import { getDocument, setDocument } from "@/lib/firebase/firestore";
 
@@ -30,6 +31,10 @@ interface AuthContextType {
   ) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  changePassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -41,6 +46,7 @@ const AuthContext = createContext<AuthContextType>({
   signUp: async () => {},
   signInWithGoogle: async () => {},
   signOut: async () => {},
+  changePassword: async () => {},
 });
 
 export const useAuth = () => {
@@ -170,6 +176,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ) => {
+    const result = await updateUserPassword(currentPassword, newPassword);
+    if (result.error) {
+      throw new Error(result.error);
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChange(async (firebaseUser) => {
       setUser(firebaseUser);
@@ -205,6 +221,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signUp,
     signInWithGoogle,
     signOut,
+    changePassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

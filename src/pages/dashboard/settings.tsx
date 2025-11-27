@@ -13,7 +13,7 @@ import { Award, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 const SettingsPage: React.FC = () => {
-  const { userProfile } = useAuth();
+  const { userProfile, changePassword } = useAuth();
   const {} = useVerification();
   const [loading, setLoading] = useState(false);
   const [showVerificationForm, setShowVerificationForm] = useState(false);
@@ -76,13 +76,14 @@ const SettingsPage: React.FC = () => {
     setLoading(true);
 
     try {
-      // TODO: Implement password change API call
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Mock delay
+      await changePassword(password.current, password.new);
       toast.success("Password changed successfully!");
       setPassword({ current: "", new: "", confirm: "" });
       setShowPassword({ current: false, new: false, confirm: false });
-    } catch {
-      toast.error("Failed to change password");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to change password";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
